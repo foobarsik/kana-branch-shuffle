@@ -2,6 +2,16 @@ import React, { useEffect, useState } from "react";
 import { KanaData } from "@/types/game";
 import { cn } from "@/lib/utils";
 
+const playKanaAudio = (kana: string, romaji: string) => {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(kana);
+    utterance.lang = 'ja-JP';
+    utterance.rate = 0.8;
+    utterance.pitch = 1.0;
+    speechSynthesis.speak(utterance);
+  }
+};
+
 interface KanaPopupProps {
   kana: KanaData;
   isVisible: boolean;
@@ -18,13 +28,16 @@ export const KanaPopup: React.FC<KanaPopupProps> = ({
   useEffect(() => {
     if (isVisible) {
       setAnimate(true);
+      // Play kana pronunciation
+      playKanaAudio(kana.kana, kana.romaji);
+      
       const timer = setTimeout(() => {
         setAnimate(false);
         setTimeout(onClose, 300);
-      }, 1500);
+      }, 3500); // Extended by 2 seconds (was 1500ms)
       return () => clearTimeout(timer);
     }
-  }, [isVisible, onClose]);
+  }, [isVisible, onClose, kana]);
 
   if (!isVisible) return null;
 
