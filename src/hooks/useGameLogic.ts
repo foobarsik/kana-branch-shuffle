@@ -22,11 +22,11 @@ export const useGameLogic = () => {
     // Shuffle tiles
     const shuffledTiles = [...allTiles].sort(() => Math.random() - 0.5);
 
-    // Create 12 branches (10 filled with 4 tiles each, 2 empty)
+    // Create 7 branches (5 filled, 2 empty)
     const branches: Branch[] = [];
     
-    // Fill 10 branches with 4 tiles each (uses all 40 tiles)
-    for (let i = 0; i < 10; i++) {
+    // Fill 5 branches with 4 tiles each
+    for (let i = 0; i < 5; i++) {
       branches.push({
         id: `branch-${i}`,
         tiles: shuffledTiles.slice(i * 4, (i + 1) * 4),
@@ -37,12 +37,12 @@ export const useGameLogic = () => {
     // Add 2 empty branches
     branches.push(
       {
-        id: "branch-10",
+        id: "branch-5",
         tiles: [],
         maxCapacity: 4,
       },
       {
-        id: "branch-11", 
+        id: "branch-6", 
         tiles: [],
         maxCapacity: 4,
       }
@@ -135,7 +135,7 @@ export const useGameLogic = () => {
       });
 
       // Add empty branches for completed ones
-      while (remaining.length < 12 && remaining.length < newBranches.length) {
+      while (remaining.length < 7 && remaining.length < newBranches.length) {
         remaining.push({
           id: `branch-${Date.now()}-${remaining.length}`,
           tiles: [],
