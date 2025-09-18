@@ -8,35 +8,51 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Japanese-inspired color palette */
+    --background: 15 20% 97%;
+    --foreground: 240 10% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 10% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Cherry blossom pink as primary */
+    --primary: 340 75% 75%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Soft sage green as secondary */
+    --secondary: 120 15% 85%;
+    --secondary-foreground: 240 10% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 60 5% 90%;
+    --muted-foreground: 240 5% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Soft lavender as accent */
+    --accent: 260 30% 85%;
+    --accent-foreground: 240 10% 25%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 65% 65%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 240 10% 88%;
+    --input: 240 10% 88%;
+    --ring: 340 75% 75%;
 
-    --radius: 0.5rem;
+    /* Game-specific colors */
+    --branch: 30 25% 75%;
+    --tile: 0 0% 98%;
+    --tile-shadow: 240 10% 80%;
+    --success: 140 60% 70%;
+    --warning: 45 90% 75%;
+
+    /* Gradients */
+    --gradient-background: linear-gradient(135deg, hsl(15 20% 97%), hsl(340 20% 95%));
+    --gradient-tile: linear-gradient(145deg, hsl(0 0% 100%), hsl(240 5% 95%));
+    --gradient-branch: linear-gradient(90deg, hsl(30 25% 75%), hsl(25 20% 70%));
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 

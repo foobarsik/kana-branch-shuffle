@@ -57,6 +57,17 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Game-specific colors
+        branch: "hsl(var(--branch))",
+        tile: "hsl(var(--tile))",
+        "tile-shadow": "hsl(var(--tile-shadow))",
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+      },
+      backgroundImage: {
+        "gradient-background": "var(--gradient-background)",
+        "gradient-tile": "var(--gradient-tile)",  
+        "gradient-branch": "var(--gradient-branch)",
       },
       borderRadius: {
         lg: "var(--radius)",
