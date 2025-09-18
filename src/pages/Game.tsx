@@ -79,7 +79,7 @@ export const Game: React.FC = () => {
           <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
             <span>Moves: {gameState.moves}</span>
             <span>Score: {gameState.score}</span>
-            <span>Learned: {gameState.learnedKana.length}/5</span>
+            <span>Learned: {gameState.learnedKana.length}/10</span>
           </div>
         </div>
 

@@ -32,4 +32,9 @@ export const HIRAGANA_SET = [
   { kana: "う", romaji: "u" },
   { kana: "え", romaji: "e" },
   { kana: "お", romaji: "o" },
+  { kana: "か", romaji: "ka" },
+  { kana: "き", romaji: "ki" },
+  { kana: "く", romaji: "ku" },
+  { kana: "け", romaji: "ke" },
+  { kana: "こ", romaji: "ko" },
 ];
