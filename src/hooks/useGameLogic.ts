@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { GameState, Branch, KanaTile, HIRAGANA_SET } from "@/types/game";
 import { useToast } from "@/hooks/use-toast";
+import { playMoveSound } from "@/utils/audio";
 
 export const useGameLogic = () => {
   const { toast } = useToast();
@@ -114,6 +115,9 @@ export const useGameLogic = () => {
       // Move the tile
       sourceBranch.tiles = sourceBranch.tiles.slice(0, -1);
       targetBranch.tiles = [...targetBranch.tiles, tileToMove];
+      
+      // Play move sound
+      playMoveSound();
 
       const newMoves = prevState.moves + 1;
       
