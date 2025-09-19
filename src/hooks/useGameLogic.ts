@@ -116,8 +116,8 @@ export const useGameLogic = () => {
       sourceBranch.tiles = sourceBranch.tiles.slice(0, -1);
       targetBranch.tiles = [...targetBranch.tiles, tileToMove];
       
-      // Play move sound
-      playMoveSound();
+      // Play kana pronunciation
+      playMoveSound(tileToMove.kana);
 
       const newMoves = prevState.moves + 1;
       
