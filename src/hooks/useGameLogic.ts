@@ -103,10 +103,21 @@ export const useGameLogic = () => {
 
       const tileToMove = sourceBranch.tiles[sourceBranch.tiles.length - 1];
 
+      // Check specific reasons for invalid moves
+      let errorMessage = "Cannot place tile here!";
+      if (targetBranch.tiles.length >= targetBranch.maxCapacity) {
+        errorMessage = "Branch is full! Maximum 4 tiles per branch.";
+      } else if (targetBranch.tiles.length > 0) {
+        const topTile = targetBranch.tiles[targetBranch.tiles.length - 1];
+        if (topTile.kana !== tileToMove.kana) {
+          errorMessage = `Can only place ${topTile.kana} on this branch! You tried to place ${tileToMove.kana}.`;
+        }
+      }
+
       if (!canPlaceTile(tileToMove, targetBranch)) {
         toast({
           title: "Invalid Move",
-          description: "Cannot place tile here!",
+          description: errorMessage,
           variant: "destructive",
         });
         return prevState;
