@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { KanaData } from "@/types/game";
 import { cn } from "@/lib/utils";
 
@@ -30,26 +31,31 @@ export const KanaPopup: React.FC<KanaPopupProps> = ({
       setAnimate(true);
       // Play kana pronunciation
       playKanaAudio(kana.kana, kana.romaji);
-      
-      const timer = setTimeout(() => {
-        setAnimate(false);
-        setTimeout(onClose, 300);
-      }, 3500); // Extended by 2 seconds (was 1500ms)
-      return () => clearTimeout(timer);
     }
-  }, [isVisible, onClose, kana]);
+  }, [isVisible, kana]);
 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={onClose}
+    >
       <div
         className={cn(
-          "bg-card border-2 border-primary rounded-2xl p-8 shadow-2xl",
-          "flex flex-col items-center space-y-4 transition-all duration-500",
+          "bg-card border-2 border-primary rounded-2xl p-8 shadow-2xl relative",
+          "flex flex-col items-center space-y-4 transition-all duration-500 pointer-events-auto",
           animate ? "scale-100 opacity-100" : "scale-0 opacity-0"
         )}
+        onClick={(e) => e.stopPropagation()}
       >
+        <button
+          onClick={onClose}
+          className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full p-1 hover:bg-primary/90 transition-colors"
+        >
+          <X size={16} />
+        </button>
+        
         <div className="text-6xl font-bold text-primary">
           {kana.kana}
         </div>
