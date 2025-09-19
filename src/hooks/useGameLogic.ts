@@ -19,8 +19,24 @@ export const useGameLogic = () => {
       }
     });
 
-    // Shuffle tiles
-    const shuffledTiles = [...allTiles].sort(() => Math.random() - 0.5);
+    // Shuffle tiles with validation to ensure no branch has 4 identical kana
+    let shuffledTiles: KanaTile[];
+    let isValidShuffle = false;
+    
+    while (!isValidShuffle) {
+      shuffledTiles = [...allTiles].sort(() => Math.random() - 0.5);
+      
+      // Check if any group of 4 consecutive tiles (that will form a branch) has all identical kana
+      isValidShuffle = true;
+      for (let i = 0; i < 5; i++) {
+        const branchTiles = shuffledTiles.slice(i * 4, (i + 1) * 4);
+        const firstKana = branchTiles[0].kana;
+        if (branchTiles.every(tile => tile.kana === firstKana)) {
+          isValidShuffle = false;
+          break;
+        }
+      }
+    }
 
     // Create 7 branches (5 filled, 2 empty)
     const branches: Branch[] = [];
