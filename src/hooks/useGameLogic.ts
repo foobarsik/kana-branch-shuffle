@@ -86,20 +86,26 @@ export const useGameLogic = () => {
     return topTile.kana === sourceTile.kana;
   }, []);
 
-  const checkForCompletion = useCallback((branches: Branch[]): { completed: string[], remaining: Branch[] } => {
+  const checkForCompletion = useCallback((branches: Branch[]): { completed: string[], updatedBranches: Branch[] } => {
     const completed: string[] = [];
-    const remaining: Branch[] = [];
+    const updatedBranches: Branch[] = [];
 
     branches.forEach(branch => {
       if (branch.tiles.length === 4 && 
           branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)) {
         completed.push(branch.tiles[0].kana);
+        // Replace completed branch with empty one in the same position
+        updatedBranches.push({
+          id: `branch-${Date.now()}-${Math.random()}`,
+          tiles: [],
+          maxCapacity: 4,
+        });
       } else {
-        remaining.push(branch);
+        updatedBranches.push(branch);
       }
     });
 
-    return { completed, remaining };
+    return { completed, updatedBranches };
   }, []);
 
   const moveTile = useCallback((sourceBranchId: string, targetBranchId: string) => {
@@ -149,7 +155,7 @@ export const useGameLogic = () => {
       const newMoves = prevState.moves + 1;
       
       // Check for completions
-      const { completed, remaining } = checkForCompletion(newBranches);
+      const { completed, updatedBranches } = checkForCompletion(newBranches);
 
       // Show popup for new completions
       completed.forEach(kana => {
@@ -161,20 +167,11 @@ export const useGameLogic = () => {
         }
       });
 
-      // Add empty branches for completed ones
-      while (remaining.length < 7 && remaining.length < newBranches.length) {
-        remaining.push({
-          id: `branch-${Date.now()}-${remaining.length}`,
-          tiles: [],
-          maxCapacity: 4,
-        });
-      }
-
       const newLearnedKana = [...new Set([...prevState.learnedKana, ...completed])];
-      const isComplete = remaining.every(branch => branch.tiles.length === 0);
+      const isComplete = updatedBranches.every(branch => branch.tiles.length === 0);
 
       return {
-        branches: remaining,
+        branches: updatedBranches,
         selectedBranch: null,
         moves: newMoves,
         score: Math.max(0, 1000 - newMoves * 10),
