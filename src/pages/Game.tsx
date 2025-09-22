@@ -68,7 +68,7 @@ export const Game: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-background p-4">
+    <div className="min-h-screen bg-gradient-background p-4 flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <Button
@@ -109,42 +109,44 @@ export const Game: React.FC = () => {
       </div>
 
       {/* Game Board */}
-      <div className="flex justify-center px-1">
-        <div className="grid grid-cols-2 gap-2 md:gap-4 w-full max-w-3xl">
-          {/* First column */}
-          <div className="flex flex-col gap-3 md:gap-4">
-            {gameState.branches.slice(0, Math.ceil(gameState.branches.length / 2)).map((branch) => (
-              <GameBranch
-                key={branch.id}
-                branch={branch}
-                selectedBranch={gameState.selectedBranch}
-                onBranchClick={selectBranch}
-                canPlace={getCanPlaceStatus(branch.id)}
-                align="left"
-              />
-            ))}
+      <div className="flex-1 flex justify-center items-center px-1">
+        <div className="w-full max-w-3xl">
+          <div className="grid grid-cols-2 gap-2 md:gap-4">
+            {/* First column */}
+            <div className="flex flex-col gap-3 md:gap-4">
+              {gameState.branches.slice(0, Math.ceil(gameState.branches.length / 2)).map((branch) => (
+                <GameBranch
+                  key={branch.id}
+                  branch={branch}
+                  selectedBranch={gameState.selectedBranch}
+                  onBranchClick={selectBranch}
+                  canPlace={getCanPlaceStatus(branch.id)}
+                  align="left"
+                />
+              ))}
+            </div>
+            {/* Second column */}
+            <div className="flex flex-col gap-3 md:gap-4">
+              {gameState.branches.slice(Math.ceil(gameState.branches.length / 2)).map((branch) => (
+                <GameBranch
+                  key={branch.id}
+                  branch={branch}
+                  selectedBranch={gameState.selectedBranch}
+                  onBranchClick={selectBranch}
+                  canPlace={getCanPlaceStatus(branch.id)}
+                  align="right"
+                />
+              ))}
+            </div>
           </div>
-          {/* Second column */}
-          <div className="flex flex-col gap-3 md:gap-4">
-            {gameState.branches.slice(Math.ceil(gameState.branches.length / 2)).map((branch) => (
-              <GameBranch
-                key={branch.id}
-                branch={branch}
-                selectedBranch={gameState.selectedBranch}
-                onBranchClick={selectBranch}
-                canPlace={getCanPlaceStatus(branch.id)}
-                align="right"
-              />
-            ))}
+          
+          {/* Instructions */}
+          <div className="text-center mt-8 text-sm text-muted-foreground">
+            <p>Group 4 identical kana tiles together.</p>
+            <p>Tap a branch to select, then tap another branch to move the top tile.</p>
+            <p>You can only place a kana on an empty branch or next to the same kana.</p>
           </div>
         </div>
-      </div>
-
-      {/* Instructions */}
-      <div className="text-center mt-8 text-sm text-muted-foreground">
-        <p>Group 4 identical kana tiles together.</p>
-        <p>Tap a branch to select, then tap another branch to move the top tile.</p>
-        <p>You can only place a kana on an empty branch or next to the same kana.</p>
       </div>
 
       {/* Kana Popup */}
