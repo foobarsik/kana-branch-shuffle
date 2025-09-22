@@ -22,10 +22,10 @@ export const GameTile: React.FC<GameTileProps> = ({
   return (
     <div
       className={cn(
-        "w-10 h-10 md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
+        "w-9 h-9 md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
         "hover:scale-105 active:scale-95",
         isSelectable && "hover:brightness-110",
-        isSelected && "scale-110 brightness-110",
+        isSelected && "brightness-110",
         !isSelectable && "cursor-default hover:scale-100 active:scale-100",
         className
       )}
@@ -66,7 +66,7 @@ export const GameTile: React.FC<GameTileProps> = ({
             <div className="absolute inset-0">
               <div className="md:hidden">
                 {[0, 90, 180, 270].map((angle, index) => (
-                  <div key={`m-${index}`} className="absolute w-1.5 h-1.5" style={{ top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${isSelected ? '14px' : '12px'}) rotate(-${angle}deg)` }}>
+                  <div key={`m-${index}`} className="absolute w-1.5 h-1.5" style={{ top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${isSelected ? '13px' : '11px'}) rotate(-${angle}deg)` }}>
                     <div className="w-full h-full bg-pink-300 rounded-full opacity-10" />
                   </div>
                 ))}
@@ -95,8 +95,8 @@ export const GameTile: React.FC<GameTileProps> = ({
               <circle cx="50" cy="50" r="28" stroke="currentColor" strokeWidth="1" fill="none" />
               <circle cx="50" cy="50" r="18" stroke="currentColor" strokeWidth="1" fill="none" />
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="font-semibold tracking-wide uppercase text-amber-200 text-xs md:text-base select-none">{tile.romaji}</span>
+            <div className="absolute mb-1 inset-0 flex items-center justify-center">
+              <span className="font-bold text-amber-200 drop-shadow-lg select-none text-base md:text-2xl">{tile.romaji}</span>
             </div>
           </div>
         </div>
