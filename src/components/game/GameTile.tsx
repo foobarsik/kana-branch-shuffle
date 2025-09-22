@@ -22,7 +22,7 @@ export const GameTile: React.FC<GameTileProps> = ({
   return (
     <div
       className={cn(
-        "w-16 h-16 rounded-xl bg-gradient-tile shadow-lg border-2 border-tile-shadow",
+        "w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-tile shadow-lg border-2 border-tile-shadow",
         "flex items-center justify-center cursor-pointer transition-all duration-300",
         "hover:scale-105 hover:shadow-xl active:scale-95",
         isSelectable && "hover:border-primary/50",
@@ -33,7 +33,7 @@ export const GameTile: React.FC<GameTileProps> = ({
       style={style}
       onClick={isSelectable ? onClick : undefined}
     >
-      <span className="text-2xl font-bold text-foreground select-none">
+      <span className="text-lg md:text-2xl font-bold text-foreground select-none">
         {tile.kana}
       </span>
     </div>

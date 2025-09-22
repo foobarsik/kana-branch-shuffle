@@ -75,8 +75,8 @@ export const Game: React.FC = () => {
         </Button>
         
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground">Hiragana Sort</h1>
-          <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
+          <h1 className="text-xl md:text-2xl font-bold text-foreground">Hiragana Sort</h1>
+          <div className="flex gap-2 md:gap-4 mt-1 text-xs md:text-sm text-muted-foreground">
             <span>Moves: {gameState.moves}</span>
             <span>Score: {gameState.score}</span>
             <span>Learned: {gameState.learnedKana.length}/5</span>
@@ -103,10 +103,10 @@ export const Game: React.FC = () => {
       </div>
 
       {/* Game Board */}
-      <div className="flex justify-center">
-        <div className="grid grid-cols-2 gap-8 max-w-6xl">
+      <div className="flex justify-center px-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 w-full max-w-6xl">
           {/* First column */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 md:gap-4">
             {gameState.branches.slice(0, Math.ceil(gameState.branches.length / 2)).map((branch) => (
               <GameBranch
                 key={branch.id}
@@ -118,7 +118,7 @@ export const Game: React.FC = () => {
             ))}
           </div>
           {/* Second column */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 md:gap-4">
             {gameState.branches.slice(Math.ceil(gameState.branches.length / 2)).map((branch) => (
               <GameBranch
                 key={branch.id}
