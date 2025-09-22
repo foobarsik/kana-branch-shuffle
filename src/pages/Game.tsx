@@ -104,7 +104,7 @@ export const Game: React.FC = () => {
 
       {/* Game Board */}
       <div className="flex justify-center">
-        <div className="grid grid-cols-7 gap-4 max-w-6xl">
+        <div className="flex flex-col gap-4 max-w-6xl">
           {gameState.branches.map((branch) => (
             <GameBranch
               key={branch.id}
