@@ -5,6 +5,7 @@ import { useGameLogic } from "@/hooks/useGameLogic";
 import { Button } from "@/components/ui/button";
 import { Undo2, RotateCcw, Home, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { initializeVoices } from "@/utils/audio";
 
 export const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -17,6 +18,11 @@ export const Game: React.FC = () => {
     showKanaPopup,
     closeKanaPopup,
   } = useGameLogic();
+
+  // Initialize voices for better audio quality
+  React.useEffect(() => {
+    initializeVoices();
+  }, []);
 
   const getCanPlaceStatus = (branchId: string): boolean => {
     if (!gameState.selectedBranch || gameState.selectedBranch === branchId) return false;
