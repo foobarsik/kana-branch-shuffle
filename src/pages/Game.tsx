@@ -104,7 +104,7 @@ export const Game: React.FC = () => {
 
       {/* Game Board */}
       <div className="flex justify-center px-1">
-        <div className="grid grid-cols-2 gap-2 md:gap-8 w-full max-w-6xl">
+        <div className="grid grid-cols-2 gap-2 md:gap-4 w-full max-w-3xl">
           {/* First column */}
           <div className="flex flex-col gap-3 md:gap-4">
             {gameState.branches.slice(0, Math.ceil(gameState.branches.length / 2)).map((branch) => (
@@ -114,6 +114,7 @@ export const Game: React.FC = () => {
                 selectedBranch={gameState.selectedBranch}
                 onBranchClick={selectBranch}
                 canPlace={getCanPlaceStatus(branch.id)}
+                align="left"
               />
             ))}
           </div>
@@ -126,6 +127,7 @@ export const Game: React.FC = () => {
                 selectedBranch={gameState.selectedBranch}
                 onBranchClick={selectBranch}
                 canPlace={getCanPlaceStatus(branch.id)}
+                align="right"
               />
             ))}
           </div>
@@ -133,9 +135,10 @@ export const Game: React.FC = () => {
       </div>
 
       {/* Instructions */}
-      <div className="text-center mt-8 text-sm text-muted-foreground max-w-md mx-auto">
+      <div className="text-center mt-8 text-sm text-muted-foreground">
+        <p>Group 4 identical kana tiles together.</p>
         <p>Tap a branch to select, then tap another branch to move the top tile.</p>
-        <p>Group 4 identical kana tiles together to learn them!</p>
+        <p>You can only place a kana on an empty branch or next to the same kana.</p>
       </div>
 
       {/* Kana Popup */}

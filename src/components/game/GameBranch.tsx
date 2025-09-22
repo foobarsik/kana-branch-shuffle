@@ -1,6 +1,7 @@
 import React from "react";
 import { Branch, KanaTile } from "@/types/game";
 import { GameTile } from "./GameTile";
+import { SakuraBranch } from "@/components/ui/SakuraBranch";
 import { cn } from "@/lib/utils";
 
 interface GameBranchProps {
@@ -8,6 +9,7 @@ interface GameBranchProps {
   selectedBranch: string | null;
   onBranchClick: (branchId: string) => void;
   canPlace: boolean;
+  align: 'left' | 'right';
 }
 
 export const GameBranch: React.FC<GameBranchProps> = ({
@@ -15,6 +17,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   selectedBranch,
   onBranchClick,
   canPlace,
+  align,
 }) => {
   const isSelected = selectedBranch === branch.id;
   const isEmpty = branch.tiles.length === 0;
@@ -25,7 +28,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
     <div className="flex flex-col items-center space-y-2">
       <div
         className={cn(
-          "relative w-full max-w-44 md:max-w-80 h-12 md:h-20 cursor-pointer transition-all duration-300",
+          "relative w-full max-w-44 md:max-w-80 h-14 md:h-24 cursor-pointer transition-all duration-300",
           "flex items-end justify-start p-1 md:p-2 gap-1",
           // Selection and interaction states  
           isSelected && "scale-105",
@@ -34,42 +37,40 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         )}
         onClick={() => onBranchClick(branch.id)}
       >
-        {/* The shelf - bottom part only */}
-        <div className={cn(
-          "absolute bottom-0 left-1 md:left-4 right-1 md:right-4 h-2 md:h-3 rounded-lg shadow-md",
-          "bg-gradient-to-b from-amber-200 to-amber-300 dark:from-amber-700 dark:to-amber-800",
-          isSelected && "ring-2 ring-primary/50",
-          canPlace && selectedBranch && selectedBranch !== branch.id && "ring-2 ring-success/50"
-        )} />
-        
-        {/* Tiles standing on the shelf */}
-        {branch.tiles.map((tile, index) => (
-          <GameTile
-            key={`${tile.id}-${index}`}
-            tile={tile}
-            isSelectable={index === branch.tiles.length - 1 && !selectedBranch}
-            isSelected={isSelected && index === branch.tiles.length - 1}
-            className={cn(
-              "absolute transition-all duration-300",
-            )}
-            style={{
-              left: `${4 + index * 36}px`, // More compact for mobile
-              bottom: `6px`, // Standing on the shelf
-              zIndex: index + 1,
-            }}
+        {/* The sakura branch - replaces the old shelf */}
+        <div className="absolute bottom-0 left-1 md:left-4 right-1 md:right-4 h-4 md:h-6">
+          <SakuraBranch
+            isSelected={isSelected}
+            canPlace={canPlace && selectedBranch && selectedBranch !== branch.id}
           />
-        ))}
+        </div>
+        
+        {/* Tiles container */}
+        <div className={cn(
+          "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-2",
+          align === 'left' ? 'justify-start' : 'justify-end'
+        )}>
+          {branch.tiles.map((tile, index) => (
+            <GameTile
+              key={`${tile.id}-${index}`}
+              tile={tile}
+              isSelectable={index === branch.tiles.length - 1 && !selectedBranch}
+              isSelected={isSelected && index === branch.tiles.length - 1}
+              className="transition-all duration-300"
+            />
+          ))}
+        </div>
         
         {/* Empty shelf indicator */}
-        {isEmpty && (
+        {/* {isEmpty && (
           <div className="absolute left-2 md:left-6 bottom-1 md:bottom-3 w-8 md:w-12 h-8 md:h-12 rounded-xl border-2 border-dashed border-muted-foreground/30 flex items-center justify-center">
             <span className="text-xs text-muted-foreground">空</span>
           </div>
-        )}
+        )} */}
       </div>
       
       {/* Capacity indicator */}
-      <div className="flex space-x-1">
+      {/* <div className="flex space-x-1">
         {Array.from({ length: branch.maxCapacity }).map((_, index) => (
           <div
             key={index}
@@ -79,7 +80,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
             )}
           />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
