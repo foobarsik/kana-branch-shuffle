@@ -132,7 +132,7 @@ export const useGameLogic = () => {
       } else if (targetBranch.tiles.length > 0) {
         const topTile = targetBranch.tiles[targetBranch.tiles.length - 1];
         if (topTile.kana !== tileToMove.kana) {
-          errorMessage = `Can only place ${topTile.kana} on this branch! You tried to place ${tileToMove.kana}.`;
+          errorMessage = `You can only place a kana next to the same kana.`;
         }
       }
 
