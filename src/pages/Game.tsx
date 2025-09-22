@@ -104,9 +104,9 @@ export const Game: React.FC = () => {
 
       {/* Game Board */}
       <div className="flex justify-center">
-        <div className="grid grid-rows-2 gap-6 max-w-6xl">
-          {/* First row - branches 0-6 */}
-          <div className="flex gap-4">
+        <div className="grid grid-cols-2 gap-8 max-w-6xl">
+          {/* First column */}
+          <div className="flex flex-col gap-4">
             {gameState.branches.slice(0, Math.ceil(gameState.branches.length / 2)).map((branch) => (
               <GameBranch
                 key={branch.id}
@@ -117,8 +117,8 @@ export const Game: React.FC = () => {
               />
             ))}
           </div>
-          {/* Second row - remaining branches */}
-          <div className="flex gap-4">
+          {/* Second column */}
+          <div className="flex flex-col gap-4">
             {gameState.branches.slice(Math.ceil(gameState.branches.length / 2)).map((branch) => (
               <GameBranch
                 key={branch.id}
