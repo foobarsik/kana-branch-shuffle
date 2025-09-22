@@ -78,7 +78,7 @@ export const GameTile: React.FC<GameTileProps> = ({
                       transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${isSelected ? '14px' : '12px'}) rotate(-${angle}deg)`,
                     }}
                   >
-                    <div className="w-full h-full bg-pink-300 rounded-full opacity-20" />
+                    <div className="w-full h-full bg-pink-300 rounded-full opacity-10" />
                   </div>
                 ))}
               </div>
@@ -94,7 +94,7 @@ export const GameTile: React.FC<GameTileProps> = ({
                       transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${isSelected ? '24px' : '22px'}) rotate(-${angle}deg)`,
                     }}
                   >
-                    <div className="w-full h-full bg-pink-300 rounded-full opacity-20" />
+                    <div className="w-full h-full bg-pink-300 rounded-full opacity-10" />
                   </div>
                 ))}
               </div>

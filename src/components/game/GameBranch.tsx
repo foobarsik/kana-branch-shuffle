@@ -31,8 +31,8 @@ export const GameBranch: React.FC<GameBranchProps> = ({
           "relative w-full max-w-44 md:max-w-80 h-14 md:h-24 cursor-pointer transition-all duration-300",
           "flex items-end justify-start p-1 md:p-2 gap-1",
           // Selection and interaction states  
-          isSelected && "scale-105",
-          canPlace && selectedBranch && selectedBranch !== branch.id && "bg-success/10",
+          // isSelected && "scale-105",
+          // canPlace && selectedBranch && selectedBranch !== branch.id && "bg-success/10",
           !isEmpty && !isFull && "hover:scale-102"
         )}
         onClick={() => onBranchClick(branch.id)}
@@ -48,7 +48,10 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         {/* Tiles container */}
         <div className={cn(
           "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-2",
-          align === 'left' ? 'justify-start' : 'justify-end'
+          // Left column: normal flow from left edge
+          align === 'left' ? 'justify-start' : '',
+          // Right column: reverse visual order and keep row anchored to the right edge
+          align === 'right' && 'flex-row-reverse justify-start'
         )}>
           {branch.tiles.map((tile, index) => (
             <GameTile

@@ -149,9 +149,6 @@ export const useGameLogic = () => {
       sourceBranch.tiles = sourceBranch.tiles.slice(0, -1);
       targetBranch.tiles = [...targetBranch.tiles, tileToMove];
       
-      // Play kana pronunciation
-      playMoveSound(tileToMove.kana);
-
       const newMoves = prevState.moves + 1;
       
       // Check for completions
@@ -189,6 +186,11 @@ export const useGameLogic = () => {
 
       // If no branch selected and this branch has tiles, select it
       if (!prevState.selectedBranch && branch.tiles.length > 0) {
+        // Play sound for the top tile when selecting a branch
+        const topTile = branch.tiles[branch.tiles.length - 1];
+        if (topTile) {
+          playMoveSound(topTile.kana);
+        }
         return { ...prevState, selectedBranch: branchId };
       }
 
