@@ -81,7 +81,7 @@ export const GameTile: React.FC<GameTileProps> = ({
             </div>
             {/* Kana */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className={cn("font-bold text-white select-none drop-shadow-lg", "text-base md:text-2xl", isSelected && "text-yellow-200")}>{tile.kana}</span>
+              <span className={cn("font-bold text-white select-none drop-shadow-lg", "text-lg md:text-3xl", isSelected && "text-yellow-200")}>{tile.kana}</span>
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@ export const GameTile: React.FC<GameTileProps> = ({
               <circle cx="50" cy="50" r="18" stroke="currentColor" strokeWidth="1" fill="none" />
             </svg>
             <div className="absolute mb-1 inset-0 flex items-center justify-center">
-              <span className="font-bold text-amber-200 drop-shadow-lg select-none text-base md:text-2xl">{tile.romaji}</span>
+              <span className="font-bold text-amber-200 drop-shadow-lg select-none text-lg md:text-3xl">{tile.romaji}</span>
             </div>
           </div>
         </div>
