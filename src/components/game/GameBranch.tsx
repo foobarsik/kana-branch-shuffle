@@ -25,7 +25,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
     <div className="flex flex-col items-center space-y-2">
       <div
         className={cn(
-          "relative w-full max-w-80 h-16 md:h-20 cursor-pointer transition-all duration-300",
+          "relative w-full max-w-44 md:max-w-80 h-12 md:h-20 cursor-pointer transition-all duration-300",
           "flex items-end justify-start p-1 md:p-2 gap-1",
           // Selection and interaction states  
           isSelected && "scale-105",
@@ -36,7 +36,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
       >
         {/* The shelf - bottom part only */}
         <div className={cn(
-          "absolute bottom-0 left-2 md:left-4 right-2 md:right-4 h-2 md:h-3 rounded-lg shadow-md",
+          "absolute bottom-0 left-1 md:left-4 right-1 md:right-4 h-2 md:h-3 rounded-lg shadow-md",
           "bg-gradient-to-b from-amber-200 to-amber-300 dark:from-amber-700 dark:to-amber-800",
           isSelected && "ring-2 ring-primary/50",
           canPlace && selectedBranch && selectedBranch !== branch.id && "ring-2 ring-success/50"
@@ -53,8 +53,8 @@ export const GameBranch: React.FC<GameBranchProps> = ({
               "absolute transition-all duration-300",
             )}
             style={{
-              left: `${8 + index * 52}px`, // Reduced spacing for mobile
-              bottom: `8px`, // Standing on the shelf
+              left: `${4 + index * 36}px`, // More compact for mobile
+              bottom: `6px`, // Standing on the shelf
               zIndex: index + 1,
             }}
           />
@@ -62,7 +62,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         
         {/* Empty shelf indicator */}
         {isEmpty && (
-          <div className="absolute left-3 md:left-6 bottom-2 md:bottom-3 w-10 md:w-12 h-10 md:h-12 rounded-xl border-2 border-dashed border-muted-foreground/30 flex items-center justify-center">
+          <div className="absolute left-2 md:left-6 bottom-1 md:bottom-3 w-8 md:w-12 h-8 md:h-12 rounded-xl border-2 border-dashed border-muted-foreground/30 flex items-center justify-center">
             <span className="text-xs text-muted-foreground">空</span>
           </div>
         )}
