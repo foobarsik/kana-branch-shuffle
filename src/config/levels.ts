@@ -1,5 +1,3 @@
-import { HIRAGANA_SET } from "@/data/hiragana";
-
 export interface LevelConfig {
   level: number;
   name: string;
@@ -69,7 +67,7 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 6,
     name: "K-Series Complete",
-    description: "Complete K-series with more space",
+    description: "Complete K-series",
     kanaCount: 4,
     tilesPerKana: 4,
     branchCount: 6,
@@ -93,7 +91,7 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 8,
     name: "S-Series",
-    description: "Learn S sounds with plenty of space",
+    description: "Learn S sounds",
     kanaCount: 4,
     tilesPerKana: 4,
     branchCount: 6,
@@ -105,7 +103,7 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 9,
     name: "Spacious Challenge",
-    description: "5 kana types, 7 branches - plenty of room!",
+    description: "5 kana types, 7 branches",
     kanaCount: 5,
     tilesPerKana: 4,
     branchCount: 7,
@@ -117,7 +115,7 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 10,
     name: "T-Series",
-    description: "Master T sounds with room to breathe",
+    description: "Master T sounds",
     kanaCount: 4,
     tilesPerKana: 4,
     branchCount: 6,
@@ -129,7 +127,7 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 11,
     name: "Advanced Mix",
-    description: "6 kana types, 8 branches - strategic gameplay",
+    description: "6 kana types, 8 branches",
     kanaCount: 6,
     tilesPerKana: 4,
     branchCount: 8,
@@ -141,7 +139,7 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 12,
     name: "Master Level",
-    description: "7 kana types, 9 branches - ultimate test!",
+    description: "7 kana types, 9 branches",
     kanaCount: 7,
     tilesPerKana: 4,
     branchCount: 9,
