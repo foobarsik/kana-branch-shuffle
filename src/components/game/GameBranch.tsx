@@ -70,6 +70,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
                 isSelected={shouldBeSelected}
                 className="transition-all duration-300"
                 isFlipping={flippingTiles.has(tile.id)}
+                showRomajiByDefault={align === 'right'}
               />
             );
           })}

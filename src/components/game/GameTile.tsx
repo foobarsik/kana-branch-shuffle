@@ -10,6 +10,7 @@ interface GameTileProps {
   className?: string;
   style?: React.CSSProperties;
   isFlipping?: boolean;
+  showRomajiByDefault?: boolean;
 }
 
 export const GameTile: React.FC<GameTileProps> = ({
@@ -20,6 +21,7 @@ export const GameTile: React.FC<GameTileProps> = ({
   className,
   style,
   isFlipping = false,
+  showRomajiByDefault = false,
 }) => {
   if (isFlipping) {
     console.log('🔄 Tile is flipping:', tile.id, tile.kana);
@@ -39,12 +41,23 @@ export const GameTile: React.FC<GameTileProps> = ({
       {/* 3D flipper */}
       <div
         className="absolute inset-0 [transform-style:preserve-3d] transition-transform duration-500"
-        style={{ transform: (isSelected || isFlipping) ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+        style={{ 
+          transform: showRomajiByDefault 
+            ? ((isSelected || isFlipping) ? 'rotateY(0deg)' : 'rotateY(180deg)')
+            : ((isSelected || isFlipping) ? 'rotateY(180deg)' : 'rotateY(0deg)')
+        }}
       >
         {/* FRONT FACE: kana */}
         <div className="absolute inset-0 [backface-visibility:hidden]">
           {/* Inner ring (expanded because outer ring removed) */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800" />
+          <div 
+            className="absolute inset-0 rounded-full bg-gradient-to-br"
+            style={{
+              background: isSelected 
+                ? 'linear-gradient(135deg, #fbbf24, #f59e0b, #d97706)' 
+                : 'linear-gradient(135deg, #4b5563, #374151, #1f2937)'
+            }}
+          />
           {/* Main surface with texture pattern (expanded accordingly) */}
           <div
             className="absolute inset-0.5 rounded-full overflow-hidden"
@@ -102,14 +115,32 @@ export const GameTile: React.FC<GameTileProps> = ({
 
         {/* BACK FACE: romaji */}
         <div className="absolute inset-0 [backface-visibility:hidden]" style={{ transform: 'rotateY(180deg)' }}>
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-slate-700 via-slate-800 to-black" />
-          <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 overflow-hidden">
+          <div 
+            className="absolute inset-0 rounded-full bg-gradient-to-br"
+            style={{
+              background: isSelected 
+                ? 'linear-gradient(135deg, #fbbf24, #f59e0b, #d97706)' 
+                : 'linear-gradient(135deg, #4b5563, #374151, #1f2937)'
+            }}
+          />
+          <div 
+            className="absolute inset-0.5 rounded-full overflow-hidden"
+            style={{ backgroundColor: tile.color || '#4b5563' }}
+          >
             <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <circle cx="50" cy="50" r="28" stroke="currentColor" strokeWidth="1" fill="none" />
               <circle cx="50" cy="50" r="18" stroke="currentColor" strokeWidth="1" fill="none" />
             </svg>
             <div className="absolute mb-1 inset-0 flex items-center justify-center">
-              <span className="font-bold text-amber-200 drop-shadow-lg select-none text-lg md:text-3xl">{tile.romaji}</span>
+              <span 
+                className={cn(
+                  "font-bold drop-shadow-lg select-none text-lg md:text-3xl",
+                  showRomajiByDefault ? "text-white" : "text-yellow-300"
+                )}
+                style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
+              >
+                {tile.romaji}
+              </span>
             </div>
           </div>
         </div>
