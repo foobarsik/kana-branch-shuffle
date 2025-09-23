@@ -1,4 +1,5 @@
 // Система хранения прогресса игрока через куки
+import { getMaxLevel } from "@/config/levels";
 
 export interface PlayerProgress {
   currentLevel: number;
@@ -53,10 +54,12 @@ export const updateProgressAfterLevel = (
   learnedKana: string[]
 ): PlayerProgress => {
   const currentProgress = getPlayerProgress();
+  const maxLevel = getMaxLevel();
+  const nextLevel = Math.min(level + 1, maxLevel);
   
   const updatedProgress: PlayerProgress = {
     ...currentProgress,
-    currentLevel: Math.max(currentProgress.currentLevel, level + 1),
+    currentLevel: Math.max(currentProgress.currentLevel, nextLevel),
     completedLevels: [...new Set([...currentProgress.completedLevels, level])],
     totalKanaLearned: [...new Set([...currentProgress.totalKanaLearned, ...learnedKana])],
     bestScores: {

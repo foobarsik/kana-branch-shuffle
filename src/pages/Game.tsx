@@ -14,9 +14,11 @@ export const Game: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
-  // Get level from URL params, default to 1
+  // Get level from URL params, default to 1, and clamp to available range
   const levelParam = searchParams.get('level');
-  const currentLevelNumber = levelParam ? parseInt(levelParam, 10) : 1;
+  const requestedLevel = levelParam ? parseInt(levelParam, 10) : 1;
+  const maxLevel = getMaxLevel();
+  const currentLevelNumber = Math.min(Math.max(1, requestedLevel || 1), maxLevel);
   
   const {
     gameState,
@@ -35,7 +37,6 @@ export const Game: React.FC = () => {
   // Get level configuration and player progress
   const levelConfig = getLevelConfig(currentLevelNumber);
   const playerProgress = getPlayerProgress();
-  const maxLevel = getMaxLevel();
 
   // Initialize voices for better audio quality
   React.useEffect(() => {
@@ -154,11 +155,6 @@ export const Game: React.FC = () => {
             <span>Score: {gameState.score}</span>
             <span>Learned: {gameState.learnedKana.length}/{levelConfig?.kanaCount || 5}</span>
           </div>
-          {gameState.selectedBranch && selectedTileCount > 1 && (
-            <div className="mt-1 px-2 py-1 bg-primary/10 rounded-md text-xs text-primary font-medium inline-block">
-              {selectedTileCount} tiles selected
-            </div>
-          )}
         </div>
 
         <div className="flex gap-2">

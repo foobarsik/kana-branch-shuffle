@@ -5,11 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Play, BookOpen, Settings, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getPlayerProgress } from "@/utils/progress";
+import { getMaxLevel } from "@/config/levels";
 import "@/utils/levelAnalysis"; // Анализ уровней в консоли
 
 const Index = () => {
   const navigate = useNavigate();
   const playerProgress = getPlayerProgress();
+  const maxLevel = getMaxLevel();
+  const continueLevel = Math.min(Math.max(1, playerProgress.currentLevel), maxLevel);
 
   return (
     <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4">
@@ -31,12 +34,12 @@ const Index = () => {
         <div className="space-y-4">
           <Card 
             className="p-6 cursor-pointer transition-all hover:scale-105 hover:shadow-lg border-2 hover:border-primary/50 bg-gradient-tile"
-            onClick={() => navigate(`/game?level=${playerProgress.currentLevel}`)}
+            onClick={() => navigate(`/game?level=${continueLevel}`)}
           >
             <div className="flex items-center justify-center space-x-3">
               <Play className="w-6 h-6 text-primary" />
               <span className="text-xl font-semibold">Continue Game</span>
-              <Badge variant="secondary">Level {playerProgress.currentLevel}</Badge>
+              <Badge variant="secondary">Level {continueLevel}</Badge>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
               Continue from your current level
