@@ -77,6 +77,7 @@ export const useGameLogic = () => {
   const [gameState, setGameState] = useState<GameState>(createInitialState);
   const [gameHistory, setGameHistory] = useState<GameState[]>([]);
   const [showKanaPopup, setShowKanaPopup] = useState<{kana: string; romaji: string; learned: boolean} | null>(null);
+  const [flippingTiles, setFlippingTiles] = useState<Set<string>>(new Set());
 
   const canPlaceTile = useCallback((sourceTile: KanaTile, targetBranch: Branch): boolean => {
     if (targetBranch.tiles.length >= targetBranch.maxCapacity) return false;
@@ -151,20 +152,61 @@ export const useGameLogic = () => {
       
       const newMoves = prevState.moves + 1;
       
-      // Check for completions
-      const { completed, updatedBranches } = checkForCompletion(newBranches);
-
-      // Show popup for new completions
-      completed.forEach(kana => {
-        if (!prevState.learnedKana.includes(kana)) {
-          const kanaData = HIRAGANA_SET.find(k => k.kana === kana);
-          if (kanaData) {
-            setShowKanaPopup({ ...kanaData, learned: true });
-          }
+      // Check for completions manually (without removing tiles yet)
+      const completed: string[] = [];
+      const tilesToDisappear = new Set<string>();
+      
+      newBranches.forEach(branch => {
+        if (branch.tiles.length === 4 && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)) {
+          completed.push(branch.tiles[0].kana);
+          branch.tiles.forEach(tile => tilesToDisappear.add(tile.id));
         }
       });
 
-      const newLearnedKana = [...new Set([...prevState.learnedKana, ...completed])];
+      // Handle completions with simple flip animation
+      if (completed.length > 0) {
+        console.log('🎉 Completed kana detected:', completed);
+        
+        // Just flip tiles to show romaji for a moment, then remove them
+        setTimeout(() => {
+          // Flip all completed tiles at once
+          setFlippingTiles(tilesToDisappear);
+          
+          // After showing romaji, remove tiles and clear flipping
+          setTimeout(() => {
+            setFlippingTiles(new Set());
+            
+            // Remove completed tiles immediately
+            setGameState(currentState => {
+              const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
+              const newLearnedKana = [...new Set([...currentState.learnedKana, ...newCompleted])];
+              const isComplete = finalBranches.every(branch => branch.tiles.length === 0);
+              
+              return {
+                ...currentState,
+                branches: finalBranches,
+                learnedKana: newLearnedKana,
+                isComplete,
+              };
+            });
+          }, 1000); // Show romaji for 1 second
+        }, 100);
+        
+        // Return current state for now
+        const newLearnedKana = [...new Set([...prevState.learnedKana, ...completed])];
+        
+        return {
+          branches: newBranches,
+          selectedBranch: null,
+          moves: newMoves,
+          score: Math.max(0, 1000 - newMoves * 10),
+          isComplete: false,
+          learnedKana: newLearnedKana,
+        };
+      }
+
+      // No completions - normal flow
+      const { completed: normalCompleted, updatedBranches } = checkForCompletion(newBranches);
       const isComplete = updatedBranches.every(branch => branch.tiles.length === 0);
 
       return {
@@ -173,7 +215,7 @@ export const useGameLogic = () => {
         moves: newMoves,
         score: Math.max(0, 1000 - newMoves * 10),
         isComplete,
-        learnedKana: newLearnedKana,
+        learnedKana: prevState.learnedKana,
       };
     });
   }, [canPlaceTile, checkForCompletion, toast]);
@@ -218,9 +260,11 @@ export const useGameLogic = () => {
   }, [gameHistory]);
 
   const resetGame = useCallback(() => {
+    // Reset all states
     setGameState(createInitialState());
     setGameHistory([]);
     setShowKanaPopup(null);
+    setFlippingTiles(new Set());
   }, []);
 
   const closeKanaPopup = useCallback(() => {
@@ -235,5 +279,6 @@ export const useGameLogic = () => {
     canUndo: gameHistory.length > 0,
     showKanaPopup,
     closeKanaPopup,
+    flippingTiles,
   };
 };

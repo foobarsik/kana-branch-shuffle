@@ -9,6 +9,7 @@ interface GameTileProps {
   onClick?: () => void;
   className?: string;
   style?: React.CSSProperties;
+  isFlipping?: boolean;
 }
 
 export const GameTile: React.FC<GameTileProps> = ({
@@ -18,14 +19,19 @@ export const GameTile: React.FC<GameTileProps> = ({
   onClick,
   className,
   style,
+  isFlipping = false,
 }) => {
+  if (isFlipping) {
+    console.log('🔄 Tile is flipping:', tile.id, tile.kana);
+  }
+  
   return (
     <div
       className={cn(
         "w-9 h-9 md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
         "hover:scale-105 active:scale-95",
         isSelectable && "hover:brightness-110",
-        isSelected && "brightness-110",
+        (isSelected || isFlipping) && "brightness-110",
         !isSelectable && "cursor-default hover:scale-100 active:scale-100",
         className
       )}
@@ -35,7 +41,7 @@ export const GameTile: React.FC<GameTileProps> = ({
       {/* 3D flipper */}
       <div
         className="absolute inset-0 [transform-style:preserve-3d] transition-transform duration-500"
-        style={{ transform: (isSelected ? 'rotateY(180deg)' : 'rotateY(0deg)') as any }}
+        style={{ transform: ((isSelected || isFlipping) ? 'rotateY(180deg)' : 'rotateY(0deg)') as any }}
       >
         {/* FRONT FACE: kana */}
         <div className="absolute inset-0 [backface-visibility:hidden]">

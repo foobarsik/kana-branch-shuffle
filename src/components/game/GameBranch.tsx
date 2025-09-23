@@ -10,6 +10,7 @@ interface GameBranchProps {
   onBranchClick: (branchId: string) => void;
   canPlace: boolean;
   align: 'left' | 'right';
+  flippingTiles?: Set<string>;
 }
 
 export const GameBranch: React.FC<GameBranchProps> = ({
@@ -18,6 +19,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   onBranchClick,
   canPlace,
   align,
+  flippingTiles = new Set(),
 }) => {
   const isSelected = selectedBranch === branch.id;
   const isEmpty = branch.tiles.length === 0;
@@ -60,6 +62,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
               isSelectable={index === branch.tiles.length - 1 && !selectedBranch}
               isSelected={isSelected && index === branch.tiles.length - 1}
               className="transition-all duration-300"
+              isFlipping={flippingTiles.has(tile.id)}
             />
           ))}
         </div>

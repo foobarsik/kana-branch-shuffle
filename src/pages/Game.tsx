@@ -17,6 +17,7 @@ export const Game: React.FC = () => {
     canUndo,
     showKanaPopup,
     closeKanaPopup,
+    flippingTiles,
   } = useGameLogic();
 
   // Initialize voices for better audio quality
@@ -122,6 +123,7 @@ export const Game: React.FC = () => {
                   onBranchClick={selectBranch}
                   canPlace={getCanPlaceStatus(branch.id)}
                   align="left"
+                  flippingTiles={flippingTiles}
                 />
               ))}
             </div>
@@ -135,6 +137,7 @@ export const Game: React.FC = () => {
                   onBranchClick={selectBranch}
                   canPlace={getCanPlaceStatus(branch.id)}
                   align="right"
+                  flippingTiles={flippingTiles}
                 />
               ))}
             </div>
