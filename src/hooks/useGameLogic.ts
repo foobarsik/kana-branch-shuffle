@@ -294,20 +294,40 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
         }
       });
 
-      // Handle completions with simple flip animation
+      // Handle completions with sequential flip animation
       if (completed.length > 0) {
         console.log('🎉 Completed kana detected:', completed);
         
-        // Just flip tiles to show romaji for a moment, then remove them
+        // Find completed branches and their alignment
+        const completedBranches = newBranches.filter(branch => 
+          branch.tiles.length === 4 && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)
+        );
+        
         setTimeout(() => {
-          // Flip all completed tiles at once
-          setFlippingTiles(tilesToDisappear);
+          // Animate each completed branch sequentially
+          completedBranches.forEach((branch, branchIndex) => {
+            // Determine if this is a left or right column branch
+            const branchIndexInGame = newBranches.findIndex(b => b.id === branch.id);
+            const isRightColumn = branchIndexInGame >= Math.ceil(newBranches.length / 2);
+            
+            // For right column: flex-row-reverse means index 0 is visually rightmost, so flip (3,2,1,0) to go left to right visually
+            // For left column: normal order, so flip (3,2,1,0) to go right to left visually  
+            const tileIndices = isRightColumn ? [3, 2, 1, 0] : [3, 2, 1, 0];
+            
+            tileIndices.forEach((tileIndex, animationIndex) => {
+              setTimeout(() => {
+                const tileId = branch.tiles[tileIndex].id;
+                setFlippingTiles(prev => new Set([...prev, tileId]));
+              }, branchIndex * 500 + animationIndex * 400); // 400ms between tiles, 500ms between branches
+            });
+          });
           
-          // After showing romaji, remove tiles and clear flipping
+          // After all animations, remove tiles and clear flipping
+          const totalAnimationTime = completedBranches.length * 500 + 4 * 400 + 500; // Extra 0.5s to show romaji
           setTimeout(() => {
             setFlippingTiles(new Set());
             
-            // Remove completed tiles immediately
+            // Remove completed tiles
             setGameState(currentState => {
               const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
               const newLearnedKana = [...new Set([...currentState.learnedKana, ...newCompleted])];
@@ -320,7 +340,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
                 isComplete,
               };
             });
-          }, 1000); // Show romaji for 1 second
+          }, totalAnimationTime);
         }, 100);
         
         // Return current state for now
