@@ -5,7 +5,7 @@ import { useGameLogic } from "@/hooks/useGameLogic";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight } from "lucide-react";
+import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
 import { getLevelConfig, getMaxLevel } from "@/config/levels";
@@ -26,6 +26,7 @@ export const Game: React.FC = () => {
     selectBranch,
     undoMove,
     resetGame,
+    restartPreset,
     canUndo,
     showKanaPopup,
     closeKanaPopup,
@@ -116,8 +117,8 @@ export const Game: React.FC = () => {
                 Levels
               </Button>
               <Button onClick={resetGame} variant="outline" className="flex-1">
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Retry
+                <ShuffleIcon className="w-4 h-4 mr-2" />
+                Shuffle and play again
               </Button>
               <Button onClick={() => navigate("/")} variant="outline" className="flex-1">
                 <Home className="w-4 h-4 mr-2" />
@@ -226,15 +227,26 @@ export const Game: React.FC = () => {
                 <span className="hidden md:inline ml-2">Undo</span>
               </Button>
               <Button
-                onClick={resetGame}
+                onClick={restartPreset}
                 variant="outline"
                 size="icon"
-                title="Restart"
-                aria-label="Restart"
+                title="Restart (return to initial preset)"
+                aria-label="Restart (return to initial preset)"
                 className="h-9 w-9 md:h-8 md:w-auto md:px-3"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span className="hidden md:inline ml-2">Restart</span>
+              </Button>
+              <Button
+                onClick={resetGame}
+                variant="outline"
+                size="icon"
+                title="Shuffle (new layout)"
+                aria-label="Shuffle (new layout)"
+                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              >
+                <ShuffleIcon className="w-4 h-4" />
+                <span className="hidden md:inline ml-2">Shuffle</span>
               </Button>
             </div>
 

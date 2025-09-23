@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Branch, GameState, KanaTile, HIRAGANA_SET } from "@/types/game";
 import { playMoveSound } from "@/utils/audio";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +12,9 @@ interface UseGameLogicProps {
 
 export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
   const { toast } = useToast();
+
+  // Keep an immutable snapshot of the initially generated branches for the current preset
+  const initialBranchesRef = useRef<Branch[] | null>(null);
 
   // Simple and reliable board generation
   const generateSolvableBoard = useCallback((levelConfig: LevelConfig, colorMap: Record<string, string>): Branch[] => {
@@ -215,6 +218,12 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     
     // Use solvable board generation for better gameplay
     const solvableBranches = generateSolvableBoard(config, colorMapObject);
+    // Save initial preset snapshot
+    initialBranchesRef.current = solvableBranches.map(b => ({
+      id: b.id,
+      maxCapacity: b.maxCapacity,
+      tiles: b.tiles.map(t => ({ ...t }))
+    }));
     
     return {
       branches: solvableBranches,
@@ -577,6 +586,54 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     setIsLevelComplete(false);
   }, [createInitialState]);
 
+  // Restart to the initially generated preset (no reshuffle)
+  const restartPreset = useCallback(() => {
+    console.log("🔄 Restarting to initial preset...");
+    const snapshot = initialBranchesRef.current;
+
+    if (!snapshot) {
+      console.warn("⚠️ No initial preset snapshot found. Falling back to full shuffle.");
+      resetGame();
+      return;
+    }
+
+    console.log("✅ Snapshot found. Restoring from:", JSON.parse(JSON.stringify(snapshot)));
+
+    // Deep copy snapshot to avoid mutations
+    const newBranches = snapshot.map(b => ({
+      ...b,
+      tiles: b.tiles.map(t => ({ ...t }))
+    }));
+
+    setGameState(prev => {
+      const newState = {
+        ...prev,
+        branches: newBranches,
+        selectedBranch: null,
+        moves: 0,
+        score: 0,
+        isComplete: false,
+      };
+      console.log(" board state after restore:", JSON.parse(JSON.stringify(newState.branches)));
+      return newState;
+    });
+
+    setGameHistory([]);
+    setShowKanaPopup(null);
+    setFlippingTiles(new Set());
+    setSelectedTileCount(1);
+    setIsLevelComplete(false);
+  }, [resetGame]);
+
+  // Zero out moves and clear undo history, keeping the current board
+  const resetMoves = useCallback(() => {
+    setGameState(prev => ({
+      ...prev,
+      moves: 0,
+    }));
+    setGameHistory([]);
+  }, []);
+
   const closeKanaPopup = useCallback(() => {
     setShowKanaPopup(null);
   }, []);
@@ -586,6 +643,8 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     selectBranch,
     undoMove,
     resetGame,
+    restartPreset,
+    resetMoves,
     canUndo: gameHistory.length > 0,
     showKanaPopup,
     closeKanaPopup,
