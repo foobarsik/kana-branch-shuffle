@@ -16,7 +16,7 @@ export const StreakDisplay: React.FC<StreakDisplayProps> = ({
 }) => {
   const streakData = getStreakData();
 
-  // Определяем уровень серии для визуального оформления
+  // Determine streak level for visual styling
   const getStreakLevel = (streak: number) => {
     if (streak >= 30) return { level: 'legendary', color: 'text-yellow-500', bg: 'bg-yellow-50 dark:bg-yellow-900/20' };
     if (streak >= 14) return { level: 'epic', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-900/20' };
@@ -27,17 +27,17 @@ export const StreakDisplay: React.FC<StreakDisplayProps> = ({
 
   const streakLevel = getStreakLevel(streakData.currentStreak);
 
-  // Мотивационные сообщения
+  // Motivational messages
   const getMotivationalMessage = (streak: number) => {
-    if (streak === 0) return "Начните играть каждый день!";
-    if (streak === 1) return "Отличное начало! Продолжайте завтра.";
-    if (streak < 7) return "Хорошая серия! Не останавливайтесь.";
-    if (streak < 14) return "Впечатляющая серия! Вы на правильном пути.";
-    if (streak < 30) return "Невероятная серия! Вы настоящий мастер.";
-    return "Легендарная серия! Вы достигли вершины!";
+    if (streak === 0) return "Start playing every day!";
+    if (streak === 1) return "Great start! Keep it up tomorrow.";
+    if (streak < 7) return "Good streak! Don't stop now.";
+    if (streak < 14) return "Impressive streak! You're on the right track.";
+    if (streak < 30) return "Incredible streak! You're a true master.";
+    return "Legendary streak! You've reached the top!";
   };
 
-  // Иконка в зависимости от уровня серии
+  // Icon based on streak level
   const getStreakIcon = (streak: number) => {
     if (streak >= 30) return <Star className="w-5 h-5" />;
     if (streak >= 7) return <Flame className="w-5 h-5" />;
@@ -54,10 +54,10 @@ export const StreakDisplay: React.FC<StreakDisplayProps> = ({
         </div>
         <div>
           <div className="font-semibold">
-            {streakData.currentStreak} дней
+            {streakData.currentStreak} days
           </div>
           <div className="text-xs text-muted-foreground">
-            Серия
+            Streak
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@ export const StreakDisplay: React.FC<StreakDisplayProps> = ({
           <div className={streakLevel.color}>
             {getStreakIcon(streakData.currentStreak)}
           </div>
-          <span className="font-medium">Серия дней</span>
+          <span className="font-medium">Day Streak</span>
         </div>
         
         {streakData.currentStreak > 0 && (
@@ -89,21 +89,21 @@ export const StreakDisplay: React.FC<StreakDisplayProps> = ({
 
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <span className="text-sm text-muted-foreground">Текущая серия</span>
+          <span className="text-sm text-muted-foreground">Current Streak</span>
           <span className={cn("font-bold text-lg", streakLevel.color)}>
-            {streakData.currentStreak} дней
+            {streakData.currentStreak} days
           </span>
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-sm text-muted-foreground">Лучшая серия</span>
+          <span className="text-sm text-muted-foreground">Best Streak</span>
           <span className="font-semibold">
-            {streakData.longestStreak} дней
+            {streakData.longestStreak} days
           </span>
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-sm text-muted-foreground">Всего дней</span>
+          <span className="text-sm text-muted-foreground">Total Days</span>
           <span className="font-semibold">
             {streakData.totalDaysPlayed}
           </span>
@@ -116,11 +116,11 @@ export const StreakDisplay: React.FC<StreakDisplayProps> = ({
         </p>
       </div>
 
-      {/* Прогресс до следующего уровня */}
+      {/* Progress to next level */}
       {streakData.currentStreak > 0 && (
         <div className="mt-3">
           <div className="text-xs text-muted-foreground mb-1">
-            До следующего уровня:
+            To next level:
           </div>
           <div className="flex gap-1">
             {[3, 7, 14, 30].map((milestone, index) => {
@@ -135,7 +135,7 @@ export const StreakDisplay: React.FC<StreakDisplayProps> = ({
                     "flex-1 h-2 rounded",
                     isReached ? "bg-green-500" : isCurrent ? "bg-yellow-400" : "bg-muted"
                   )}
-                  title={`${milestone} дней`}
+                  title={`${milestone} days`}
                 />
               );
             })}

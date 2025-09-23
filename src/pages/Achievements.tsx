@@ -10,14 +10,14 @@ import { getAllAchievementsWithProgress, getAchievementStats, getStreakData } fr
 import { getAchievementsByCategory, getAchievementCategories } from '@/config/achievements';
 import { AchievementCategory } from '@/types/achievements';
 
-const Achievements: React.FC = () => {
+const Achievements: React.FC = (): JSX.Element => {
   const [selectedCategory, setSelectedCategory] = useState<AchievementCategory | 'all'>('all');
   
   const achievements = getAllAchievementsWithProgress();
   const stats = getAchievementStats();
   const streakData = getStreakData();
 
-  // Фильтрация достижений по категории
+  // Filter achievements by category
   const filteredAchievements = useMemo(() => {
     if (selectedCategory === 'all') {
       return achievements;
@@ -25,7 +25,7 @@ const Achievements: React.FC = () => {
     return achievements.filter(achievement => achievement.category === selectedCategory);
   }, [achievements, selectedCategory]);
 
-  // Группировка достижений по статусу
+  // Group achievements by status
   const { unlockedAchievements, lockedAchievements } = useMemo(() => {
     const unlocked = filteredAchievements.filter(a => a.isUnlocked);
     const locked = filteredAchievements.filter(a => !a.isUnlocked);
@@ -35,7 +35,7 @@ const Achievements: React.FC = () => {
     };
   }, [filteredAchievements]);
 
-  // Иконки для категорий
+  // Icons for categories
   const categoryIcons = {
     learning: <Target className="w-4 h-4" />,
     efficiency: <Zap className="w-4 h-4" />,
@@ -46,38 +46,38 @@ const Achievements: React.FC = () => {
   };
 
   const categoryLabels = {
-    learning: 'Обучение',
-    efficiency: 'Эффективность',
-    speed: 'Скорость',
-    streak: 'Серии',
-    mastery: 'Мастерство',
-    special: 'Особое'
+    learning: 'Learning',
+    efficiency: 'Efficiency',
+    speed: 'Speed',
+    streak: 'Streaks',
+    mastery: 'Mastery',
+    special: 'Special'
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900">
       <div className="container mx-auto px-4 py-8">
-        {/* Заголовок */}
+        {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Link to="/">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Назад
+              Back
             </Button>
           </Link>
           
           <div className="flex items-center gap-3">
             <Trophy className="w-8 h-8 text-yellow-500" />
-            <h1 className="text-3xl font-bold text-foreground">Достижения</h1>
+            <h1 className="text-3xl font-bold text-foreground">Achievements</h1>
           </div>
         </div>
 
-        {/* Статистика */}
+        {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-card rounded-lg p-4 border">
             <div className="flex items-center gap-2 mb-2">
               <Trophy className="w-5 h-5 text-yellow-500" />
-              <span className="text-sm font-medium">Разблокировано</span>
+              <span className="text-sm font-medium">Unlocked</span>
             </div>
             <div className="text-2xl font-bold">{stats.unlockedCount}/{stats.totalAchievements}</div>
             <Progress value={stats.completionPercentage} className="mt-2" />
@@ -86,7 +86,7 @@ const Achievements: React.FC = () => {
           <div className="bg-card rounded-lg p-4 border">
             <div className="flex items-center gap-2 mb-2">
               <Star className="w-5 h-5 text-blue-500" />
-              <span className="text-sm font-medium">Очки достижений</span>
+              <span className="text-sm font-medium">Achievement Points</span>
             </div>
             <div className="text-2xl font-bold">{stats.totalPoints}</div>
           </div>
@@ -94,21 +94,21 @@ const Achievements: React.FC = () => {
           <div className="bg-card rounded-lg p-4 border">
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-5 h-5 text-red-500" />
-              <span className="text-sm font-medium">Текущая серия</span>
+              <span className="text-sm font-medium">Current Streak</span>
             </div>
-            <div className="text-2xl font-bold">{streakData.currentStreak} дней</div>
+            <div className="text-2xl font-bold">{streakData.currentStreak} days</div>
           </div>
 
           <div className="bg-card rounded-lg p-4 border">
             <div className="flex items-center gap-2 mb-2">
               <Crown className="w-5 h-5 text-purple-500" />
-              <span className="text-sm font-medium">Титулы</span>
+              <span className="text-sm font-medium">Titles</span>
             </div>
             <div className="text-2xl font-bold">{stats.unlockedTitles}</div>
           </div>
         </div>
 
-        {/* Фильтры по категориям */}
+        {/* Category Filters */}
         <div className="mb-6">
           <div className="flex flex-wrap gap-2">
             <Button
@@ -116,7 +116,7 @@ const Achievements: React.FC = () => {
               size="sm"
               onClick={() => setSelectedCategory('all')}
             >
-              Все ({achievements.length})
+              All ({achievements.length})
             </Button>
             
             {getAchievementCategories().map(category => {
@@ -141,14 +141,14 @@ const Achievements: React.FC = () => {
           </div>
         </div>
 
-        {/* Достижения */}
+        {/* Achievements */}
         <Tabs defaultValue="unlocked" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="unlocked">
-              Разблокированные ({unlockedAchievements.length})
+              Unlocked ({unlockedAchievements.length})
             </TabsTrigger>
             <TabsTrigger value="locked">
-              Заблокированные ({lockedAchievements.length})
+              Locked ({lockedAchievements.length})
             </TabsTrigger>
           </TabsList>
           
@@ -167,10 +167,10 @@ const Achievements: React.FC = () => {
               <div className="text-center py-12">
                 <Trophy className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-                  Нет разблокированных достижений
+                  No achievements unlocked yet
                 </h3>
                 <p className="text-muted-foreground">
-                  Играйте в игру, чтобы разблокировать достижения!
+                  Play the game to unlock achievements!
                 </p>
               </div>
             )}
@@ -191,10 +191,10 @@ const Achievements: React.FC = () => {
               <div className="text-center py-12">
                 <Star className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-                  Все достижения разблокированы!
+                  All achievements unlocked!
                 </h3>
                 <p className="text-muted-foreground">
-                  Поздравляем! Вы разблокировали все доступные достижения.
+                  Congratulations! You've unlocked all available achievements.
                 </p>
               </div>
             )}

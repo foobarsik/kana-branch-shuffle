@@ -1,12 +1,12 @@
 import { Achievement, AchievementCategory, AchievementRarity } from '@/types/achievements';
 
-// Конфигурация всех достижений в игре
+// Configuration of all in-game achievements
 export const ACHIEVEMENTS: Achievement[] = [
-  // === ОБУЧЕНИЕ (LEARNING) ===
+  // === LEARNING ===
   {
     id: 'first_steps',
-    title: 'Первые шаги',
-    description: 'Завершите первый уровень',
+    title: 'First Steps',
+    description: 'Complete the first level',
     icon: '👶',
     category: 'learning',
     rarity: 'common',
@@ -18,14 +18,14 @@ export const ACHIEVEMENTS: Achievement[] = [
     reward: {
       type: 'points',
       value: 100,
-      description: '+100 очков достижений'
+      description: '+100 achievement points'
     },
     isUnlocked: false
   },
   {
     id: 'vowel_master',
-    title: 'Мастер гласных',
-    description: 'Завершите все уровни с гласными (1-4)',
+    title: 'Vowel Master',
+    description: 'Complete all vowel levels (1-4)',
     icon: '🎓',
     category: 'learning',
     rarity: 'rare',
@@ -36,15 +36,15 @@ export const ACHIEVEMENTS: Achievement[] = [
     },
     reward: {
       type: 'title',
-      value: 'Мастер гласных',
-      description: 'Разблокирован титул "Мастер гласных"'
+      value: 'Vowel Master',
+      description: 'Unlocked title "Vowel Master"'
     },
     isUnlocked: false
   },
   {
     id: 'kana_collector',
-    title: 'Коллекционер кана',
-    description: 'Изучите 20 различных кана',
+    title: 'Kana Collector',
+    description: 'Learn 20 different kana',
     icon: '📚',
     category: 'learning',
     rarity: 'rare',
@@ -56,14 +56,14 @@ export const ACHIEVEMENTS: Achievement[] = [
     reward: {
       type: 'badge',
       value: 'kana_collector',
-      description: 'Значок "Коллекционер кана"'
+      description: '"Kana Collector" badge'
     },
     isUnlocked: false
   },
   {
     id: 'hiragana_master',
-    title: 'Мастер хираганы',
-    description: 'Изучите все основные хирагана (46 символов)',
+    title: 'Hiragana Master',
+    description: 'Learn all basic hiragana (46 characters)',
     icon: '🏆',
     category: 'learning',
     rarity: 'legendary',
@@ -74,17 +74,17 @@ export const ACHIEVEMENTS: Achievement[] = [
     },
     reward: {
       type: 'title',
-      value: 'Мастер хираганы',
-      description: 'Легендарный титул "Мастер хираганы"'
+      value: 'Hiragana Master',
+      description: 'Legendary "Hiragana Master" title'
     },
     isUnlocked: false
   },
 
-  // === ЭФФЕКТИВНОСТЬ (EFFICIENCY) ===
+  // === EFFICIENCY ===
   {
     id: 'efficient_solver',
-    title: 'Эффективный решатель',
-    description: 'Завершите уровень менее чем за 20 ходов',
+    title: 'Efficient Solver',
+    description: 'Complete a level in less than 20 moves',
     icon: '⚡',
     category: 'efficiency',
     rarity: 'common',
@@ -96,14 +96,14 @@ export const ACHIEVEMENTS: Achievement[] = [
     reward: {
       type: 'points',
       value: 150,
-      description: '+150 очков достижений'
+      description: '+150 achievement points'
     },
     isUnlocked: false
   },
   {
     id: 'perfectionist',
-    title: 'Перфекционист',
-    description: 'Завершите уровень с максимальным счетом (1000 очков)',
+    title: 'Perfectionist',
+    description: 'Complete a level with the maximum possible score',
     icon: '💎',
     category: 'efficiency',
     rarity: 'epic',
@@ -114,15 +114,15 @@ export const ACHIEVEMENTS: Achievement[] = [
     },
     reward: {
       type: 'title',
-      value: 'Перфекционист',
-      description: 'Титул "Перфекционист"'
+      value: 'Perfectionist',
+      description: 'Unlocked title "Perfectionist"'
     },
     isUnlocked: false
   },
   {
     id: 'speed_demon',
-    title: 'Демон скорости',
-    description: 'Завершите уровень менее чем за 60 секунд',
+    title: 'Speed Demon',
+    description: 'Complete a level in less than 60 seconds',
     icon: '🏃‍♂️',
     category: 'speed',
     rarity: 'rare',
@@ -134,16 +134,16 @@ export const ACHIEVEMENTS: Achievement[] = [
     reward: {
       type: 'badge',
       value: 'speed_demon',
-      description: 'Значок "Демон скорости"'
+      description: '"Speed Demon" badge'
     },
     isUnlocked: false
   },
 
-  // === СЕРИИ (STREAK) ===
+  // === STREAKS ===
   {
     id: 'daily_player',
-    title: 'Ежедневный игрок',
-    description: 'Играйте 3 дня подряд',
+    title: 'Daily Player',
+    description: 'Play for 3 consecutive days',
     icon: '📅',
     category: 'streak',
     rarity: 'common',
@@ -155,14 +155,14 @@ export const ACHIEVEMENTS: Achievement[] = [
     reward: {
       type: 'points',
       value: 200,
-      description: '+200 очков достижений'
+      description: '+200 achievement points'
     },
     isUnlocked: false
   },
   {
     id: 'dedicated_learner',
-    title: 'Преданный ученик',
-    description: 'Играйте 7 дней подряд',
+    title: 'Dedicated Learner',
+    description: 'Play for 7 consecutive days',
     icon: '🔥',
     category: 'streak',
     rarity: 'rare',
@@ -173,15 +173,15 @@ export const ACHIEVEMENTS: Achievement[] = [
     },
     reward: {
       type: 'title',
-      value: 'Преданный ученик',
-      description: 'Титул "Преданный ученик"'
+      value: 'Dedicated Learner',
+      description: 'Title "Dedicated Learner"'
     },
     isUnlocked: false
   },
   {
     id: 'unstoppable',
-    title: 'Неудержимый',
-    description: 'Играйте 30 дней подряд',
+    title: 'Unstoppable',
+    description: 'Play for 30 consecutive days',
     icon: '🌟',
     category: 'streak',
     rarity: 'legendary',
@@ -192,17 +192,17 @@ export const ACHIEVEMENTS: Achievement[] = [
     },
     reward: {
       type: 'title',
-      value: 'Неудержимый',
-      description: 'Легендарный титул "Неудержимый"'
+      value: 'Unstoppable',
+      description: 'Legendary title "Unstoppable"'
     },
     isUnlocked: false
   },
 
-  // === МАСТЕРСТВО (MASTERY) ===
+  // === MASTERY ===
   {
     id: 'level_master',
-    title: 'Мастер уровней',
-    description: 'Завершите 10 уровней',
+    title: 'Level Master',
+    description: 'Complete 10 levels',
     icon: '🎯',
     category: 'mastery',
     rarity: 'rare',
@@ -214,35 +214,35 @@ export const ACHIEVEMENTS: Achievement[] = [
     reward: {
       type: 'badge',
       value: 'level_master',
-      description: 'Значок "Мастер уровней"'
+      description: '"Level Master" badge'
     },
     isUnlocked: false
   },
   {
     id: 'game_master',
-    title: 'Мастер игры',
-    description: 'Завершите все доступные уровни',
+    title: 'Game Master',
+    description: 'Complete all available levels',
     icon: '👑',
     category: 'mastery',
     rarity: 'legendary',
     condition: {
       type: 'level_complete',
-      value: 13, // максимальный уровень
+      value: 13, // maximum level
       comparison: 'greater_equal'
     },
     reward: {
       type: 'title',
-      value: 'Мастер игры',
-      description: 'Легендарный титул "Мастер игры"'
+      value: 'Game Master',
+      description: 'Legendary title "Game Master"'
     },
     isUnlocked: false
   },
 
-  // === ОСОБЫЕ (SPECIAL) ===
+  // === SPECIAL ===
   {
     id: 'century_club',
-    title: 'Клуб сотни',
-    description: 'Сыграйте 100 игр',
+    title: 'Century Club',
+    description: 'Play 100 games',
     icon: '💯',
     category: 'special',
     rarity: 'epic',
@@ -253,53 +253,53 @@ export const ACHIEVEMENTS: Achievement[] = [
     },
     reward: {
       type: 'title',
-      value: 'Ветеран',
-      description: 'Титул "Ветеран"'
+      value: 'Veteran',
+      description: 'Title "Veteran"'
     },
     isUnlocked: false
   },
   {
     id: 'explorer',
-    title: 'Исследователь',
-    description: 'Попробуйте случайный уровень',
+    title: 'Explorer',
+    description: 'Try a random level',
     icon: '🗺️',
     category: 'special',
     rarity: 'rare',
     condition: {
       type: 'level_complete',
-      value: 13, // случайный уровень
+      value: 13, // random level
       comparison: 'equal'
     },
     reward: {
       type: 'badge',
       value: 'explorer',
-      description: 'Значок "Исследователь"'
+      description: '"Explorer" badge'
     },
     isUnlocked: false
   }
 ];
 
-// Получить достижение по ID
+// Get achievement by ID
 export const getAchievementById = (id: string): Achievement | undefined => {
   return ACHIEVEMENTS.find(achievement => achievement.id === id);
 };
 
-// Получить достижения по категории
+// Get achievements by category
 export const getAchievementsByCategory = (category: AchievementCategory): Achievement[] => {
   return ACHIEVEMENTS.filter(achievement => achievement.category === category);
 };
 
-// Получить достижения по редкости
+// Get achievements by rarity
 export const getAchievementsByRarity = (rarity: AchievementRarity): Achievement[] => {
   return ACHIEVEMENTS.filter(achievement => achievement.rarity === rarity);
 };
 
-// Получить все категории достижений
+// Get all achievement categories
 export const getAchievementCategories = (): AchievementCategory[] => {
   return ['learning', 'efficiency', 'speed', 'streak', 'mastery', 'special'];
 };
 
-// Получить цвет для категории достижения
+// Get color for achievement category
 export const getCategoryColor = (category: AchievementCategory): string => {
   const colors = {
     learning: '#3b82f6', // blue
@@ -312,7 +312,7 @@ export const getCategoryColor = (category: AchievementCategory): string => {
   return colors[category];
 };
 
-// Получить цвет для редкости достижения
+// Get color for achievement rarity
 export const getRarityColor = (rarity: AchievementRarity): string => {
   const colors = {
     common: '#6b7280', // gray

@@ -201,7 +201,7 @@ export const Game: React.FC = () => {
                 className="h-9 w-9 md:h-8 md:w-auto md:px-3"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="hidden md:inline ml-2">Back</span>
+                <span className="hidden md:inline ml-2">Prev level</span>
               </Button>
               <Button
                 onClick={goToNextLevel}
@@ -213,7 +213,7 @@ export const Game: React.FC = () => {
                 className="h-9 w-9 md:h-8 md:w-auto md:px-3"
               >
                 <ArrowRight className="w-4 h-4" />
-                <span className="hidden md:inline ml-2">Next</span>
+                <span className="hidden md:inline ml-2">Next level</span>
               </Button>
             </div>
 
