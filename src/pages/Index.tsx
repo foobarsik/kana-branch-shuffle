@@ -68,9 +68,9 @@ const Index = () => {
               <BookOpen className="w-6 h-6 text-primary" />
               <span className="text-xl font-semibold">Collection</span>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">
+            {/* <p className="text-sm text-muted-foreground mt-2">
               View learned characters
-            </p>
+            </p> */}
           </Card>
 
           <Card className="p-6 cursor-pointer transition-all hover:scale-105 hover:shadow-lg border-2 hover:border-primary/50 bg-gradient-tile opacity-60">

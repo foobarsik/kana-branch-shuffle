@@ -30,23 +30,23 @@ export const Collection: React.FC = () => {
               <BookOpen className="w-8 h-8 text-primary" />
               Kana Collection
             </h1>
-            <p className="text-muted-foreground mt-1">
+            {/* <p className="text-muted-foreground mt-1">
               Your learned hiragana characters
-            </p>
+            </p> */}
           </div>
 
           <div className="w-24" /> {/* Spacer for alignment */}
         </div>
 
         {/* Progress */}
-        <div className="text-center mb-8">
+        {/* <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-card rounded-full px-6 py-3 shadow-lg border">
             <div className="w-3 h-3 rounded-full bg-success"></div>
             <span className="font-medium">
               {learnedKana.length} / {HIRAGANA_SET.length} Learned
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* Kana Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -83,7 +83,7 @@ export const Collection: React.FC = () => {
                   >
                     {kanaData.romaji}
                   </div>
-                  {isLearned && (
+                  {/* {isLearned && (
                     <div className="text-xs text-success font-medium">
                       ✓ Learned
                     </div>
@@ -92,7 +92,7 @@ export const Collection: React.FC = () => {
                     <div className="text-xs text-muted-foreground">
                       Not learned yet
                     </div>
-                  )}
+                  )} */}
                 </div>
               </Card>
             );
@@ -100,7 +100,7 @@ export const Collection: React.FC = () => {
         </div>
 
         {/* Back to Game */}
-        <div className="text-center mt-12">
+        {/* <div className="text-center mt-12">
           <Button
             onClick={() => navigate("/game")}
             size="lg"
@@ -108,7 +108,7 @@ export const Collection: React.FC = () => {
           >
             Continue Learning
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
