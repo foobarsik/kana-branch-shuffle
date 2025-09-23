@@ -32,8 +32,8 @@ export const GameBranch: React.FC<GameBranchProps> = ({
     <div className="flex flex-col items-center space-y-2">
       <div
         className={cn(
-          "relative w-full max-w-44 md:max-w-80 h-14 md:h-24 cursor-pointer transition-all duration-300",
-          "flex items-end justify-start p-1 md:p-2 gap-1",
+          "relative w-full md:max-w-80 md:mx-auto h-14 md:h-24 cursor-pointer transition-all duration-300",
+          "flex items-end justify-start gap-1 md:p-2",
           // Selection and interaction states  
           // isSelected && "scale-105",
           // canPlace && selectedBranch && selectedBranch !== branch.id && "bg-success/10",
@@ -42,7 +42,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         onClick={() => onBranchClick(branch.id)}
       >
         {/* The sakura branch - replaces the old shelf */}
-        <div className="absolute bottom-0 left-1 md:left-4 right-1 md:right-4 h-4 md:h-6">
+        <div className="absolute bottom-0 left-0 right-0 md:left-4 md:right-4 h-4 md:h-6">
           <SakuraBranch
             isSelected={isSelected}
             canPlace={false} // Remove green highlighting
@@ -51,11 +51,11 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         
         {/* Tiles container */}
         <div className={cn(
-          "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-2",
+          "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-0 md:px-2",
           // Left column: normal flow from left edge
-          align === 'left' ? 'justify-start' : '',
+          align === 'left' ? 'justify-start pl-[1px] pr-2 md:pr-2' : '',
           // Right column: reverse visual order and keep row anchored to the right edge
-          align === 'right' && 'flex-row-reverse justify-start'
+          align === 'right' && 'flex-row-reverse justify-start pr-[1px] pl-2 md:pl-2'
         )}>
           {branch.tiles.map((tile, index) => {
             // Check if this tile should be selected (for multiple consecutive tiles)

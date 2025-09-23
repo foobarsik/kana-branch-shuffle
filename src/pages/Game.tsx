@@ -256,9 +256,9 @@ export const Game: React.FC = () => {
       </div>
 
       {/* Game Board */}
-      <div className="flex-1 flex justify-center items-center px-1 mt-3 md:mt-4">
-        <div className="w-full max-w-3xl">
-          <div className="grid grid-cols-2 gap-2 md:gap-4">
+      <div className="flex-1 flex justify-center items-center px-0 md:px-1 mt-3 md:mt-4">
+        <div className="w-full md:max-w-3xl">
+          <div className="grid grid-cols-2 gap-3 md:gap-4">
             {/* First column */}
             <div className="flex flex-col gap-3 md:gap-4">
               {gameState.branches.slice(0, Math.ceil(gameState.branches.length / 2)).map((branch) => (

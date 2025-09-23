@@ -28,7 +28,7 @@ export const GameTile: React.FC<GameTileProps> = ({
   return (
     <div
       className={cn(
-        "w-9 h-9 md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
+        "w-11 h-11 md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
         "active:scale-95",
         !isSelectable && "cursor-default",
         className
@@ -39,16 +39,14 @@ export const GameTile: React.FC<GameTileProps> = ({
       {/* 3D flipper */}
       <div
         className="absolute inset-0 [transform-style:preserve-3d] transition-transform duration-500"
-        style={{ transform: ((isSelected || isFlipping) ? 'rotateY(180deg)' : 'rotateY(0deg)') as any }}
+        style={{ transform: (isSelected || isFlipping) ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
       >
         {/* FRONT FACE: kana */}
         <div className="absolute inset-0 [backface-visibility:hidden]">
-          {/* Outer ring - metal border */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-300 via-gray-400 to-gray-600 shadow-lg" />
-          {/* Inner ring */}
-          <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800" />
-          {/* Main surface with texture pattern */}
-          <div className="absolute inset-1 rounded-full bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 overflow-hidden">
+          {/* Inner ring (expanded because outer ring removed) */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800" />
+          {/* Main surface with texture pattern (expanded accordingly) */}
+          <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 overflow-hidden">
             {/* Decorative pattern background */}
             <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <g stroke="currentColor" strokeWidth="1" fill="none">
@@ -70,7 +68,7 @@ export const GameTile: React.FC<GameTileProps> = ({
             <div className="absolute inset-0">
               <div className="md:hidden">
                 {[0, 90, 180, 270].map((angle, index) => (
-                  <div key={`m-${index}`} className="absolute w-1.5 h-1.5" style={{ top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${isSelected ? '13px' : '11px'}) rotate(-${angle}deg)` }}>
+                  <div key={`m-${index}`} className="absolute w-1.5 h-1.5" style={{ top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${isSelected ? '14px' : '12px'}) rotate(-${angle}deg)` }}>
                     <div className="w-full h-full bg-pink-300 rounded-full opacity-10" />
                   </div>
                 ))}
@@ -85,16 +83,15 @@ export const GameTile: React.FC<GameTileProps> = ({
             </div>
             {/* Kana */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className={cn("font-bold text-white select-none drop-shadow-lg", "text-lg md:text-3xl", isSelected && "text-yellow-200")}>{tile.kana}</span>
+              <span className={cn("font-bold text-white select-none drop-shadow-lg", "text-xl md:text-3xl", isSelected && "text-yellow-200")}>{tile.kana}</span>
             </div>
           </div>
         </div>
 
         {/* BACK FACE: romaji */}
         <div className="absolute inset-0 [backface-visibility:hidden]" style={{ transform: 'rotateY(180deg)' }}>
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-300 via-gray-400 to-gray-600 shadow-lg" />
-          <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-slate-700 via-slate-800 to-black" />
-          <div className="absolute inset-1 rounded-full bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 overflow-hidden">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-slate-700 via-slate-800 to-black" />
+          <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 overflow-hidden">
             <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <circle cx="50" cy="50" r="28" stroke="currentColor" strokeWidth="1" fill="none" />
               <circle cx="50" cy="50" r="18" stroke="currentColor" strokeWidth="1" fill="none" />
