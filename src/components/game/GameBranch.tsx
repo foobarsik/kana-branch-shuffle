@@ -45,7 +45,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         <div className="absolute bottom-0 left-1 md:left-4 right-1 md:right-4 h-4 md:h-6">
           <SakuraBranch
             isSelected={isSelected}
-            canPlace={canPlace && selectedBranch && selectedBranch !== branch.id}
+            canPlace={false} // Remove green highlighting
           />
         </div>
         
