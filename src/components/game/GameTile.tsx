@@ -28,7 +28,7 @@ export const GameTile: React.FC<GameTileProps> = ({
   return (
     <div
       className={cn(
-        "w-11 h-11 md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
+        "w-[43px] h-[43px] md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
         "active:scale-95",
         !isSelectable && "cursor-default",
         className
