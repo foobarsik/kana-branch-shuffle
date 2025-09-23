@@ -178,6 +178,37 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     return count;
   }, []);
 
+  // Check if the player has any valid moves available
+  const hasValidMoves = useCallback((branches: Branch[]): boolean => {
+    // If any branch is empty, there are always moves available
+    const hasEmptyBranch = branches.some(branch => branch.tiles.length === 0);
+    if (hasEmptyBranch) return true;
+
+    // Check if any tiles can be moved between branches
+    for (let sourceIndex = 0; sourceIndex < branches.length; sourceIndex++) {
+      const sourceBranch = branches[sourceIndex];
+      if (sourceBranch.tiles.length === 0) continue;
+
+      const topTile = sourceBranch.tiles[sourceBranch.tiles.length - 1];
+      
+      // Check if this tile can be placed on any other branch
+      for (let targetIndex = 0; targetIndex < branches.length; targetIndex++) {
+        if (sourceIndex === targetIndex) continue;
+        
+        const targetBranch = branches[targetIndex];
+        
+        // Can place if target is empty or top tile matches
+        if (targetBranch.tiles.length === 0 || 
+            (targetBranch.tiles.length < targetBranch.maxCapacity && 
+             targetBranch.tiles[targetBranch.tiles.length - 1].kana === topTile.kana)) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }, []);
+
   const checkForCompletion = useCallback((branches: Branch[]): { completed: string[], updatedBranches: Branch[] } => {
     const completed: string[] = [];
     const updatedBranches: Branch[] = [];
@@ -309,6 +340,17 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
       // No completions - normal flow
       const { completed: normalCompleted, updatedBranches } = checkForCompletion(newBranches);
       const isComplete = updatedBranches.every(branch => branch.tiles.length === 0);
+      
+      // Check for deadlock (no valid moves available)
+      const hasMovesAvailable = hasValidMoves(updatedBranches);
+      if (!isComplete && !hasMovesAvailable) {
+        toast({
+          title: "No moves available! 😔",
+          description: "The game is stuck. Try using the undo button or restart the level.",
+          variant: "destructive",
+          duration: 10000,
+        });
+      }
 
       return {
         branches: updatedBranches,
@@ -320,7 +362,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
         kanaColorMap: prevState.kanaColorMap,
       };
     });
-  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount]);
+  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves]);
 
   const selectBranch = useCallback((branchId: string) => {
     setGameState(prevState => {
@@ -390,5 +432,6 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     selectedTileCount,
     currentLevel,
     isLevelComplete,
+    hasValidMoves: () => hasValidMoves(gameState.branches),
   };
 };
