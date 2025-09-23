@@ -4,6 +4,7 @@ import { playMoveSound } from "@/utils/audio";
 import { useToast } from "@/hooks/use-toast";
 import { getLevelConfig, type LevelConfig } from "@/config/levels";
 import { getPlayerProgress, updateProgressAfterLevel } from "@/utils/progress";
+import { generateKanaColorMap } from '@/utils/colors';
 
 interface UseGameLogicProps {
   level?: number;
@@ -25,6 +26,9 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
       kanaSubset: ["あ", "い", "う", "え", "お"]
     };
 
+    // Generate the color map for the current level's kana subset
+    const kanaColorMap = generateKanaColorMap(config.kanaSubset);
+
     // Create tiles based on level configuration
     const allTiles: KanaTile[] = [];
     config.kanaSubset.forEach((kanaChar) => {
@@ -32,6 +36,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
       if (kanaData) {
         for (let i = 0; i < config.tilesPerKana; i++) {
           allTiles.push({
+            color: kanaColorMap.get(kanaData.kana),
             id: `${kanaData.kana}-${i}`,
             kana: kanaData.kana,
             romaji: kanaData.romaji,
@@ -98,6 +103,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
       score: 0,
       isComplete: false,
       learnedKana: [],
+      kanaColorMap,
     };
   }, [level]);
 
@@ -296,6 +302,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
           score: Math.max(0, 1000 - newMoves * 10),
           isComplete: false,
           learnedKana: newLearnedKana,
+          kanaColorMap: prevState.kanaColorMap,
         };
       }
 
@@ -310,6 +317,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
         score: Math.max(0, 1000 - newMoves * 10),
         isComplete,
         learnedKana: prevState.learnedKana,
+        kanaColorMap: prevState.kanaColorMap,
       };
     });
   }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount]);

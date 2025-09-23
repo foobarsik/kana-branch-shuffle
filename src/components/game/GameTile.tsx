@@ -46,7 +46,10 @@ export const GameTile: React.FC<GameTileProps> = ({
           {/* Inner ring (expanded because outer ring removed) */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800" />
           {/* Main surface with texture pattern (expanded accordingly) */}
-          <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 overflow-hidden">
+          <div
+            className="absolute inset-0.5 rounded-full overflow-hidden"
+            style={{ backgroundColor: tile.color || '#4b5563' }} // Fallback to a neutral gray
+          >
             {/* Decorative pattern background */}
             <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <g stroke="currentColor" strokeWidth="1" fill="none">
@@ -83,7 +86,16 @@ export const GameTile: React.FC<GameTileProps> = ({
             </div>
             {/* Kana */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className={cn("font-bold text-white select-none drop-shadow-lg", "text-xl md:text-3xl", isSelected && "text-yellow-200")}>{tile.kana}</span>
+              <span
+                className={cn(
+                  "font-bold text-white select-none",
+                  "text-xl md:text-3xl",
+                  isSelected && "text-yellow-200"
+                )}
+                style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }} // Enhanced shadow for readability
+              >
+                {tile.kana}
+              </span>
             </div>
           </div>
         </div>

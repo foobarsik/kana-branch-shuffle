@@ -18,6 +18,7 @@ export interface GameState {
   score: number;
   isComplete: boolean;
   learnedKana: string[];
+  kanaColorMap: Map<string, string>;
 }
 
 export interface KanaData {
