@@ -11,6 +11,7 @@ interface GameBranchProps {
   canPlace: boolean;
   align: 'left' | 'right';
   flippingTiles?: Set<string>;
+  selectedTileCount?: number;
 }
 
 export const GameBranch: React.FC<GameBranchProps> = ({
@@ -20,6 +21,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   canPlace,
   align,
   flippingTiles = new Set(),
+  selectedTileCount = 1,
 }) => {
   const isSelected = selectedBranch === branch.id;
   const isEmpty = branch.tiles.length === 0;
@@ -55,16 +57,22 @@ export const GameBranch: React.FC<GameBranchProps> = ({
           // Right column: reverse visual order and keep row anchored to the right edge
           align === 'right' && 'flex-row-reverse justify-start'
         )}>
-          {branch.tiles.map((tile, index) => (
-            <GameTile
-              key={`${tile.id}-${index}`}
-              tile={tile}
-              isSelectable={index === branch.tiles.length - 1 && !selectedBranch}
-              isSelected={isSelected && index === branch.tiles.length - 1}
-              className="transition-all duration-300"
-              isFlipping={flippingTiles.has(tile.id)}
-            />
-          ))}
+          {branch.tiles.map((tile, index) => {
+            // Check if this tile should be selected (for multiple consecutive tiles)
+            const shouldBeSelected = isSelected && 
+              index >= branch.tiles.length - selectedTileCount;
+            
+            return (
+              <GameTile
+                key={`${tile.id}-${index}`}
+                tile={tile}
+                isSelectable={index === branch.tiles.length - 1 && !selectedBranch}
+                isSelected={shouldBeSelected}
+                className="transition-all duration-300"
+                isFlipping={flippingTiles.has(tile.id)}
+              />
+            );
+          })}
         </div>
         
         {/* Empty shelf indicator */}

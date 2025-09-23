@@ -18,6 +18,7 @@ export const Game: React.FC = () => {
     showKanaPopup,
     closeKanaPopup,
     flippingTiles,
+    selectedTileCount,
   } = useGameLogic();
 
   // Initialize voices for better audio quality
@@ -124,6 +125,7 @@ export const Game: React.FC = () => {
                   canPlace={getCanPlaceStatus(branch.id)}
                   align="left"
                   flippingTiles={flippingTiles}
+                  selectedTileCount={selectedTileCount}
                 />
               ))}
             </div>
@@ -138,6 +140,7 @@ export const Game: React.FC = () => {
                   canPlace={getCanPlaceStatus(branch.id)}
                   align="right"
                   flippingTiles={flippingTiles}
+                  selectedTileCount={selectedTileCount}
                 />
               ))}
             </div>

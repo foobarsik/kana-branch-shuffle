@@ -78,6 +78,7 @@ export const useGameLogic = () => {
   const [gameHistory, setGameHistory] = useState<GameState[]>([]);
   const [showKanaPopup, setShowKanaPopup] = useState<{kana: string; romaji: string; learned: boolean} | null>(null);
   const [flippingTiles, setFlippingTiles] = useState<Set<string>>(new Set());
+  const [selectedTileCount, setSelectedTileCount] = useState<number>(1);
 
   const canPlaceTile = useCallback((sourceTile: KanaTile, targetBranch: Branch): boolean => {
     if (targetBranch.tiles.length >= targetBranch.maxCapacity) return false;
@@ -85,6 +86,24 @@ export const useGameLogic = () => {
     
     const topTile = targetBranch.tiles[targetBranch.tiles.length - 1];
     return topTile.kana === sourceTile.kana;
+  }, []);
+
+  // Count consecutive identical tiles from the end of the branch
+  const getConsecutiveCount = useCallback((branch: Branch): number => {
+    if (branch.tiles.length === 0) return 0;
+    
+    const topTile = branch.tiles[branch.tiles.length - 1];
+    let count = 0;
+    
+    for (let i = branch.tiles.length - 1; i >= 0; i--) {
+      if (branch.tiles[i].kana === topTile.kana) {
+        count++;
+      } else {
+        break;
+      }
+    }
+    
+    return count;
   }, []);
 
   const checkForCompletion = useCallback((branches: Branch[]): { completed: string[], updatedBranches: Branch[] } => {
@@ -113,45 +132,54 @@ export const useGameLogic = () => {
     if (sourceBranchId === targetBranchId) return;
 
     setGameState(prevState => {
-      // Save current state for undo
-      setGameHistory(prev => [...prev, prevState]);
-
-      const newBranches = [...prevState.branches];
-      const sourceBranch = newBranches.find(b => b.id === sourceBranchId);
-      const targetBranch = newBranches.find(b => b.id === targetBranchId);
+      const sourceBranch = prevState.branches.find(b => b.id === sourceBranchId);
+      const targetBranch = prevState.branches.find(b => b.id === targetBranchId);
 
       if (!sourceBranch || !targetBranch || sourceBranch.tiles.length === 0) {
         return prevState;
       }
 
-      const tileToMove = sourceBranch.tiles[sourceBranch.tiles.length - 1];
+      // Get the tiles to move (consecutive identical tiles from the end)
+      const consecutiveCount = Math.min(selectedTileCount, getConsecutiveCount(sourceBranch));
+      const tilesToMove = sourceBranch.tiles.slice(-consecutiveCount);
+      const topTile = tilesToMove[tilesToMove.length - 1];
 
-      // Check specific reasons for invalid moves
-      let errorMessage = "Cannot place tile here!";
-      if (targetBranch.tiles.length >= targetBranch.maxCapacity) {
-        errorMessage = "Branch is full! Maximum 4 tiles per branch.";
-      } else if (targetBranch.tiles.length > 0) {
-        const topTile = targetBranch.tiles[targetBranch.tiles.length - 1];
-        if (topTile.kana !== tileToMove.kana) {
-          errorMessage = `You can only place a kana next to the same kana.`;
-        }
-      }
-
-      if (!canPlaceTile(tileToMove, targetBranch)) {
+      // Check if we can place the top tile
+      if (!canPlaceTile(topTile, targetBranch)) {
         toast({
-          title: "Invalid Move",
-          description: errorMessage,
+          title: "Invalid move",
+          description: "You can only place tiles on empty branches or on tiles of the same kana.",
           variant: "destructive",
         });
         return prevState;
       }
 
-      // Move the tile
-      sourceBranch.tiles = sourceBranch.tiles.slice(0, -1);
-      targetBranch.tiles = [...targetBranch.tiles, tileToMove];
-      
+      // Check if target branch has enough space
+      if (targetBranch.tiles.length + tilesToMove.length > targetBranch.maxCapacity) {
+        toast({
+          title: "Invalid move", 
+          description: "Not enough space in the target branch.",
+          variant: "destructive",
+        });
+        return prevState;
+      }
+
+      // Save current state to history
+      setGameHistory(prev => [...prev, prevState]);
+
+      // Create new branches array with the move
+      const newBranches = prevState.branches.map(branch => {
+        if (branch.id === sourceBranchId) {
+          return { ...branch, tiles: branch.tiles.slice(0, -consecutiveCount) };
+        }
+        if (branch.id === targetBranchId) {
+          return { ...branch, tiles: [...branch.tiles, ...tilesToMove] };
+        }
+        return branch;
+      });
+
       const newMoves = prevState.moves + 1;
-      
+
       // Check for completions manually (without removing tiles yet)
       const completed: string[] = [];
       const tilesToDisappear = new Set<string>();
@@ -218,7 +246,7 @@ export const useGameLogic = () => {
         learnedKana: prevState.learnedKana,
       };
     });
-  }, [canPlaceTile, checkForCompletion, toast]);
+  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount]);
 
   const selectBranch = useCallback((branchId: string) => {
     setGameState(prevState => {
@@ -233,6 +261,9 @@ export const useGameLogic = () => {
         if (topTile) {
           playMoveSound(topTile.kana);
         }
+        // Set the count of consecutive identical tiles to select
+        const consecutiveCount = getConsecutiveCount(branch);
+        setSelectedTileCount(consecutiveCount);
         return { ...prevState, selectedBranch: branchId };
       }
 
@@ -249,7 +280,7 @@ export const useGameLogic = () => {
 
       return prevState;
     });
-  }, [moveTile]);
+  }, [moveTile, getConsecutiveCount]);
 
   const undoMove = useCallback(() => {
     if (gameHistory.length > 0) {
@@ -265,6 +296,7 @@ export const useGameLogic = () => {
     setGameHistory([]);
     setShowKanaPopup(null);
     setFlippingTiles(new Set());
+    setSelectedTileCount(1);
   }, []);
 
   const closeKanaPopup = useCallback(() => {
@@ -280,5 +312,6 @@ export const useGameLogic = () => {
     showKanaPopup,
     closeKanaPopup,
     flippingTiles,
+    selectedTileCount,
   };
 };
