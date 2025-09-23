@@ -29,10 +29,8 @@ export const GameTile: React.FC<GameTileProps> = ({
     <div
       className={cn(
         "w-9 h-9 md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
-        "hover:scale-105 active:scale-95",
-        isSelectable && "hover:brightness-110",
-        (isSelected || isFlipping) && "brightness-110",
-        !isSelectable && "cursor-default hover:scale-100 active:scale-100",
+        "active:scale-95",
+        !isSelectable && "cursor-default",
         className
       )}
       style={{ ...(style || {}), perspective: 600 }}
@@ -107,11 +105,6 @@ export const GameTile: React.FC<GameTileProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Outer glow effect when selectable */}
-      {isSelectable && (
-        <div className="absolute -inset-0.5 rounded-full bg-blue-400/20 blur-sm opacity-0 hover:opacity-100 transition-opacity duration-300" />
-      )}
     </div>
   );
 };
