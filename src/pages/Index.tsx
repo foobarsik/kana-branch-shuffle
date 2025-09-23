@@ -2,10 +2,11 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Play, BookOpen, Settings, Trophy } from "lucide-react";
+import { Play, BookOpen, Settings, Trophy, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getPlayerProgress } from "@/utils/progress";
 import { getMaxLevel } from "@/config/levels";
+import { getAchievementStats } from "@/utils/achievements";
 import "@/utils/levelAnalysis"; // Анализ уровней в консоли
 
 const Index = () => {
@@ -13,6 +14,7 @@ const Index = () => {
   const playerProgress = getPlayerProgress();
   const maxLevel = getMaxLevel();
   const continueLevel = Math.min(Math.max(1, playerProgress.currentLevel), maxLevel);
+  const achievementStats = getAchievementStats();
 
   return (
     <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4">
@@ -71,6 +73,34 @@ const Index = () => {
             {/* <p className="text-sm text-muted-foreground mt-2">
               View learned characters
             </p> */}
+          </Card>
+
+          <Card 
+            className="p-6 cursor-pointer transition-all hover:scale-105 hover:shadow-lg border-2 hover:border-primary/50 bg-gradient-tile"
+            onClick={() => navigate("/achievements")}
+          >
+            <div className="flex items-center justify-center space-x-3">
+              <Trophy className="w-6 h-6 text-yellow-500" />
+              <span className="text-xl font-semibold">Achievements</span>
+              <Badge variant="outline">{achievementStats.unlockedCount}/{achievementStats.totalAchievements}</Badge>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              View your progress and rewards
+            </p>
+          </Card>
+
+          <Card 
+            className="p-6 cursor-pointer transition-all hover:scale-105 hover:shadow-lg border-2 hover:border-primary/50 bg-gradient-tile"
+            onClick={() => navigate("/stats")}
+          >
+            <div className="flex items-center justify-center space-x-3">
+              <BarChart3 className="w-6 h-6 text-blue-500" />
+              <span className="text-xl font-semibold">Statistics</span>
+              <Badge variant="outline">{playerProgress.totalGamesPlayed} games</Badge>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              View detailed statistics and records
+            </p>
           </Card>
 
           <Card className="p-6 cursor-pointer transition-all hover:scale-105 hover:shadow-lg border-2 hover:border-primary/50 bg-gradient-tile opacity-60">

@@ -10,6 +10,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
 import { getLevelConfig, getMaxLevel } from "@/config/levels";
 import { getPlayerProgress } from "@/utils/progress";
+import { AchievementNotificationManager } from "@/components/ui/AchievementNotification";
+import { ScoreAnimation } from "@/components/ui/ScoreAnimation";
 
 export const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -34,6 +36,8 @@ export const Game: React.FC = () => {
     selectedTileCount,
     currentLevel,
     isLevelComplete,
+    newAchievements,
+    clearNewAchievements,
   } = useGameLogic({ level: currentLevelNumber });
 
   // Get level configuration and player progress
@@ -330,6 +334,12 @@ export const Game: React.FC = () => {
           onClose={closeKanaPopup}
         />
       )}
+
+      {/* Achievement Notifications */}
+      <AchievementNotificationManager
+        achievements={newAchievements}
+        onAchievementShown={clearNewAchievements}
+      />
     </div>
   );
 };

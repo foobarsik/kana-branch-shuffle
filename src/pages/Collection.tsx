@@ -1,16 +1,26 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Home, BookOpen } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Home, BookOpen, Trophy, Star, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { HIRAGANA_SET } from "@/types/game";
+import { getPlayerProgress } from "@/utils/progress";
+import { getAchievementStats, getStreakData } from "@/utils/achievements";
+import { AnimatedProgress } from "@/components/ui/ScoreAnimation";
 
 export const Collection: React.FC = () => {
   const navigate = useNavigate();
   
-  // For now, we'll show all kana. In a real implementation, 
-  // this would be connected to game progress
-  const learnedKana = HIRAGANA_SET.map(k => k.kana);
+  // Get real player progress
+  const playerProgress = getPlayerProgress();
+  const achievementStats = getAchievementStats();
+  const streakData = getStreakData();
+  
+  const learnedKana = playerProgress.totalKanaLearned;
+  const totalKana = HIRAGANA_SET.length;
+  const completionPercentage = Math.round((learnedKana.length / totalKana) * 100);
 
   return (
     <div className="min-h-screen bg-gradient-background p-4">
@@ -38,25 +48,80 @@ export const Collection: React.FC = () => {
           <div className="w-24" /> {/* Spacer for alignment */}
         </div>
 
-        {/* Progress */}
-        {/* <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-card rounded-full px-6 py-3 shadow-lg border">
-            <div className="w-3 h-3 rounded-full bg-success"></div>
-            <span className="font-medium">
-              {learnedKana.length} / {HIRAGANA_SET.length} Learned
-            </span>
-          </div>
-        </div> */}
+        {/* Progress Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <BookOpen className="w-6 h-6 text-blue-500" />
+              <h3 className="text-lg font-semibold">Изучение кана</h3>
+            </div>
+            <AnimatedProgress
+              current={learnedKana.length}
+              total={totalKana}
+              label="Прогресс изучения"
+              color="bg-blue-500"
+            />
+          </Card>
+          
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <Trophy className="w-6 h-6 text-yellow-500" />
+              <h3 className="text-lg font-semibold">Достижения</h3>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Разблокировано</span>
+                <span className="font-semibold">{achievementStats.unlockedCount}/{achievementStats.totalAchievements}</span>
+              </div>
+              <Progress value={achievementStats.completionPercentage} className="h-2" />
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Очки</span>
+                <span className="font-semibold text-yellow-600">{achievementStats.totalPoints}</span>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <Calendar className="w-6 h-6 text-red-500" />
+              <h3 className="text-lg font-semibold">Активность</h3>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Текущая серия</span>
+                <Badge variant="secondary" className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                  🔥 {streakData.currentStreak} дней
+                </Badge>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Лучшая серия</span>
+                <span className="font-semibold">{streakData.longestStreak} дней</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Всего дней</span>
+                <span className="font-semibold">{streakData.totalDaysPlayed}</span>
+              </div>
+            </div>
+          </Card>
+        </div>
 
         {/* Kana Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {HIRAGANA_SET.map((kanaData) => {
-            const isLearned = learnedKana.includes(kanaData.kana);
-            
-            return (
-              <Card
-                key={kanaData.kana}
-                className={`
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Коллекция кана</h2>
+            <div className="text-sm text-muted-foreground">
+              {learnedKana.length} из {totalKana} изучено ({completionPercentage}%)
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {HIRAGANA_SET.map((kanaData) => {
+              const isLearned = learnedKana.includes(kanaData.kana);
+              
+              return (
+                <Card
+                  key={kanaData.kana}
+                  className={`
                   p-6 text-center transition-all duration-300 cursor-pointer
                   hover:scale-105 hover:shadow-lg border-2
                   ${
@@ -96,7 +161,8 @@ export const Collection: React.FC = () => {
                 </div>
               </Card>
             );
-          })}
+            })}
+          </div>
         </div>
 
         {/* Back to Game */}

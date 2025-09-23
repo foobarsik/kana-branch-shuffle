@@ -5,6 +5,9 @@ import { useToast } from "@/hooks/use-toast";
 import { getLevelConfig, type LevelConfig } from "@/config/levels";
 import { getPlayerProgress, updateProgressAfterLevel } from "@/utils/progress";
 import { generateKanaColorMap } from '@/utils/colors';
+import { checkAndUnlockAchievements, updateStreak } from '@/utils/achievements';
+import { Achievement, GameSession } from '@/types/achievements';
+import { addLeaderboardEntry } from '@/utils/leaderboard';
 
 interface UseGameLogicProps {
   level?: number;
@@ -243,6 +246,8 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
   const [selectedTileCount, setSelectedTileCount] = useState<number>(1);
   const [currentLevel, setCurrentLevel] = useState<number>(level);
   const [isLevelComplete, setIsLevelComplete] = useState<boolean>(false);
+  const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
+  const [gameStartTime, setGameStartTime] = useState<Date>(new Date());
 
   // Update game when level changes
   useEffect(() => {
@@ -254,13 +259,53 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
       setFlippingTiles(new Set());
       setSelectedTileCount(1);
       setIsLevelComplete(false);
+      setNewAchievements([]);
+      setGameStartTime(new Date());
     }
   }, [level, currentLevel, createInitialState]);
+
+  // Initialize game start time
+  useEffect(() => {
+    setGameStartTime(new Date());
+  }, []);
 
   // Handle level completion
   useEffect(() => {
     if (gameState.isComplete && !isLevelComplete) {
       setIsLevelComplete(true);
+      
+      // Calculate game session data
+      const gameEndTime = new Date();
+      const timeSpent = Math.floor((gameEndTime.getTime() - gameStartTime.getTime()) / 1000);
+      const isPerfect = gameState.score === 1000; // Perfect score means no mistakes
+      
+      const gameSession: GameSession = {
+        level: currentLevel,
+        score: gameState.score,
+        moves: gameState.moves,
+        timeSpent,
+        learnedKana: gameState.learnedKana,
+        isPerfect,
+        completedAt: gameEndTime
+      };
+
+      // Update streak
+      const updatedStreak = updateStreak();
+      
+      // Check for new achievements
+      const unlockedAchievements = checkAndUnlockAchievements(gameSession);
+      if (unlockedAchievements.length > 0) {
+        setNewAchievements(unlockedAchievements);
+      }
+      
+      // Add to leaderboard
+      addLeaderboardEntry(
+        currentLevel,
+        gameState.score,
+        gameState.moves,
+        timeSpent,
+        gameState.learnedKana.length
+      );
       
       // Save progress
       const updatedProgress = updateProgressAfterLevel(
@@ -270,16 +315,22 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
         gameState.learnedKana
       );
 
-      // Show completion message
+      // Show completion message with achievements info
+      const achievementText = unlockedAchievements.length > 0 
+        ? ` Разблокировано достижений: ${unlockedAchievements.length}!`
+        : '';
+      
       toast({
-        title: "Level Complete! 🎉",
-        description: `You completed level ${currentLevel} with ${gameState.score} points!`,
+        title: "Уровень завершен! 🎉",
+        description: `Уровень ${currentLevel} завершен с ${gameState.score} очками!${achievementText}`,
         duration: 5000,
       });
 
       console.log('Level completed! Progress saved:', updatedProgress);
+      console.log('Streak updated:', updatedStreak);
+      console.log('New achievements:', unlockedAchievements);
     }
-  }, [gameState.isComplete, isLevelComplete, currentLevel, gameState.score, gameState.moves, gameState.learnedKana, toast]);
+  }, [gameState.isComplete, isLevelComplete, currentLevel, gameState.score, gameState.moves, gameState.learnedKana, gameStartTime, toast]);
 
   const canPlaceTile = useCallback((sourceTile: KanaTile, targetBranch: Branch): boolean => {
     if (targetBranch.tiles.length >= targetBranch.maxCapacity) return false;
@@ -584,6 +635,8 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     setFlippingTiles(new Set());
     setSelectedTileCount(1);
     setIsLevelComplete(false);
+    setNewAchievements([]);
+    setGameStartTime(new Date());
   }, [createInitialState]);
 
   // Restart to the initially generated preset (no reshuffle)
@@ -623,6 +676,8 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     setFlippingTiles(new Set());
     setSelectedTileCount(1);
     setIsLevelComplete(false);
+    setNewAchievements([]);
+    setGameStartTime(new Date());
   }, [resetGame]);
 
   // Zero out moves and clear undo history, keeping the current board
@@ -632,6 +687,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
       moves: 0,
     }));
     setGameHistory([]);
+    setGameStartTime(new Date()); // Reset timer for achievements
   }, []);
 
   const closeKanaPopup = useCallback(() => {
@@ -653,5 +709,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     currentLevel,
     isLevelComplete,
     hasValidMoves: () => hasValidMoves(gameState.branches),
+    newAchievements,
+    clearNewAchievements: () => setNewAchievements([]),
   };
 };
