@@ -46,6 +46,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
           <SakuraBranch
             isSelected={isSelected}
             canPlace={false} // Remove green highlighting
+            mirrored={align === 'left'} // Mirror for left column
           />
         </div>
         

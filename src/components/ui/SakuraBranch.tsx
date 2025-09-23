@@ -5,22 +5,81 @@ interface SakuraBranchProps {
   className?: string;
   isSelected?: boolean;
   canPlace?: boolean;
+  mirrored?: boolean; // true для левой колонки (тонкий конец справа)
 }
 
 export const SakuraBranch: React.FC<SakuraBranchProps> = ({ 
   className, 
   isSelected, 
-  canPlace 
+  canPlace,
+  mirrored = false
 }) => {
   return (
     <svg
       viewBox="0 0 500 40"
       className={cn("w-full h-full", className)}
       xmlns="http://www.w3.org/2000/svg"
+      style={mirrored ? { transform: 'scaleX(-1)' } : undefined}
     >
-      {/* Main branch */}
+      {/* Main branch - base layer (thinnest) */}
       <path
         d="M2 25 Q70 20 140 22 Q210 24 280 20 Q350 16 420 18 Q460 19 498 20"
+        stroke="#8B4513"
+        strokeWidth="4"
+        fill="none"
+        strokeLinecap="round"
+        className={cn(
+          "transition-all duration-300",
+          isSelected && "stroke-amber-600",
+          canPlace && "stroke-green-600"
+        )}
+      />
+      
+      {/* Gradual thickness increase - layer 1 */}
+      <path
+        d="M150 22 Q210 24 280 20 Q350 16 420 18 Q460 19 498 20"
+        stroke="#8B4513"
+        strokeWidth="5"
+        fill="none"
+        strokeLinecap="round"
+        className={cn(
+          "transition-all duration-300",
+          isSelected && "stroke-amber-600",
+          canPlace && "stroke-green-600"
+        )}
+      />
+      
+      {/* Gradual thickness increase - layer 2 */}
+      <path
+        d="M250 22 Q280 20 350 16 Q420 18 460 19 Q480 19 498 20"
+        stroke="#8B4513"
+        strokeWidth="6"
+        fill="none"
+        strokeLinecap="round"
+        className={cn(
+          "transition-all duration-300",
+          isSelected && "stroke-amber-600",
+          canPlace && "stroke-green-600"
+        )}
+      />
+      
+      {/* Gradual thickness increase - layer 3 */}
+      <path
+        d="M350 16 Q420 18 460 19 Q480 19 498 20"
+        stroke="#8B4513"
+        strokeWidth="7"
+        fill="none"
+        strokeLinecap="round"
+        className={cn(
+          "transition-all duration-300",
+          isSelected && "stroke-amber-600",
+          canPlace && "stroke-green-600"
+        )}
+      />
+      
+      {/* Final thick right end */}
+      <path
+        d="M420 18 Q460 19 498 20"
         stroke="#8B4513"
         strokeWidth="8"
         fill="none"
