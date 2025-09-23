@@ -292,10 +292,10 @@ export const Game: React.FC = () => {
           </div>
           
           {/* Instructions */}
-          <div className="text-center mt-8 text-sm text-muted-foreground">
-            <p>Group {levelConfig?.tilesPerKana || 4} identical kana tiles together.</p>
-            <p>Tap a branch to select all identical tiles from the top, then tap another branch to move them.</p>
-            <p>You can only place tiles on an empty branch or next to the same kana.</p>
+          <div className="text-center mt-8 text-sm text-muted-foreground p-2">
+          <p>Group {levelConfig?.tilesPerKana || 4} identical kana tiles.</p>
+          <p>Tap a branch to select the kana, then tap another branch to move it there.</p>
+          <p>You can only place a kana on an empty branch or next to the same kana.</p>
             {/* {levelConfig && (
               <div className="mt-2 flex flex-wrap justify-center gap-1">
                 <span className="text-xs">Kana in this level:</span>
