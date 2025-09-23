@@ -182,6 +182,11 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
   const hasValidMoves = useCallback((branches: Branch[]): boolean => {
     // If any branch is empty, there are always moves available
     const hasEmptyBranch = branches.some(branch => branch.tiles.length === 0);
+    console.log('🔍 Checking valid moves:', {
+      totalBranches: branches.length,
+      emptyBranches: branches.filter(b => b.tiles.length === 0).length,
+      hasEmptyBranch
+    });
     if (hasEmptyBranch) return true;
 
     // Check if any tiles can be moved between branches
@@ -191,23 +196,39 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
 
       const topTile = sourceBranch.tiles[sourceBranch.tiles.length - 1];
       
-      // Check if this tile can be placed on any other branch
+      // Count consecutive identical tiles from the top (like in the actual game logic)
+      const consecutiveCount = getConsecutiveCount(sourceBranch);
+      
+      // Check if this group of tiles can be placed on any other branch
       for (let targetIndex = 0; targetIndex < branches.length; targetIndex++) {
         if (sourceIndex === targetIndex) continue;
         
         const targetBranch = branches[targetIndex];
         
-        // Can place if target is empty or top tile matches
-        if (targetBranch.tiles.length === 0 || 
-            (targetBranch.tiles.length < targetBranch.maxCapacity && 
-             targetBranch.tiles[targetBranch.tiles.length - 1].kana === topTile.kana)) {
+        // Can place if target is empty or top tile matches AND there's enough space
+        const canPlace = targetBranch.tiles.length === 0 || 
+                        (targetBranch.tiles.length < targetBranch.maxCapacity && 
+                         targetBranch.tiles[targetBranch.tiles.length - 1].kana === topTile.kana);
+        
+        const hasEnoughSpace = targetBranch.tiles.length + consecutiveCount <= targetBranch.maxCapacity;
+        
+        if (canPlace && hasEnoughSpace) {
+          console.log('✅ Found valid move:', {
+            from: `${consecutiveCount}x ${topTile.kana} (branch ${sourceIndex})`,
+            to: `branch ${targetIndex}`,
+            targetEmpty: targetBranch.tiles.length === 0,
+            targetKana: targetBranch.tiles.length > 0 ? targetBranch.tiles[targetBranch.tiles.length - 1].kana : 'empty',
+            spaceNeeded: consecutiveCount,
+            spaceAvailable: targetBranch.maxCapacity - targetBranch.tiles.length
+          });
           return true;
         }
       }
     }
     
+    console.log('❌ No valid moves found');
     return false;
-  }, []);
+  }, [getConsecutiveCount]);
 
   const checkForCompletion = useCallback((branches: Branch[]): { completed: string[], updatedBranches: Branch[] } => {
     const completed: string[] = [];
