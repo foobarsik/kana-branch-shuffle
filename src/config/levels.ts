@@ -1,3 +1,5 @@
+import { HIRAGANA_SET } from '@/types/game';
+
 export interface LevelConfig {
   level: number;
   name: string;
@@ -7,6 +9,7 @@ export interface LevelConfig {
   branchCount: number; // количество веток
   branchCapacity: number; // вместимость каждой ветки
   kanaSubset: string[]; // какие каны использовать
+  isRandomKana?: boolean; // если true, случайно выбирать каны из всего набора
 }
 
 // Прогрессивная система уровней (упрощенная для лучшего геймплея)
@@ -145,12 +148,43 @@ export const LEVELS: LevelConfig[] = [
     branchCount: 9,
     branchCapacity: 4,
     kanaSubset: ["あ", "か", "さ", "た", "な", "は", "ま"]
+  },
+  
+  // Случайный уровень с большим количеством веток
+  {
+    level: 13,
+    name: "Random Challenge",
+    description: "8 random kana from the full set, 10 branches",
+    kanaCount: 8,
+    tilesPerKana: 4,
+    branchCount: 10,
+    branchCapacity: 4,
+    kanaSubset: [], // будет заполнено случайно
+    isRandomKana: true
   }
 ];
 
+// Функция для случайного выбора кан из полного набора
+export const getRandomKanaSubset = (count: number): string[] => {
+  const allKana = HIRAGANA_SET.map(item => item.kana);
+  const shuffled = [...allKana].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+};
+
 // Получить конфигурацию уровня
 export const getLevelConfig = (level: number): LevelConfig | null => {
-  return LEVELS.find(l => l.level === level) || null;
+  const levelConfig = LEVELS.find(l => l.level === level);
+  if (!levelConfig) return null;
+  
+  // Если это случайный уровень, генерируем случайные каны
+  if (levelConfig.isRandomKana) {
+    return {
+      ...levelConfig,
+      kanaSubset: getRandomKanaSubset(levelConfig.kanaCount)
+    };
+  }
+  
+  return levelConfig;
 };
 
 // Получить максимальный уровень
