@@ -1,68 +1,95 @@
-import { useState, useCallback } from "react";
-import { GameState, Branch, KanaTile, HIRAGANA_SET } from "@/types/game";
-import { useToast } from "@/hooks/use-toast";
+import { useState, useCallback, useEffect } from "react";
+import { Branch, GameState, KanaTile, HIRAGANA_SET } from "@/types/game";
 import { playMoveSound } from "@/utils/audio";
+import { useToast } from "@/hooks/use-toast";
+import { getLevelConfig, type LevelConfig } from "@/config/levels";
+import { getPlayerProgress, updateProgressAfterLevel } from "@/utils/progress";
 
-export const useGameLogic = () => {
+interface UseGameLogicProps {
+  level?: number;
+}
+
+export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
   const { toast } = useToast();
 
-  const createInitialState = (): GameState => {
-    // Create 4 tiles for each kana
+  const createInitialState = useCallback((levelConfig?: LevelConfig): GameState => {
+    // Get level configuration or use default
+    const config = levelConfig || getLevelConfig(level) || {
+      level: 1,
+      name: "Default",
+      description: "Default level",
+      kanaCount: 5,
+      tilesPerKana: 4,
+      branchCount: 5,
+      branchCapacity: 4,
+      kanaSubset: ["あ", "い", "う", "え", "お"]
+    };
+
+    // Create tiles based on level configuration
     const allTiles: KanaTile[] = [];
-    HIRAGANA_SET.forEach((kanaData, kanaIndex) => {
-      for (let i = 0; i < 4; i++) {
-        allTiles.push({
-          id: `${kanaData.kana}-${i}`,
-          kana: kanaData.kana,
-          romaji: kanaData.romaji,
-        });
+    config.kanaSubset.forEach((kanaChar) => {
+      const kanaData = HIRAGANA_SET.find(h => h.kana === kanaChar);
+      if (kanaData) {
+        for (let i = 0; i < config.tilesPerKana; i++) {
+          allTiles.push({
+            id: `${kanaData.kana}-${i}`,
+            kana: kanaData.kana,
+            romaji: kanaData.romaji,
+          });
+        }
       }
     });
 
-    // Shuffle tiles with validation to ensure no branch has 4 identical kana
-    let shuffledTiles: KanaTile[];
-    let isValidShuffle = false;
+    // Debug: log tile creation
+    if (import.meta.env.DEV) {
+      console.log(`Created ${allTiles.length} tiles for level ${config.level}:`, config.kanaSubset);
+    }
+
+    // Shuffle tiles
+    const shuffledTiles = [...allTiles].sort(() => Math.random() - 0.5);
+
+    // Create branches based on level configuration
+    const branches: Branch[] = [];
+    for (let i = 0; i < config.branchCount; i++) {
+      branches.push({
+        id: `branch-${i}`,
+        tiles: [],
+        maxCapacity: config.branchCapacity,
+      });
+    }
+
+    // Distribute tiles among branches more strategically
+    // Fill branches densely, leaving some completely empty for strategy
+    const tilesPerFilledBranch = Math.min(config.branchCapacity, 4); // Max 4 tiles per branch for better gameplay
+    const branchesToFill = Math.min(config.branchCount - 1, Math.ceil(shuffledTiles.length / tilesPerFilledBranch));
     
-    while (!isValidShuffle) {
-      shuffledTiles = [...allTiles].sort(() => Math.random() - 0.5);
+    console.log(`Level ${config.level}: ${shuffledTiles.length} tiles, filling ${branchesToFill} branches with ~${tilesPerFilledBranch} tiles each`);
+    
+    let tileIndex = 0;
+    for (let branchIndex = 0; branchIndex < branchesToFill && tileIndex < shuffledTiles.length; branchIndex++) {
+      // Fill this branch up to the limit or until we run out of tiles
+      const tilesToAdd = Math.min(tilesPerFilledBranch, shuffledTiles.length - tileIndex);
       
-      // Check if any group of 4 consecutive tiles (that will form a branch) has all identical kana
-      isValidShuffle = true;
-      for (let i = 0; i < 5; i++) {
-        const branchTiles = shuffledTiles.slice(i * 4, (i + 1) * 4);
-        const firstKana = branchTiles[0].kana;
-        if (branchTiles.every(tile => tile.kana === firstKana)) {
-          isValidShuffle = false;
-          break;
+      for (let i = 0; i < tilesToAdd; i++) {
+        branches[branchIndex].tiles.push(shuffledTiles[tileIndex]);
+        tileIndex++;
+      }
+    }
+    
+    // If there are remaining tiles, distribute them among the filled branches
+    while (tileIndex < shuffledTiles.length) {
+      for (let branchIndex = 0; branchIndex < branchesToFill && tileIndex < shuffledTiles.length; branchIndex++) {
+        if (branches[branchIndex].tiles.length < config.branchCapacity) {
+          branches[branchIndex].tiles.push(shuffledTiles[tileIndex]);
+          tileIndex++;
         }
       }
     }
 
-    // Create 7 branches (5 filled, 2 empty)
-    const branches: Branch[] = [];
-    
-    // Fill 5 branches with 4 tiles each
-    for (let i = 0; i < 5; i++) {
-      branches.push({
-        id: `branch-${i}`,
-        tiles: shuffledTiles.slice(i * 4, (i + 1) * 4),
-        maxCapacity: 4,
-      });
+    // Debug: log branch distribution
+    if (import.meta.env.DEV) {
+      console.log('Branch distribution:', branches.map((b, i) => `Branch ${i}: ${b.tiles.length} tiles`));
     }
-
-    // Add 2 empty branches
-    branches.push(
-      {
-        id: "branch-5",
-        tiles: [],
-        maxCapacity: 4,
-      },
-      {
-        id: "branch-6", 
-        tiles: [],
-        maxCapacity: 4,
-      }
-    );
 
     return {
       branches,
@@ -72,13 +99,52 @@ export const useGameLogic = () => {
       isComplete: false,
       learnedKana: [],
     };
-  };
+  }, [level]);
 
-  const [gameState, setGameState] = useState<GameState>(createInitialState);
+  const [gameState, setGameState] = useState<GameState>(() => createInitialState());
   const [gameHistory, setGameHistory] = useState<GameState[]>([]);
   const [showKanaPopup, setShowKanaPopup] = useState<{kana: string; romaji: string; learned: boolean} | null>(null);
   const [flippingTiles, setFlippingTiles] = useState<Set<string>>(new Set());
   const [selectedTileCount, setSelectedTileCount] = useState<number>(1);
+  const [currentLevel, setCurrentLevel] = useState<number>(level);
+  const [isLevelComplete, setIsLevelComplete] = useState<boolean>(false);
+
+  // Update game when level changes
+  useEffect(() => {
+    if (currentLevel !== level) {
+      setCurrentLevel(level);
+      setGameState(createInitialState());
+      setGameHistory([]);
+      setShowKanaPopup(null);
+      setFlippingTiles(new Set());
+      setSelectedTileCount(1);
+      setIsLevelComplete(false);
+    }
+  }, [level, currentLevel, createInitialState]);
+
+  // Handle level completion
+  useEffect(() => {
+    if (gameState.isComplete && !isLevelComplete) {
+      setIsLevelComplete(true);
+      
+      // Save progress
+      const updatedProgress = updateProgressAfterLevel(
+        currentLevel,
+        gameState.score,
+        gameState.moves,
+        gameState.learnedKana
+      );
+
+      // Show completion message
+      toast({
+        title: "Level Complete! 🎉",
+        description: `You completed level ${currentLevel} with ${gameState.score} points!`,
+        duration: 5000,
+      });
+
+      console.log('Level completed! Progress saved:', updatedProgress);
+    }
+  }, [gameState.isComplete, isLevelComplete, currentLevel, gameState.score, gameState.moves, gameState.learnedKana, toast]);
 
   const canPlaceTile = useCallback((sourceTile: KanaTile, targetBranch: Branch): boolean => {
     if (targetBranch.tiles.length >= targetBranch.maxCapacity) return false;
@@ -297,7 +363,8 @@ export const useGameLogic = () => {
     setShowKanaPopup(null);
     setFlippingTiles(new Set());
     setSelectedTileCount(1);
-  }, []);
+    setIsLevelComplete(false);
+  }, [createInitialState]);
 
   const closeKanaPopup = useCallback(() => {
     setShowKanaPopup(null);
@@ -313,5 +380,7 @@ export const useGameLogic = () => {
     closeKanaPopup,
     flippingTiles,
     selectedTileCount,
+    currentLevel,
+    isLevelComplete,
   };
 };

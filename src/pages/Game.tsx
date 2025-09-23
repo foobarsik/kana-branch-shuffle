@@ -3,12 +3,21 @@ import { GameBranch } from "@/components/game/GameBranch";
 import { KanaPopup } from "@/components/game/KanaPopup";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { Button } from "@/components/ui/button";
-import { Undo2, RotateCcw, Home, Trophy } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
+import { getLevelConfig, getMaxLevel } from "@/config/levels";
+import { getPlayerProgress } from "@/utils/progress";
 
 export const Game: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  
+  // Get level from URL params, default to 1
+  const levelParam = searchParams.get('level');
+  const currentLevelNumber = levelParam ? parseInt(levelParam, 10) : 1;
+  
   const {
     gameState,
     selectBranch,
@@ -19,12 +28,36 @@ export const Game: React.FC = () => {
     closeKanaPopup,
     flippingTiles,
     selectedTileCount,
-  } = useGameLogic();
+    currentLevel,
+    isLevelComplete,
+  } = useGameLogic({ level: currentLevelNumber });
+
+  // Get level configuration and player progress
+  const levelConfig = getLevelConfig(currentLevelNumber);
+  const playerProgress = getPlayerProgress();
+  const maxLevel = getMaxLevel();
 
   // Initialize voices for better audio quality
   React.useEffect(() => {
     initializeVoices();
   }, []);
+
+  // Navigation functions
+  const goToNextLevel = () => {
+    if (currentLevelNumber < maxLevel) {
+      navigate(`/game?level=${currentLevelNumber + 1}`);
+    }
+  };
+
+  const goToPreviousLevel = () => {
+    if (currentLevelNumber > 1) {
+      navigate(`/game?level=${currentLevelNumber - 1}`);
+    }
+  };
+
+  const goToLevelSelect = () => {
+    navigate('/levels');
+  };
 
   const getCanPlaceStatus = (branchId: string): boolean => {
     if (!gameState.selectedBranch || gameState.selectedBranch === branchId) return false;
@@ -44,25 +77,51 @@ export const Game: React.FC = () => {
   };
 
   if (gameState.isComplete) {
+    const canGoToNext = currentLevelNumber < maxLevel;
+    const isLevelUnlocked = playerProgress.completedLevels.includes(currentLevelNumber - 1) || currentLevelNumber === 1;
+    
     return (
       <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4">
-        <div className="text-center space-y-6">
-          <Trophy className="w-20 h-20 text-primary mx-auto" />
-          <h1 className="text-4xl font-bold text-foreground">おめでとう!</h1>
-          <p className="text-xl text-muted-foreground">Congratulations!</p>
-          <div className="space-y-2">
-            <p className="text-lg">Moves: {gameState.moves}</p>
-            <p className="text-lg">Score: {gameState.score}</p>
-            <p className="text-lg">Learned Kana: {gameState.learnedKana.length}</p>
+        <div className="text-center space-y-6 max-w-md">
+          <div className="text-6xl">🎉</div>
+          <div>
+            <Badge variant="secondary" className="mb-2">Level {currentLevelNumber}</Badge>
+            <h1 className="text-3xl font-bold text-foreground">Level Complete!</h1>
+            <h2 className="text-lg font-medium text-muted-foreground">{levelConfig?.name}</h2>
           </div>
-          <div className="flex gap-4 justify-center">
-            <Button onClick={resetGame} variant="default">
-              Play Again
-            </Button>
-            <Button onClick={() => navigate("/")} variant="outline">
-              <Home className="w-4 h-4 mr-2" />
-              Home
-            </Button>
+          <div className="bg-card p-4 rounded-lg border">
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="text-2xl font-bold text-primary">{gameState.score}</div>
+                <div className="text-muted-foreground">Score</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-primary">{gameState.moves}</div>
+                <div className="text-muted-foreground">Moves</div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            {canGoToNext && (
+              <Button onClick={goToNextLevel} className="w-full">
+                <ArrowRight className="w-4 h-4 mr-2" />
+                Next Level ({currentLevelNumber + 1})
+              </Button>
+            )}
+            <div className="flex gap-2">
+              <Button onClick={goToLevelSelect} variant="outline" className="flex-1">
+                <Trophy className="w-4 h-4 mr-2" />
+                Levels
+              </Button>
+              <Button onClick={resetGame} variant="outline" className="flex-1">
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Retry
+              </Button>
+              <Button onClick={() => navigate("/")} variant="outline" className="flex-1">
+                <Home className="w-4 h-4 mr-2" />
+                Home
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -83,15 +142,52 @@ export const Game: React.FC = () => {
         </Button>
         
         <div className="text-center">
-          <h1 className="text-xl md:text-2xl font-bold text-foreground">Hiragana Sort</h1>
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <Badge variant="secondary">Level {currentLevelNumber}</Badge>
+            {levelConfig && <Badge variant="outline">{levelConfig.name}</Badge>}
+          </div>
+          <h1 className="text-xl md:text-2xl font-bold text-foreground">
+            {levelConfig?.description || "Hiragana Sort"}
+          </h1>
           <div className="flex gap-2 md:gap-4 mt-1 text-xs md:text-sm text-muted-foreground">
             <span>Moves: {gameState.moves}</span>
             <span>Score: {gameState.score}</span>
-            <span>Learned: {gameState.learnedKana.length}/5</span>
+            <span>Learned: {gameState.learnedKana.length}/{levelConfig?.kanaCount || 5}</span>
           </div>
+          {gameState.selectedBranch && selectedTileCount > 1 && (
+            <div className="mt-1 px-2 py-1 bg-primary/10 rounded-md text-xs text-primary font-medium inline-block">
+              {selectedTileCount} tiles selected
+            </div>
+          )}
         </div>
 
         <div className="flex gap-2">
+          <Button
+            onClick={goToPreviousLevel}
+            disabled={currentLevelNumber <= 1}
+            variant="outline"
+            size="sm"
+            title="Previous Level"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={goToLevelSelect}
+            variant="outline"
+            size="sm"
+            title="Level Select"
+          >
+            <Trophy className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={goToNextLevel}
+            disabled={currentLevelNumber >= maxLevel}
+            variant="outline"
+            size="sm"
+            title="Next Level"
+          >
+            <ArrowRight className="w-4 h-4" />
+          </Button>
           <Button
             onClick={undoMove}
             disabled={!canUndo}
@@ -148,9 +244,19 @@ export const Game: React.FC = () => {
           
           {/* Instructions */}
           <div className="text-center mt-8 text-sm text-muted-foreground">
-            <p>Group 4 identical kana tiles together.</p>
-            <p>Tap a branch to select, then tap another branch to move the top tile.</p>
-            <p>You can only place a kana on an empty branch or next to the same kana.</p>
+            <p>Group {levelConfig?.tilesPerKana || 4} identical kana tiles together.</p>
+            <p>Tap a branch to select all identical tiles from the top, then tap another branch to move them.</p>
+            <p>You can only place tiles on an empty branch or next to the same kana.</p>
+            {levelConfig && (
+              <div className="mt-2 flex flex-wrap justify-center gap-1">
+                <span className="text-xs">Kana in this level:</span>
+                {levelConfig.kanaSubset.map((kana) => (
+                  <Badge key={kana} variant="outline" className="text-xs">
+                    {kana}
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
