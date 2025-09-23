@@ -39,34 +39,44 @@ export const LevelSelect: React.FC = () => {
   const progressPercentage = (progress.completedLevels.length / maxLevel) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-background p-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <Button
-            onClick={() => navigate("/")}
-            variant="outline"
-            size="sm"
-          >
-            <Home className="w-4 h-4 mr-2" />
-            Home
-          </Button>
-          
-          <div className="text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">Level Select</h1>
-            <p className="text-muted-foreground">Choose your challenge</p>
-          </div>
+    <div className="min-h-screen bg-gradient-background p-0">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-40 bg-gradient-background/80 backdrop-blur supports-[backdrop-filter]:bg-gradient-background/60 border-b">
+        <div className="max-w-6xl mx-auto px-3 py-2 md:px-4 md:py-3">
+          <div className="flex items-center justify-between gap-2">
+            <Button
+              onClick={() => navigate("/")}
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              title="Home"
+              aria-label="Home"
+            >
+              <Home className="w-5 h-5 md:w-4 md:h-4" />
+              <span className="hidden md:inline ml-2">Home</span>
+            </Button>
 
-          <Button
-            onClick={() => setShowResetConfirm(true)}
-            variant="outline"
-            size="sm"
-            className="text-destructive hover:text-destructive"
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Reset
-          </Button>
+            <div className="text-center flex-1 min-w-0">
+              <h1 className="text-base md:text-3xl font-bold text-foreground truncate">Level Select</h1>
+              <p className="text-[10px] md:text-sm text-muted-foreground">Choose your challenge</p>
+            </div>
+
+            <Button
+              onClick={() => setShowResetConfirm(true)}
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 md:h-8 md:w-auto md:px-3 text-destructive hover:text-destructive"
+              title="Reset Progress"
+              aria-label="Reset Progress"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span className="hidden md:inline ml-2">Reset</span>
+            </Button>
+          </div>
         </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 pt-4">
 
         {/* Progress Overview */}
         <Card className="mb-8">

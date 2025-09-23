@@ -4,6 +4,7 @@ import { KanaPopup } from "@/components/game/KanaPopup";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
@@ -130,80 +131,132 @@ export const Game: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-background p-4 flex flex-col">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <Button
-          onClick={() => navigate("/")}
-          variant="outline"
-          size="sm"
-        >
-          <Home className="w-4 h-4 mr-2" />
-          Home
-        </Button>
-        
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <Badge variant="secondary">Level {currentLevelNumber}</Badge>
-            {levelConfig && <Badge variant="outline">{levelConfig.name}</Badge>}
-          </div>
-          <h1 className="text-xl md:text-2xl font-bold text-foreground">
-            {levelConfig?.description || "Hiragana Sort"}
-          </h1>
-          <div className="flex gap-2 md:gap-4 mt-1 text-xs md:text-sm text-muted-foreground">
-            <span>Moves: {gameState.moves}</span>
-            <span>Score: {gameState.score}</span>
-            <span>Learned: {gameState.learnedKana.length}/{levelConfig?.kanaCount || 5}</span>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-background p-0 pb-4 flex flex-col">
+      {/* Header - sticky & compact on mobile */}
+      <div className="sticky top-0 z-40 bg-gradient-background/80 backdrop-blur supports-[backdrop-filter]:bg-gradient-background/60 border-b">
+        <div className="px-3 py-2 md:px-4 md:py-3 space-y-2">
+          {/* Row 1: Context */}
+          <div className="flex items-center justify-between gap-2">
+            <Button
+              onClick={() => navigate("/")}
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              title="Home"
+              aria-label="Home"
+            >
+              <Home className="w-5 h-5 md:w-4 md:h-4" />
+              <span className="hidden md:inline ml-2">Home</span>
+            </Button>
 
-        <div className="flex gap-2">
-          <Button
-            onClick={goToPreviousLevel}
-            disabled={currentLevelNumber <= 1}
-            variant="outline"
-            size="sm"
-            title="Previous Level"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            onClick={goToLevelSelect}
-            variant="outline"
-            size="sm"
-            title="Level Select"
-          >
-            <Trophy className="w-4 h-4" />
-          </Button>
-          <Button
-            onClick={goToNextLevel}
-            disabled={currentLevelNumber >= maxLevel}
-            variant="outline"
-            size="sm"
-            title="Next Level"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-          <Button
-            onClick={undoMove}
-            disabled={!canUndo}
-            variant="outline"
-            size="sm"
-          >
-            <Undo2 className="w-4 h-4" />
-          </Button>
-          <Button
-            onClick={resetGame}
-            variant="outline"
-            size="sm"
-          >
-            <RotateCcw className="w-4 h-4" />
-          </Button>
+            <div className="flex-1 text-center min-w-0">
+              <div className="inline-flex items-center gap-2">
+                <Badge className="px-2 py-0.5 text-xs md:text-sm" variant="secondary">
+                  Level {currentLevelNumber}
+                </Badge>
+                {levelConfig && (
+                  <span className="text-xs md:text-sm text-muted-foreground truncate inline-block max-w-[40vw] md:max-w-none">
+                    {levelConfig.name}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Reserve space for alignment */}
+            <div className="w-9 md:w-[72px]" />
+          </div>
+
+          {/* Row 2: Progress & Metrics */}
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between text-[10px] md:text-xs text-muted-foreground mb-1">
+                <span className="font-medium text-foreground">Progress in this level</span>
+                <span className="font-medium text-foreground">
+                  {gameState.learnedKana.length}/{levelConfig?.kanaCount || 5}
+                </span>
+              </div>
+              <Progress value={(gameState.learnedKana.length / (levelConfig?.kanaCount || 5)) * 100} className="h-2" />
+            </div>
+            <div className="flex items-center gap-3 text-[10px] md:text-sm text-muted-foreground shrink-0">
+              <span>Score: <span className="font-medium text-foreground">{gameState.score}</span></span>
+              <span>Moves: <span className="font-medium text-foreground">{gameState.moves}</span></span>
+            </div>
+          </div>
+
+          {/* Row 3: Actions */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1 md:gap-2">
+              <Button
+                onClick={goToPreviousLevel}
+                disabled={currentLevelNumber <= 1}
+                variant="outline"
+                size="icon"
+                title="Previous Level"
+                aria-label="Previous Level"
+                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden md:inline ml-2">Back</span>
+              </Button>
+              <Button
+                onClick={goToNextLevel}
+                disabled={currentLevelNumber >= maxLevel}
+                variant="outline"
+                size="icon"
+                title="Next Level"
+                aria-label="Next Level"
+                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              >
+                <ArrowRight className="w-4 h-4" />
+                <span className="hidden md:inline ml-2">Next</span>
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-1 md:gap-2">
+              <Button
+                onClick={undoMove}
+                disabled={!canUndo}
+                variant="outline"
+                size="icon"
+                title="Undo"
+                aria-label="Undo"
+                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              >
+                <Undo2 className="w-4 h-4" />
+                <span className="hidden md:inline ml-2">Undo</span>
+              </Button>
+              <Button
+                onClick={resetGame}
+                variant="outline"
+                size="icon"
+                title="Restart"
+                aria-label="Restart"
+                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span className="hidden md:inline ml-2">Restart</span>
+              </Button>
+            </div>
+
+            <div>
+              <Button
+                onClick={goToLevelSelect}
+                variant="secondary"
+                size="icon"
+                title="Level Select"
+                aria-label="Level Select"
+                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              >
+                <Trophy className="w-4 h-4" />
+                <span className="hidden md:inline ml-2">Levels</span>
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Game Board */}
-      <div className="flex-1 flex justify-center items-center px-1">
+      <div className="flex-1 flex justify-center items-center px-1 mt-3 md:mt-4">
         <div className="w-full max-w-3xl">
           <div className="grid grid-cols-2 gap-2 md:gap-4">
             {/* First column */}
@@ -243,7 +296,7 @@ export const Game: React.FC = () => {
             <p>Group {levelConfig?.tilesPerKana || 4} identical kana tiles together.</p>
             <p>Tap a branch to select all identical tiles from the top, then tap another branch to move them.</p>
             <p>You can only place tiles on an empty branch or next to the same kana.</p>
-            {levelConfig && (
+            {/* {levelConfig && (
               <div className="mt-2 flex flex-wrap justify-center gap-1">
                 <span className="text-xs">Kana in this level:</span>
                 {levelConfig.kanaSubset.map((kana) => (
@@ -252,7 +305,7 @@ export const Game: React.FC = () => {
                   </Badge>
                 ))}
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
