@@ -13,7 +13,80 @@ interface UseGameLogicProps {
 export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
   const { toast } = useToast();
 
-  const createInitialState = useCallback((levelConfig?: LevelConfig): GameState => {
+  // Simple and reliable board generation
+  const generateSolvableBoard = useCallback((levelConfig: LevelConfig, colorMap: Record<string, string>): Branch[] => {
+    console.log(`🎮 Generating board for level ${levelConfig.level}`);
+    
+    // Create all tiles first - exactly 4 of each kana
+    const allTiles: KanaTile[] = [];
+    levelConfig.kanaSubset.forEach((kana) => {
+      const kanaData = HIRAGANA_SET.find(h => h.kana === kana);
+      if (!kanaData) {
+        console.warn(`⚠️ Kana not found in HIRAGANA_SET: ${kana}`);
+        return;
+      }
+      
+      // Create exactly 4 tiles of this kana
+      for (let i = 0; i < 4; i++) {
+        allTiles.push({
+          id: `${kana}-${i}`,
+          kana: kana,
+          romaji: kanaData.romaji,
+          color: colorMap[kana] || '#6b7280'
+        });
+      }
+    });
+    
+    // Shuffle tiles thoroughly
+    const shuffledTiles = [...allTiles].sort(() => Math.random() - 0.5);
+    
+    // Create branches
+    const branches: Branch[] = [];
+    for (let i = 0; i < levelConfig.branchCount; i++) {
+      branches.push({
+        id: `branch-${i}`,
+        tiles: [],
+        maxCapacity: levelConfig.branchCapacity
+      });
+    }
+    
+    // Distribute tiles using the proven strategy from memory
+    // Fill branches densely, leaving some empty for strategy
+    const tilesPerFilledBranch = Math.min(levelConfig.branchCapacity, 4);
+    const branchesToFill = Math.min(levelConfig.branchCount - 1, Math.ceil(shuffledTiles.length / tilesPerFilledBranch));
+    
+    let tileIndex = 0;
+    for (let branchIndex = 0; branchIndex < branchesToFill && tileIndex < shuffledTiles.length; branchIndex++) {
+      const tilesToAdd = Math.min(tilesPerFilledBranch, shuffledTiles.length - tileIndex);
+      
+      for (let i = 0; i < tilesToAdd; i++) {
+        branches[branchIndex].tiles.push(shuffledTiles[tileIndex]);
+        tileIndex++;
+      }
+    }
+    
+    // Place remaining tiles
+    while (tileIndex < shuffledTiles.length) {
+      for (let branchIndex = 0; branchIndex < branchesToFill && tileIndex < shuffledTiles.length; branchIndex++) {
+        if (branches[branchIndex].tiles.length < levelConfig.branchCapacity) {
+          branches[branchIndex].tiles.push(shuffledTiles[tileIndex]);
+          tileIndex++;
+        }
+      }
+    }
+    
+    // Verify we placed all tiles
+    const totalPlaced = branches.reduce((sum, branch) => sum + branch.tiles.length, 0);
+    console.log(`📊 Placed ${totalPlaced}/${allTiles.length} tiles`);
+    
+    if (totalPlaced !== allTiles.length) {
+      console.error(`❌ Lost tiles! Expected: ${allTiles.length}, Placed: ${totalPlaced}`);
+    }
+    
+    return branches;
+  }, []);
+
+  const generateTiles = useCallback((levelConfig: LevelConfig, colorMap: Record<string, string>): GameState => {
     // Get level configuration or use default
     const config = levelConfig || getLevelConfig(level) || {
       level: 1,
@@ -106,6 +179,53 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
       kanaColorMap,
     };
   }, [level]);
+
+  // Create initial state with solvable board generation
+  const createInitialState = useCallback(() => {
+    const config = getLevelConfig(level);
+    if (!config) {
+      // Fallback to default config
+      const defaultConfig: LevelConfig = {
+        level: 1,
+        name: "Default",
+        description: "Default level",
+        kanaCount: 5,
+        tilesPerKana: 4,
+        branchCount: 5,
+        branchCapacity: 4,
+        kanaSubset: ["あ", "い", "う", "え", "お"]
+      };
+      const kanaColorMap = generateKanaColorMap(defaultConfig.kanaSubset);
+      const colorMapObject = Object.fromEntries(kanaColorMap);
+      const solvableBranches = generateSolvableBoard(defaultConfig, colorMapObject);
+      
+      return {
+        branches: solvableBranches,
+        selectedBranch: null,
+        moves: 0,
+        score: 0,
+        isComplete: false,
+        learnedKana: [],
+        kanaColorMap,
+      };
+    }
+
+    const kanaColorMap = generateKanaColorMap(config.kanaSubset);
+    const colorMapObject = Object.fromEntries(kanaColorMap);
+    
+    // Use solvable board generation for better gameplay
+    const solvableBranches = generateSolvableBoard(config, colorMapObject);
+    
+    return {
+      branches: solvableBranches,
+      selectedBranch: null,
+      moves: 0,
+      score: 0,
+      isComplete: false,
+      learnedKana: [],
+      kanaColorMap,
+    };
+  }, [level, generateSolvableBoard]);
 
   const [gameState, setGameState] = useState<GameState>(() => createInitialState());
   const [gameHistory, setGameHistory] = useState<GameState[]>([]);
