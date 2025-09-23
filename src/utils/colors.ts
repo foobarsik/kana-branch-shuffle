@@ -6,7 +6,7 @@ export const KANA_COLOR_BY_CHAR: Record<string, string> = {
   'あ': '#E91E63', // pink/magenta
   'い': '#FF5722', // deep orange
   'う': '#F4B400', // orange
-  'え': '#FFEB3B', // yellow
+  'え': '#9C27B0', // deep purple
   'お': '#8BC34A', // light green
 
   // K-row
