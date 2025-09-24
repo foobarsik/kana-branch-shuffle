@@ -5,7 +5,7 @@ export enum DisplayMode {
 }
 
 export const DISPLAY_MODE_LABELS = {
-  [DisplayMode.KANA_ONLY]: 'Только каны',
-  [DisplayMode.LEFT_KANA_RIGHT_ROMAJI]: 'Левая - каны, правая - перевод',
-  [DisplayMode.SMART_FLIP]: 'Умное переворачивание'
+  [DisplayMode.KANA_ONLY]: 'Kana Only',
+  [DisplayMode.LEFT_KANA_RIGHT_ROMAJI]: 'Left Kana, Right Romaji',
+  [DisplayMode.SMART_FLIP]: 'Smart Flip'
 } as const;

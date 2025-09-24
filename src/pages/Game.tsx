@@ -208,7 +208,14 @@ export const Game: React.FC = () => {
 
             {/* Display Mode & Audio Controls */}
             <div className="flex items-center gap-2">
-              <Select value={displayMode} onValueChange={(value) => setDisplayMode(value as DisplayMode)}>
+              <AudioControls compact={true} />
+            </div>
+          </div>
+
+          {/* Row 2: Progress & Metrics */}
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="flex-1 min-w-0">
+            <Select value={displayMode} onValueChange={(value) => setDisplayMode(value as DisplayMode)}>
                 <SelectTrigger className="w-[140px] h-8 text-xs">
                   <SelectValue />
                 </SelectTrigger>
@@ -220,105 +227,10 @@ export const Game: React.FC = () => {
                   ))}
                 </SelectContent>
               </Select>
-              <AudioControls compact={true} />
-            </div>
-          </div>
-
-          {/* Row 2: Progress & Metrics */}
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between text-[10px] md:text-xs text-muted-foreground mb-1">
-                <span className="font-medium text-foreground">Progress in this level</span>
-                <span className="font-medium text-foreground">
-                  {gameState.learnedKana.length}/{levelConfig?.kanaCount || 5}
-                </span>
-              </div>
-              <Progress value={(gameState.learnedKana.length / (levelConfig?.kanaCount || 5)) * 100} className="h-2" />
             </div>
             <div className="flex items-center gap-3 text-[10px] md:text-sm text-muted-foreground shrink-0">
               <span>Score: <span className="font-medium text-foreground">{gameState.score}</span></span>
               <span>Moves: <span className="font-medium text-foreground">{gameState.moves}</span></span>
-            </div>
-          </div>
-
-          {/* Row 3: Actions */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 md:gap-2">
-              <Button
-                onClick={goToPreviousLevel}
-                disabled={currentLevelNumber <= 1}
-                variant="outline"
-                size="icon"
-                title="Previous Level"
-                aria-label="Previous Level"
-                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="hidden md:inline ml-2">Prev level</span>
-              </Button>
-              <Button
-                onClick={goToNextLevel}
-                disabled={currentLevelNumber >= maxLevel}
-                variant="outline"
-                size="icon"
-                title="Next Level"
-                aria-label="Next Level"
-                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
-              >
-                <ArrowRight className="w-4 h-4" />
-                <span className="hidden md:inline ml-2">Next level</span>
-              </Button>
-            </div>
-
-            <div className="flex items-center gap-1 md:gap-2">
-              <Button
-                onClick={undoMove}
-                disabled={!canUndo}
-                variant="outline"
-                size="icon"
-                title="Undo"
-                aria-label="Undo"
-                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
-              >
-                <Undo2 className="w-4 h-4" />
-                <span className="hidden md:inline ml-2">Undo</span>
-              </Button>
-              <Button
-                onClick={restartPreset}
-                variant="outline"
-                size="icon"
-                title="Restart (return to initial preset)"
-                aria-label="Restart (return to initial preset)"
-                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
-              >
-                <RotateCcw className="w-4 h-4" />
-                <span className="hidden md:inline ml-2">Restart</span>
-              </Button>
-              <Button
-                onClick={resetGame}
-                variant="outline"
-                size="icon"
-                title="Shuffle (new layout)"
-                aria-label="Shuffle (new layout)"
-                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
-              >
-                <ShuffleIcon className="w-4 h-4" />
-                <span className="hidden md:inline ml-2">Shuffle</span>
-              </Button>
-            </div>
-
-            <div>
-              <Button
-                onClick={goToLevelSelect}
-                variant="secondary"
-                size="icon"
-                title="Level Select"
-                aria-label="Level Select"
-                className="h-9 w-9 md:h-8 md:w-auto md:px-3"
-              >
-                <Trophy className="w-4 h-4" />
-                <span className="hidden md:inline ml-2">Levels</span>
-              </Button>
             </div>
           </div>
         </div>
@@ -364,8 +276,46 @@ export const Game: React.FC = () => {
             </div>
           </div>
           
+          {/* Action Buttons */}
+          <div className="flex justify-center items-center gap-1 md:gap-2 mt-6">
+            <Button
+              onClick={undoMove}
+              disabled={!canUndo}
+              variant="outline"
+              size="icon"
+              title="Undo"
+              aria-label="Undo"
+              className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+            >
+              <Undo2 className="w-4 h-4" />
+              <span className="hidden md:inline ml-2">Undo</span>
+            </Button>
+            <Button
+              onClick={restartPreset}
+              variant="outline"
+              size="icon"
+              title="Restart (return to initial preset)"
+              aria-label="Restart (return to initial preset)"
+              className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span className="hidden md:inline ml-2">Restart</span>
+            </Button>
+            <Button
+              onClick={resetGame}
+              variant="outline"
+              size="icon"
+              title="Shuffle (new layout)"
+              aria-label="Shuffle (new layout)"
+              className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+            >
+              <ShuffleIcon className="w-4 h-4" />
+              <span className="hidden md:inline ml-2">Shuffle</span>
+            </Button>
+          </div>
+
           {/* Instructions */}
-          <div className="text-center mt-8 text-sm text-muted-foreground p-2">
+          <div className="text-center mt-4 text-sm text-muted-foreground p-2">
           <p>Group 4 identical kana.</p>
           <p>Tap a branch, then another to move.</p>
           <p>Place only on empty branch or next to same kana.</p>
