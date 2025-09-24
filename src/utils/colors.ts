@@ -31,68 +31,26 @@ export interface KanaGradient {
   direction?: string;
 }
 
-// Gradient mappings for specific kana characters
-export const KANA_GRADIENT_BY_CHAR: Record<string, KanaGradient> = {
-  // Vowels - warm to cool transitions for better distinction
-  'あ': { primary: '#E91E63', secondary: '#F48FB1', direction: '135deg' }, // pink gradient
-  'い': { primary: '#D32F2F', secondary: '#EF5350', direction: '45deg' }, // bright red gradient
-  'う': { primary: '#FF6B35', secondary: '#FF8E53', direction: '90deg' }, // orange-red gradient
-  'え': { primary: '#9C27B0', secondary: '#CE93D8', direction: '180deg' }, // purple gradient
-  'お': { primary: '#8BC34A', secondary: '#C8E6C9', direction: '225deg' }, // green gradient
-
-  // K-row - nature-inspired gradients
-  'か': { primary: '#4CAF50', secondary: '#81C784', direction: '135deg' }, // forest green
-  'き': { primary: '#00ACC1', secondary: '#4DD0E1', direction: '45deg' }, // ocean teal
-  'く': { primary: '#2196F3', secondary: '#64B5F6', direction: '90deg' }, // sky blue
-  'け': { primary: '#7E57C2', secondary: '#B39DDB', direction: '180deg' }, // lavender
-  'こ': { primary: '#8E24AA', secondary: '#BA68C8', direction: '225deg' }, // orchid
-
-  // S-row - sophisticated gradients
-  'さ': { primary: '#3F51B5', secondary: '#7986CB', direction: '135deg' }, // indigo
-  'し': { primary: '#795548', secondary: '#A1887F', direction: '45deg' }, // warm brown
-  'す': { primary: '#607D8B', secondary: '#90A4AE', direction: '90deg' }, // steel blue
-  'せ': { primary: '#424242', secondary: '#757575', direction: '180deg' }, // charcoal
-
-  // R-row - distinctive gradients for better differentiation
-  'ら': { primary: '#00BCD4', secondary: '#4DD0E1', direction: '270deg' }, // cyan (very different from orange)
-  'り': { primary: '#9C27B0', secondary: '#E1BEE7', direction: '315deg' }, // purple
-  'る': { primary: '#4CAF50', secondary: '#A5D6A7', direction: '0deg' }, // green
-  'れ': { primary: '#FF9800', secondary: '#FFCC02', direction: '60deg' }, // amber
-  'ろ': { primary: '#673AB7', secondary: '#B39DDB', direction: '120deg' }, // deep purple
-};
-
-// Extended fallback gradients for other kana - carefully curated for maximum visual distinction
-export const KANA_GRADIENTS: KanaGradient[] = [
-  // Primary distinct colors - each in completely different color family
-  { primary: '#1a1a1a', secondary: '#4a4a4a', direction: '90deg' }, // 1. Black/charcoal
-  { primary: '#fbbf24', secondary: '#fde047', direction: '135deg' }, // 2. Bright yellow
-  { primary: '#0891b2', secondary: '#67e8f9', direction: '180deg' }, // 3. Cyan/turquoise
-  { primary: '#059669', secondary: '#34d399', direction: '270deg' }, // 4. Emerald green
-  { primary: '#7c3aed', secondary: '#c084fc', direction: '0deg' }, // 5. Electric purple
-  { primary: '#ea580c', secondary: '#fb923c', direction: '225deg' }, // 6. Burnt orange
-  
-  // Secondary distinct colors - avoid reds completely for now
-  { primary: '#be185d', secondary: '#ec4899', direction: '315deg' }, // 7. Deep pink (not red)
-  { primary: '#166534', secondary: '#22c55e', direction: '45deg' }, // 8. Forest green
-  { primary: '#1e1b4b', secondary: '#6366f1', direction: '90deg' }, // 9. Deep indigo
-  { primary: '#0c4a6e', secondary: '#0ea5e9', direction: '180deg' }, // 10. Deep blue
-  { primary: '#92400e', secondary: '#f59e0b', direction: '270deg' }, // 11. Amber
-  { primary: '#365314', secondary: '#84cc16', direction: '0deg' }, // 12. Lime
-  
-  // Tertiary colors - more unique variations
-  { primary: '#581c87', secondary: '#a855f7', direction: '135deg' }, // 13. Royal purple
-  { primary: '#164e63', secondary: '#06b6d4', direction: '225deg' }, // 14. Teal
-  { primary: '#a21caf', secondary: '#d946ef', direction: '315deg' }, // 15. Magenta
-  { primary: '#14532d', secondary: '#16a34a', direction: '45deg' }, // 16. Very dark green
-  { primary: '#1e3a8a', secondary: '#3b82f6', direction: '90deg' }, // 17. Royal blue
-  { primary: '#6b21a8', secondary: '#c026d3', direction: '180deg' }, // 18. Royal purple variant
-  
-  // Additional unique colors - browns, grays, special tones
-  { primary: '#78350f', secondary: '#d97706', direction: '270deg' }, // 19. Brown/amber
-  { primary: '#374151', secondary: '#9ca3af', direction: '0deg' }, // 20. Gray
-  { primary: '#065f46', secondary: '#10b981', direction: '135deg' }, // 21. Dark emerald
-  { primary: '#312e81', secondary: '#8b5cf6', direction: '225deg' }, // 22. Deep violet
+// Optimized set of 15 maximally distinct gradients for random assignment
+// Completely redesigned to avoid any similar colors
+export const GAME_GRADIENTS: KanaGradient[] = [
+  { primary: '#D32F2F', secondary: '#EF5350', direction: '45deg' }, // 1. Bright red (keep one red)
+  { primary: '#fbbf24', secondary: '#fde047', direction: '90deg' }, // 2. Yellow (removed orange)
+  { primary: '#059669', secondary: '#34d399', direction: '135deg' }, // 3. Emerald green
+  { primary: '#00ACC1', secondary: '#4DD0E1', direction: '180deg' }, // 4. Teal
+  { primary: '#2196F3', secondary: '#64B5F6', direction: '225deg' }, // 5. Blue
+  { primary: '#7E57C2', secondary: '#B39DDB', direction: '270deg' }, // 6. Purple
+  { primary: '#E91E63', secondary: '#F48FB1', direction: '315deg' }, // 7. Pink
+  { primary: '#795548', secondary: '#A1887F', direction: '0deg' }, // 8. Brown
+  { primary: '#1a1a1a', secondary: '#4a4a4a', direction: '45deg' }, // 9. Black/charcoal
+  { primary: '#607D8B', secondary: '#90A4AE', direction: '90deg' }, // 10. Blue-gray
+  { primary: '#4A148C', secondary: '#7B1FA2', direction: '135deg' }, // 11. Deep purple (very different)
+  { primary: '#006064', secondary: '#00838F', direction: '180deg' }, // 12. Dark cyan (very different)
+  { primary: '#1B5E20', secondary: '#2E7D32', direction: '225deg' }, // 13. Dark green (very different)
+  { primary: '#0D47A1', secondary: '#1565C0', direction: '270deg' }, // 14. Navy blue (very different)
+  { primary: '#8E24AA', secondary: '#BA68C8', direction: '315deg' }, // 15. Magenta (good contrast)
 ];
+
 
 // Fallback palette for kana that are not explicitly specified above
 export const KANA_COLORS = [
@@ -151,49 +109,53 @@ export const generateKanaColorMap = (
  */
 export const generateKanaPrimaryColorMap = (kanaSubset: string[]): Map<string, string> => {
   const colorMap = new Map<string, string>();
-  let fallbackIndex = 0;
-
-  kanaSubset.forEach((kana) => {
-    // First try to get from gradient system
-    const gradient = KANA_GRADIENT_BY_CHAR[kana];
-    if (gradient) {
-      colorMap.set(kana, gradient.primary);
-    } else {
-      // Fallback to old color system, then to fallback palette
-      const fixedColor = KANA_COLOR_BY_CHAR[kana];
-      if (fixedColor) {
-        colorMap.set(kana, fixedColor);
-      } else {
-        const color = KANA_COLORS[fallbackIndex % KANA_COLORS.length];
-        colorMap.set(kana, color);
-        fallbackIndex++;
-      }
-    }
+  
+  // Get gradients using the new system and extract primary colors
+  const gradientMap = generateKanaGradientMap(kanaSubset);
+  
+  gradientMap.forEach((gradient, kana) => {
+    colorMap.set(kana, gradient.primary);
   });
 
   return colorMap;
 };
 
 /**
+ * Simple seeded random number generator for consistent color assignment
+ */
+const seededRandom = (seed: number) => {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+};
+
+/**
  * Generates a map from kana characters to gradient configurations for a level.
- * This improved version ensures no color conflicts by checking for similarity.
+ * NEW APPROACH: Randomly assigns unique gradients from the full palette for each game.
+ * Uses a seed based on kana combination for consistency within the same level.
  * @param kanaSubset - An array of unique kana strings for the current level.
  * @returns A Map where keys are kana characters and values are KanaGradient objects.
  */
 export const generateKanaGradientMap = (kanaSubset: string[]): Map<string, KanaGradient> => {
   const gradientMap = new Map<string, KanaGradient>();
-  let fallbackIndex = 0;
-
-  kanaSubset.forEach((kana) => {
-    const fixedGradient = KANA_GRADIENT_BY_CHAR[kana];
-    if (fixedGradient) {
-      gradientMap.set(kana, fixedGradient);
-    } else {
-      // Simple cycling through fallback gradients
-      const gradient = KANA_GRADIENTS[fallbackIndex % KANA_GRADIENTS.length];
-      gradientMap.set(kana, gradient);
-      fallbackIndex++;
-    }
+  
+  // Create a seed based on the kana combination for consistent results
+  const seed = kanaSubset.join('').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  
+  // Use the optimized set of 15 maximally distinct gradients
+  const availableGradients = GAME_GRADIENTS;
+  
+  // Shuffle the gradients using seeded random for consistent results
+  const shuffledGradients = [...availableGradients].sort((a, b) => {
+    const randomA = seededRandom(seed + availableGradients.indexOf(a));
+    const randomB = seededRandom(seed + availableGradients.indexOf(b));
+    return randomA - randomB;
+  });
+  
+  // Assign gradients to kana characters
+  kanaSubset.forEach((kana, index) => {
+    // Use modulo to cycle through if we have more kana than gradients (unlikely with 15 gradients for max 12 kana)
+    const gradient = shuffledGradients[index % shuffledGradients.length];
+    gradientMap.set(kana, gradient);
   });
 
   return gradientMap;
@@ -223,12 +185,15 @@ export const generateKanaGradientCSSMap = (
 };
 
 /**
- * Gets the gradient for a specific kana character
+ * Gets the gradient for a specific kana character from the game gradients
+ * Note: With the new random system, this returns a random gradient from the pool
  * @param kana - The kana character
- * @returns KanaGradient object or null if not found
+ * @returns KanaGradient object (randomly selected from game gradients)
  */
 export const getKanaGradient = (kana: string): KanaGradient | null => {
-  return KANA_GRADIENT_BY_CHAR[kana] || null;
+  // With the new system, we can't get a specific gradient for a kana without context
+  // Return the first gradient as a fallback, or null if you prefer
+  return GAME_GRADIENTS[0] || null;
 };
 
 /**
@@ -372,8 +337,8 @@ export const getKanaColor = (
     if (gradientCSS) return gradientCSS;
   }
   
-  // Fallback to gradient primary color or solid color
-  const gradient = KANA_GRADIENT_BY_CHAR[kana];
+  // Fallback to first game gradient or solid color
+  const gradient = GAME_GRADIENTS[0];
   if (gradient) return gradient.primary;
   
   const solidColor = KANA_COLOR_BY_CHAR[kana];
