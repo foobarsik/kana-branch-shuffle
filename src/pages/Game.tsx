@@ -277,40 +277,37 @@ export const Game: React.FC = () => {
           </div>
           
           {/* Action Buttons */}
-          <div className="flex justify-center items-center gap-1 md:gap-2 mt-6">
+          <div className="flex justify-center items-center gap-2 md:gap-2 mt-6">
             <Button
               onClick={undoMove}
               disabled={!canUndo}
               variant="outline"
-              size="icon"
               title="Undo"
               aria-label="Undo"
-              className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              className="h-9 md:h-8 px-3 whitespace-nowrap inline-flex items-center gap-2"
             >
               <Undo2 className="w-4 h-4" />
-              <span className="hidden md:inline ml-2">Undo</span>
+              <span className="inline">Undo</span>
             </Button>
             <Button
               onClick={restartPreset}
               variant="outline"
-              size="icon"
               title="Restart (return to initial preset)"
               aria-label="Restart (return to initial preset)"
-              className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              className="h-9 md:h-8 px-3 whitespace-nowrap inline-flex items-center gap-2"
             >
               <RotateCcw className="w-4 h-4" />
-              <span className="hidden md:inline ml-2">Restart</span>
+              <span className="inline">Restart</span>
             </Button>
             <Button
               onClick={resetGame}
               variant="outline"
-              size="icon"
               title="Shuffle (new layout)"
               aria-label="Shuffle (new layout)"
-              className="h-9 w-9 md:h-8 md:w-auto md:px-3"
+              className="h-9 md:h-8 px-3 whitespace-nowrap inline-flex items-center gap-2"
             >
               <ShuffleIcon className="w-4 h-4" />
-              <span className="hidden md:inline ml-2">Shuffle</span>
+              <span className="inline">Shuffle</span>
             </Button>
           </div>
 
