@@ -19,6 +19,67 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
   // Keep an immutable snapshot of the initially generated branches for the current preset
   const initialBranchesRef = useRef<Branch[] | null>(null);
 
+  // Helper to check if a branch is complete
+  const isBranchComplete = useCallback((branch: Branch, capacity: number): boolean => {
+    if (branch.tiles.length !== capacity || branch.tiles.length === 0) return false;
+    const firstKana = branch.tiles[0].kana;
+    return branch.tiles.every(tile => tile.kana === firstKana);
+  }, []);
+
+  // Shuffle board to ensure no branches are complete at the start
+  const ensureNoCompletedBranches = useCallback((initialBranches: Branch[], capacity: number): Branch[] => {
+    let branches = [...initialBranches.map(b => ({ ...b, tiles: [...b.tiles] }))];
+    let attempts = 0;
+
+    while (attempts < 50) { // Safety break to avoid infinite loops
+      const completedBranchIndex = branches.findIndex(b => isBranchComplete(b, capacity));
+
+      if (completedBranchIndex === -1) {
+        console.log('✅ Board is valid, no pre-completed branches.');
+        return branches; // No completed branches found
+      }
+
+      console.log(`⚠️ Found completed branch at index ${completedBranchIndex}. Reshuffling...`);
+
+      const completedBranch = branches[completedBranchIndex];
+      const kanaToSwap = completedBranch.tiles[0].kana;
+
+      // Find a branch to swap with
+      let swapCandidateIndex = -1;
+      for (let i = 0; i < branches.length; i++) {
+        if (i === completedBranchIndex) continue;
+        const candidateBranch = branches[i];
+        if (candidateBranch.tiles.length > 0 && candidateBranch.tiles[candidateBranch.tiles.length - 1].kana !== kanaToSwap) {
+          swapCandidateIndex = i;
+          break;
+        }
+      }
+
+      if (swapCandidateIndex !== -1) {
+        // Swap the last tile
+        const tileToMove = branches[completedBranchIndex].tiles.pop()!;
+        const tileToReceive = branches[swapCandidateIndex].tiles.pop()!;
+        branches[completedBranchIndex].tiles.push(tileToReceive);
+        branches[swapCandidateIndex].tiles.push(tileToMove);
+      } else {
+        // Fallback: if no ideal swap found, just shuffle the whole board again
+        // This is a brute-force but effective way to resolve tricky situations
+        console.warn('Could not find a suitable swap partner. Shuffling all tiles.');
+        const allTiles = branches.flatMap(b => b.tiles).sort(() => Math.random() - 0.5);
+        let tileIndex = 0;
+        branches.forEach(branch => {
+          const newTileCount = branch.tiles.length;
+          branch.tiles = allTiles.slice(tileIndex, tileIndex + newTileCount);
+          tileIndex += newTileCount;
+        });
+      }
+      attempts++;
+    }
+
+    console.error('❌ Failed to create a board without pre-completed branches after 50 attempts.');
+    return initialBranches; // Return original if we can't fix it
+  }, [isBranchComplete]);
+
   // Simple and reliable board generation
   const generateSolvableBoard = useCallback((levelConfig: LevelConfig, colorMap: Record<string, string>): Branch[] => {
     console.log(`🎮 Generating board for level ${levelConfig.level}`);
@@ -88,9 +149,12 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     if (totalPlaced !== allTiles.length) {
       console.error(`❌ Lost tiles! Expected: ${allTiles.length}, Placed: ${totalPlaced}`);
     }
-    
-    return branches;
-  }, []);
+
+    // Ensure no branches are already completed
+    const finalBranches = ensureNoCompletedBranches(branches, levelConfig.branchCapacity);
+
+    return finalBranches;
+  }, [ensureNoCompletedBranches]);
 
   const generateTiles = useCallback((levelConfig: LevelConfig, colorMap: Record<string, string>): GameState => {
     // Get level configuration or use default

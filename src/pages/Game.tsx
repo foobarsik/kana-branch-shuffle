@@ -276,7 +276,7 @@ export const Game: React.FC = () => {
         <div className="w-full md:max-w-3xl">
           <div className="grid grid-cols-2 gap-3 md:gap-4">
             {/* First column */}
-            <div className="flex flex-col gap-3 md:gap-4">
+            <div className="flex flex-col gap-2 md:gap-3">
               {gameState.branches.slice(0, Math.ceil(gameState.branches.length / 2)).map((branch) => (
                 <GameBranch
                   key={branch.id}
@@ -291,7 +291,7 @@ export const Game: React.FC = () => {
               ))}
             </div>
             {/* Second column */}
-            <div className="flex flex-col gap-3 md:gap-4 mt-[25px] md:mt-0">
+            <div className="flex flex-col gap-2 md:gap-3 mt-[25px] md:mt-0">
               {gameState.branches.slice(Math.ceil(gameState.branches.length / 2)).map((branch) => (
                 <GameBranch
                   key={branch.id}
