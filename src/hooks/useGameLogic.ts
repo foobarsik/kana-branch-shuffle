@@ -577,6 +577,24 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     }, 100);
   }, [checkForCompletion]);
 
+  // Estimate a reasonable "par" number of moves for current level based on the initial board
+  const estimateParMoves = useCallback((): number => {
+    const initial = initialBranchesRef.current;
+    if (!initial || initial.length === 0) return 30; // sensible default
+    const totalTiles = initial.reduce((sum, b) => sum + b.tiles.length, 0);
+    // Heuristic: par ~ tiles * 1.2 (tuned to allow enough slack on higher levels)
+    return Math.max(15, Math.ceil(totalTiles * 1.2));
+  }, []);
+
+  // Compute score normalized by par so higher levels (with larger boards) are not punished
+  const computeScore = useCallback((moves: number): number => {
+    const par = estimateParMoves();
+    // Allow plenty of headroom before hitting zero
+    const maxMovesForZero = Math.max(par * 2.5, par + 15);
+    const penaltyPerMove = 1000 / maxMovesForZero;
+    return Math.max(0, Math.round(1000 - moves * penaltyPerMove));
+  }, [estimateParMoves]);
+
   const moveTile = useCallback((sourceBranchId: string, targetBranchId: string) => {
     console.log('🎲 moveTile called:', { from: sourceBranchId, to: targetBranchId });
     if (sourceBranchId === targetBranchId) {
@@ -681,7 +699,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           branches: newBranches,
           selectedBranch: null,
           moves: newMoves,
-          score: Math.max(0, 1000 - newMoves * 10),
+          score: computeScore(newMoves),
           isComplete: false,
           learnedKana: newLearnedKana,
           kanaColorMap: prevState.kanaColorMap,
@@ -707,13 +725,13 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         branches: updatedBranches,
         selectedBranch: null,
         moves: newMoves,
-        score: Math.max(0, 1000 - newMoves * 10),
+        score: computeScore(newMoves),
         isComplete,
         learnedKana: prevState.learnedKana,
         kanaColorMap: prevState.kanaColorMap,
       };
     });
-  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves, displayMode, animateFlipCompletion, animateSakuraCompletion]);
+  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves, displayMode, animateFlipCompletion, animateSakuraCompletion, computeScore]);
 
   const selectBranch = useCallback((branchId: string) => {
     console.log('🎯 selectBranch called:', branchId);
@@ -841,7 +859,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
             branches: newBranches,
             selectedBranch: null,
             moves: newMoves,
-            score: Math.max(0, 1000 - newMoves * 10),
+            score: computeScore(newMoves),
             isComplete: false,
             learnedKana: newLearnedKanaNow,
             kanaColorMap: prevState.kanaColorMap,
@@ -866,7 +884,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           branches: updatedBranches,
           selectedBranch: null,
           moves: newMoves,
-          score: Math.max(0, 1000 - newMoves * 10),
+          score: computeScore(newMoves),
           isComplete,
           learnedKana: prevState.learnedKana,
           kanaColorMap: prevState.kanaColorMap,
@@ -875,7 +893,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
       return prevState;
     });
-  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast, displayMode, animateFlipCompletion, animateSakuraCompletion]);
+  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast, displayMode, animateFlipCompletion, animateSakuraCompletion, computeScore]);
 
   const undoMove = useCallback(() => {
     if (gameHistory.length > 0) {
