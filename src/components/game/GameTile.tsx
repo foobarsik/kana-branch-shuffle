@@ -134,7 +134,7 @@ export const GameTile: React.FC<GameTileProps> = ({
             <div className="absolute inset-0 flex items-center justify-center">
               <span
                 className={cn(
-                  "font-bold text-white select-none",
+                  "font-medium text-white select-none",
                   "text-xl md:text-3xl",
                   isSelected && "text-yellow-200"
                 )}
@@ -171,7 +171,7 @@ export const GameTile: React.FC<GameTileProps> = ({
             <div className="absolute mb-1 inset-0 flex items-center justify-center">
               <span 
                 className={cn(
-                  "font-bold drop-shadow-lg select-none text-lg md:text-3xl",
+                  "font-medium drop-shadow-lg select-none text-lg md:text-3xl",
                   showRomajiByDefault ? "text-white" : "text-yellow-300"
                 )}
                 style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
