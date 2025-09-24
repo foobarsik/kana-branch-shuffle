@@ -32,18 +32,19 @@ export interface KanaGradient {
 }
 
 export const GAME_GRADIENTS: KanaGradient[] = [
-  { primary: '#D32F2F', secondary: '#E53935', direction: '45deg' },   // 1. Red
-  { primary: '#FF1CF7', secondary: '#FF6EC7', direction: '90deg' },   // 2. Hot Pink / Fuchsia
-  { primary: '#4DD0E1', secondary: '#B2EBF2', direction: '180deg' }, // 3. Cyber Aqua
-  { primary: '#C77DFF', secondary: '#9D4EDD', direction: '180deg' },  // 4. Lavender Glow
-  { primary: '#FF9E80', secondary: '#FF6F61', direction: '225deg' },  // 5. Peach Digital
-  { primary: '#D4FF00', secondary: '#00C9A7', direction: '270deg' },  // 6. Acid Green → Teal
-  { primary: '#424242', secondary: '#4A4A4A', direction: '180deg' },  // 7. Black (Vaporwave)
-  { primary: '#06D6A0', secondary: '#118AB2', direction: '0deg' },    // 8. Aqua Mint → Deep Blue
-  { primary: '#F72585', secondary: '#B5179E', direction: '45deg' },   // 9. Bold Magenta → Purple
-  { primary: '#673ab7', secondary: '#7209B7', direction: '90deg' },   // 10. Deep Violet → Indigo
-  { primary: '#4361EE', secondary: '#4895EF', direction: '135deg' },  // 11. Blue Glow
-  { primary: '#F4B400', secondary: '#FFD54F', direction: '90deg' },  // 12. Yellow
+  { primary: '#f44336', secondary: '#f44336', direction: '45deg' },   // 2. Красный
+  { primary: '#ff9800', secondary: '#ff9800', direction: '45deg' },   // 3. Оранжевый
+  { primary: '#ffeb3b', secondary: '#ffeb3b', direction: '45deg' },   // 4. Желтый
+  { primary: '#8bc34a', secondary: '#8bc34a', direction: '45deg' },   // 5. Салатовый
+  { primary: '#4caf50', secondary: '#4caf50', direction: '45deg' },   // 6. Зеленый
+  { primary: '#00acc1', secondary: '#00acc1', direction: '45deg' },   // 7. Бирюзовый
+  { primary: '#2196f3', secondary: '#2196f3', direction: '45deg' },   // 8. Синий
+  { primary: '#673ab7', secondary: '#673ab7', direction: '45deg' },   // 9. Фиолетовый
+  { primary: '#9c27b0', secondary: '#9c27b0', direction: '45deg' },   // 10. Малиновый
+  { primary: '#3f51b5', secondary: '#3f51b5', direction: '45deg' },   // 11. Темно-синий
+  { primary: '#795548', secondary: '#795548', direction: '45deg' },   // 12. Коричневый
+  { primary: '#607d8b', secondary: '#607d8b', direction: '45deg' },   // 13. Серо-синий
+  { primary: '#424242', secondary: '#424242', direction: '45deg' },   // 14. Серый
 ];
 
 // Fallback palette for kana that are not explicitly specified above
