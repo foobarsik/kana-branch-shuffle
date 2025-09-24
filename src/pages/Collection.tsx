@@ -49,7 +49,7 @@ export const Collection: React.FC = () => {
         </div>
 
         {/* Progress Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card className="p-6">
             <div className="flex items-center gap-3 mb-4">
               <BookOpen className="w-6 h-6 text-blue-500" />
@@ -103,16 +103,16 @@ export const Collection: React.FC = () => {
               </div>
             </div>
           </Card>
-        </div>
+        </div> */}
 
         {/* Kana Grid */}
         <div>
-          <div className="flex items-center justify-between mb-6">
+          {/* <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">Коллекция кана</h2>
             <div className="text-sm text-muted-foreground">
               {learnedKana.length} из {totalKana} изучено ({completionPercentage}%)
             </div>
-          </div>
+          </div> */}
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {HIRAGANA_SET.map((kanaData) => {

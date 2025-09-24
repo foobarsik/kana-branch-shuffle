@@ -22,19 +22,19 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
   const rarityColor = getRarityColor(achievement.rarity);
   
   const rarityLabels = {
-    common: 'Обычное',
-    rare: 'Редкое',
-    epic: 'Эпическое',
-    legendary: 'Легендарное'
+    common: 'Common',
+    rare: 'Rare',
+    epic: 'Epic',
+    legendary: 'Legendary'
   };
 
   const categoryLabels = {
-    learning: 'Обучение',
-    efficiency: 'Эффективность',
-    speed: 'Скорость',
-    streak: 'Серии',
-    mastery: 'Мастерство',
-    special: 'Особое'
+    learning: 'Learning',
+    efficiency: 'Efficiency',
+    speed: 'Speed',
+    streak: 'Streak',
+    mastery: 'Mastery',
+    special: 'Special'
   };
 
   return (
@@ -124,7 +124,7 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
       {showProgress && achievement.progress !== undefined && !achievement.isUnlocked && (
         <div className="mb-3">
           <div className="flex justify-between items-center mb-1">
-            <span className="text-xs text-muted-foreground">Прогресс</span>
+            <span className="text-xs text-muted-foreground">Progress</span>
             <span className="text-xs text-muted-foreground">{achievement.progress}%</span>
           </div>
           <Progress value={achievement.progress} className="h-1" />
