@@ -31,26 +31,20 @@ export interface KanaGradient {
   direction?: string;
 }
 
-// Optimized set of 15 maximally distinct gradients for random assignment
-// Completely redesigned to avoid any similar colors
 export const GAME_GRADIENTS: KanaGradient[] = [
-  { primary: '#D32F2F', secondary: '#EF5350', direction: '45deg' }, // 1. Bright red (keep one red)
-  { primary: '#fbbf24', secondary: '#fde047', direction: '90deg' }, // 2. Yellow (removed orange)
-  { primary: '#059669', secondary: '#34d399', direction: '135deg' }, // 3. Emerald green
-  { primary: '#00ACC1', secondary: '#4DD0E1', direction: '180deg' }, // 4. Teal
-  { primary: '#2196F3', secondary: '#64B5F6', direction: '225deg' }, // 5. Blue
-  { primary: '#7E57C2', secondary: '#B39DDB', direction: '270deg' }, // 6. Purple
-  { primary: '#E91E63', secondary: '#F48FB1', direction: '315deg' }, // 7. Pink
-  { primary: '#795548', secondary: '#A1887F', direction: '0deg' }, // 8. Brown
-  { primary: '#1a1a1a', secondary: '#4a4a4a', direction: '45deg' }, // 9. Black/charcoal
-  { primary: '#607D8B', secondary: '#90A4AE', direction: '90deg' }, // 10. Blue-gray
-  { primary: '#4A148C', secondary: '#7B1FA2', direction: '135deg' }, // 11. Deep purple (very different)
-  { primary: '#006064', secondary: '#00838F', direction: '180deg' }, // 12. Dark cyan (very different)
-  { primary: '#1B5E20', secondary: '#2E7D32', direction: '225deg' }, // 13. Dark green (very different)
-  { primary: '#0D47A1', secondary: '#1565C0', direction: '270deg' }, // 14. Navy blue (very different)
-  { primary: '#8E24AA', secondary: '#BA68C8', direction: '315deg' }, // 15. Magenta (good contrast)
+  { primary: '#D8FF3E', secondary: '#BFFF00', direction: '45deg' },   // 1. Neon Lime
+  { primary: '#FF1CF7', secondary: '#FF6EC7', direction: '90deg' },   // 2. Hot Pink / Fuchsia
+  { primary: '#4DD0E1', secondary: '#B2EBF2', direction: '180deg' }, // 3. Cyber Aqua
+  { primary: '#C77DFF', secondary: '#9D4EDD', direction: '180deg' },  // 4. Lavender Glow
+  { primary: '#FF9E80', secondary: '#FF6F61', direction: '225deg' },  // 5. Peach Digital
+  { primary: '#D4FF00', secondary: '#00C9A7', direction: '270deg' },  // 6. Acid Green → Teal
+  { primary: '#1A1A1A', secondary: '#4A4A4A', direction: '180deg' },  // 7. Magenta → Cyan (Vaporwave)
+  { primary: '#06D6A0', secondary: '#118AB2', direction: '0deg' },    // 8. Aqua Mint → Deep Blue
+  { primary: '#F72585', secondary: '#B5179E', direction: '45deg' },   // 9. Bold Magenta → Purple
+  { primary: '#7209B7', secondary: '#3A0CA3', direction: '90deg' },   // 10. Deep Violet → Indigo
+  { primary: '#4361EE', secondary: '#4895EF', direction: '135deg' },  // 11. Blue Glow
+  { primary: '#4CC9F0', secondary: '#00B4D8', direction: '180deg' },  // 12. Neon Sky Blue
 ];
-
 
 // Fallback palette for kana that are not explicitly specified above
 export const KANA_COLORS = [
