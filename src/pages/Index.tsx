@@ -119,12 +119,6 @@ const Index = () => {
             </p>
           </Card>
         </div>
-
-        {/* Footer */}
-        <div className="text-sm text-muted-foreground">
-          <p>Learn the Japanese hiragana alphabet</p>
-          <p>through fun puzzle mechanics</p>
-        </div>
       </div>
     </div>
   );
