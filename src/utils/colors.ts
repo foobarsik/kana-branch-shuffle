@@ -32,18 +32,18 @@ export interface KanaGradient {
 }
 
 export const GAME_GRADIENTS: KanaGradient[] = [
-  { primary: '#D8FF3E', secondary: '#BFFF00', direction: '45deg' },   // 1. Neon Lime
+  { primary: '#D32F2F', secondary: '#E53935', direction: '45deg' },   // 1. Red
   { primary: '#FF1CF7', secondary: '#FF6EC7', direction: '90deg' },   // 2. Hot Pink / Fuchsia
   { primary: '#4DD0E1', secondary: '#B2EBF2', direction: '180deg' }, // 3. Cyber Aqua
   { primary: '#C77DFF', secondary: '#9D4EDD', direction: '180deg' },  // 4. Lavender Glow
   { primary: '#FF9E80', secondary: '#FF6F61', direction: '225deg' },  // 5. Peach Digital
   { primary: '#D4FF00', secondary: '#00C9A7', direction: '270deg' },  // 6. Acid Green → Teal
-  { primary: '#1A1A1A', secondary: '#4A4A4A', direction: '180deg' },  // 7. Magenta → Cyan (Vaporwave)
+  { primary: '#1A1A1A', secondary: '#4A4A4A', direction: '180deg' },  // 7. Black (Vaporwave)
   { primary: '#06D6A0', secondary: '#118AB2', direction: '0deg' },    // 8. Aqua Mint → Deep Blue
   { primary: '#F72585', secondary: '#B5179E', direction: '45deg' },   // 9. Bold Magenta → Purple
   { primary: '#7209B7', secondary: '#3A0CA3', direction: '90deg' },   // 10. Deep Violet → Indigo
   { primary: '#4361EE', secondary: '#4895EF', direction: '135deg' },  // 11. Blue Glow
-  { primary: '#4CC9F0', secondary: '#00B4D8', direction: '180deg' },  // 12. Neon Sky Blue
+  { primary: '#F4B400', secondary: '#FFD54F', direction: '90deg' },  // 12. Yellow
 ];
 
 // Fallback palette for kana that are not explicitly specified above
