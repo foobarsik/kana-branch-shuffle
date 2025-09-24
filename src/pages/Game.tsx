@@ -6,7 +6,7 @@ import { Branch } from "@/types/game";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon } from "lucide-react";
+import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon, Crown } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
 import { getLevelConfig, getMaxLevel } from "@/config/levels";
@@ -195,15 +195,11 @@ export const Game: React.FC = () => {
             </Button>
 
             <div className="flex-1 text-center min-w-0">
-              <div className="inline-flex items-center gap-2">
-                <Badge className="px-2 py-0.5 text-xs md:text-sm" variant="secondary">
-                  Level {currentLevelNumber}
-                </Badge>
-                {levelConfig && (
-                  <span className="text-xs md:text-sm text-muted-foreground truncate inline-block max-w-[40vw] md:max-w-none">
-                    {levelConfig.name}
-                  </span>
-                )}
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ffffff] border border-[#e5e7eb] rounded-lg shadow-sm">
+                <Crown className="w-4 h-4 text-yellow-500" />
+                <span className="text-xs md:text-sm font-medium text-gray-700">
+                  Level {currentLevelNumber} · {levelConfig?.name}
+                </span>
               </div>
             </div>
 
@@ -216,22 +212,25 @@ export const Game: React.FC = () => {
           {/* Row 2: Progress & Metrics */}
           <div className="flex items-center gap-3 md:gap-4">
             <div className="flex-1 min-w-0">
-            <Select value={displayMode} onValueChange={(value) => setDisplayMode(value as DisplayMode)}>
-                <SelectTrigger className="w-[140px] h-8 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(DISPLAY_MODE_LABELS).map(([mode, label]) => (
-                    <SelectItem key={mode} value={mode} className="text-xs">
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="inline-flex bg-gray-100 border border-gray-200 rounded-lg p-1">
+                {Object.entries(DISPLAY_MODE_LABELS).map(([mode, label]) => (
+                  <button
+                    key={mode}
+                    onClick={() => setDisplayMode(mode as DisplayMode)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                      displayMode === mode
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="flex items-center gap-3 text-[10px] md:text-sm text-muted-foreground shrink-0">
-              <span>Score: <span className="font-medium text-foreground">{gameState.score}</span></span>
-              <span>Moves: <span className="font-medium text-foreground">{gameState.moves}</span></span>
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-sm md:text-base font-semibold text-muted-foreground shrink-0">
+              <span>Score: <span className="font-bold text-foreground">{gameState.score}</span></span>
+              <span>Moves: <span className="font-bold text-foreground">{gameState.moves}</span></span>
             </div>
           </div>
         </div>
