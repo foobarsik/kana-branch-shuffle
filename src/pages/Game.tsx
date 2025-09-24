@@ -210,8 +210,8 @@ export const Game: React.FC = () => {
           </div>
 
           {/* Row 2: Progress & Metrics */}
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="flex-1 min-w-0">
+          <div className="flex flex-col min-[431px]:flex-row items-center justify-center min-[431px]:justify-between gap-2 md:gap-4">
+            <div className="w-full min-[431px]:w-auto min-[431px]:flex-1 flex justify-center min-[431px]:justify-start">
               <div className="inline-flex bg-gray-100 border border-gray-200 rounded-lg p-1">
                 {Object.entries(DISPLAY_MODE_LABELS).map(([mode, label]) => (
                   <button
@@ -228,7 +228,7 @@ export const Game: React.FC = () => {
                 ))}
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-sm md:text-base font-semibold text-muted-foreground shrink-0">
+            <div className="flex items-center justify-center min-[431px]:justify-end gap-4 text-sm md:text-base font-semibold text-muted-foreground shrink-0 whitespace-nowrap">
               <span>Score: <span className="font-bold text-foreground">{gameState.score}</span></span>
               <span>Moves: <span className="font-bold text-foreground">{gameState.moves}</span></span>
             </div>
