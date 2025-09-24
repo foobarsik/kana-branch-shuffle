@@ -32,19 +32,18 @@ export interface KanaGradient {
 }
 
 export const GAME_GRADIENTS: KanaGradient[] = [
-  { primary: '#f44336', secondary: '#f44336', direction: '45deg' },   // 2. Красный
-  { primary: '#ff9800', secondary: '#ff9800', direction: '45deg' },   // 3. Оранжевый
-  // { primary: '#ffeb3b', secondary: '#ffeb3b', direction: '45deg' },   // 4. Желтый
-  { primary: '#8bc34a', secondary: '#8bc34a', direction: '45deg' },   // 5. Салатовый
-  { primary: '#4caf50', secondary: '#4caf50', direction: '45deg' },   // 6. Зеленый
-  { primary: '#00acc1', secondary: '#00acc1', direction: '45deg' },   // 7. Бирюзовый
-  { primary: '#2196f3', secondary: '#2196f3', direction: '45deg' },   // 8. Синий
-  { primary: '#673ab7', secondary: '#673ab7', direction: '45deg' },   // 9. Фиолетовый
-  { primary: '#9c27b0', secondary: '#9c27b0', direction: '45deg' },   // 10. Малиновый
-  { primary: '#3f51b5', secondary: '#3f51b5', direction: '45deg' },   // 11. Темно-синий
-  { primary: '#795548', secondary: '#795548', direction: '45deg' },   // 12. Коричневый
-  { primary: '#607d8b', secondary: '#607d8b', direction: '45deg' },   // 13. Серо-синий
-  { primary: '#424242', secondary: '#424242', direction: '45deg' },   // 14. Серый
+  { primary: '#D81B60', secondary: '#E35183', direction: '45deg' }, // 1. Рубиновый
+  { primary: '#F4511E', secondary: '#F76A41', direction: '45deg' }, // 2. Терракотовый
+  { primary: '#FB8C00', secondary: '#FDA333', direction: '45deg' }, // 3. Янтарный
+  { primary: '#C0CA33', secondary: '#CDD655', direction: '45deg' }, // 4. Оливковый
+  { primary: '#43A047', secondary: '#5DB762', direction: '45deg' }, // 5. Изумрудный
+  { primary: '#00897B', secondary: '#26A69A', direction: '45deg' }, // 6. Тиал (зелёно-бирюзовый)
+  { primary: '#00ACC1', secondary: '#33BDD0', direction: '45deg' }, // 7. Циан
+  { primary: '#1E88E5', secondary: '#4CA0EA', direction: '45deg' }, // 8. Океанский синий
+  { primary: '#3949AB', secondary: '#5C6BC0', direction: '45deg' }, // 9. Индиго
+  { primary: '#5E35B1', secondary: '#7B56C0', direction: '45deg' }, // 10. Аметист
+  { primary: '#8E24AA', secondary: '#A94FC0', direction: '45deg' }, // 11. Виноградный
+  { primary: '#6D4C41', secondary: '#8D6E63', direction: '45deg' }, // 12. Коричневый (натуральный)
 ];
 
 // Fallback palette for kana that are not explicitly specified above
