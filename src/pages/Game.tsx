@@ -38,12 +38,13 @@ export const Game: React.FC = () => {
     showKanaPopup,
     closeKanaPopup,
     flippingTiles,
+    sakuraAnimatingTiles,
     selectedTileCount,
     currentLevel,
     isLevelComplete,
     newAchievements,
     clearNewAchievements,
-  } = useGameLogic({ level: currentLevelNumber });
+  } = useGameLogic({ level: currentLevelNumber, displayMode });
 
   // Get level configuration and player progress
   const levelConfig = getLevelConfig(currentLevelNumber);
@@ -338,6 +339,7 @@ export const Game: React.FC = () => {
                   canPlace={getCanPlaceStatus(branch.id)}
                   align="left"
                   flippingTiles={flippingTiles}
+                  sakuraAnimatingTiles={sakuraAnimatingTiles}
                   selectedTileCount={selectedTileCount}
                   getShouldShowRomaji={getShouldShowRomaji}
                 />
@@ -354,6 +356,7 @@ export const Game: React.FC = () => {
                   canPlace={getCanPlaceStatus(branch.id)}
                   align="right"
                   flippingTiles={flippingTiles}
+                  sakuraAnimatingTiles={sakuraAnimatingTiles}
                   selectedTileCount={selectedTileCount}
                   getShouldShowRomaji={getShouldShowRomaji}
                 />

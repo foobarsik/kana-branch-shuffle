@@ -11,6 +11,7 @@ interface GameTileProps {
   className?: string;
   style?: React.CSSProperties;
   isFlipping?: boolean;
+  isSakuraAnimating?: boolean;
   showRomajiByDefault?: boolean;
 }
 
@@ -22,6 +23,7 @@ export const GameTile: React.FC<GameTileProps> = ({
   className,
   style,
   isFlipping = false,
+  isSakuraAnimating = false,
   showRomajiByDefault = false,
 }) => {
   if (isFlipping) {
@@ -55,6 +57,57 @@ export const GameTile: React.FC<GameTileProps> = ({
   const dark1 = shade(baseColor, -18);
   const dark2 = shade(baseColor, -32);
   const light1 = shade(baseColor, 10);
+
+  // If sakura animating, show sakura petals falling
+  if (isSakuraAnimating) {
+    return (
+      <div
+        className={cn(
+          "w-[43px] h-[43px] md:w-16 md:h-16 rounded-full relative overflow-hidden flex-shrink-0",
+          className
+        )}
+        style={{ ...(style || {}) }}
+      >
+        {/* Sakura fade animation - elegant and clean */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300 animate-pulse">
+          {/* Center text fading out elegantly */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span 
+              className="text-lg md:text-2xl font-bold text-pink-700 drop-shadow-sm"
+              style={{ 
+                fontFamily: 'Noto Sans JP, sans-serif',
+                opacity: 1,
+                transform: 'scale(1)',
+                transition: 'all 1.8s ease-out',
+                animation: 'fadeOutScale 1.8s ease-out forwards'
+              }}
+            >
+              {showRomajiByDefault ? tile.romaji : tile.kana}
+            </span>
+          </div>
+          
+          {/* Add elegant fade animation */}
+          <style>{`
+            @keyframes fadeOutScale {
+              0% { 
+                opacity: 1; 
+                transform: scale(1); 
+              }
+              50% { 
+                opacity: 0.6; 
+                transform: scale(1.1); 
+              }
+              100% { 
+                opacity: 0; 
+                transform: scale(0.8); 
+              }
+            }
+          `}</style>
+        </div>
+        
+      </div>
+    );
+  }
 
   return (
     <div

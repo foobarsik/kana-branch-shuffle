@@ -8,12 +8,14 @@ import { generateKanaColorMap } from '@/utils/colors';
 import { checkAndUnlockAchievements, updateStreak } from '@/utils/achievements';
 import { Achievement, GameSession } from '@/types/achievements';
 import { addLeaderboardEntry } from '@/utils/leaderboard';
+import { DisplayMode } from '@/types/displayMode';
 
 interface UseGameLogicProps {
   level?: number;
+  displayMode?: DisplayMode;
 }
 
-export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
+export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RIGHT_ROMAJI }: UseGameLogicProps = {}) => {
   const { toast } = useToast();
 
   // Keep an immutable snapshot of the initially generated branches for the current preset
@@ -307,6 +309,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
   const [gameHistory, setGameHistory] = useState<GameState[]>([]);
   const [showKanaPopup, setShowKanaPopup] = useState<{kana: string; romaji: string; learned: boolean} | null>(null);
   const [flippingTiles, setFlippingTiles] = useState<Set<string>>(new Set());
+  const [sakuraAnimatingTiles, setSakuraAnimatingTiles] = useState<Set<string>>(new Set());
   const [selectedTileCount, setSelectedTileCount] = useState<number>(1);
   const [currentLevel, setCurrentLevel] = useState<number>(level);
   const [isLevelComplete, setIsLevelComplete] = useState<boolean>(false);
@@ -321,6 +324,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
       setGameHistory([]);
       setShowKanaPopup(null);
       setFlippingTiles(new Set());
+      setSakuraAnimatingTiles(new Set());
       setSelectedTileCount(1);
       setIsLevelComplete(false);
       setNewAchievements([]);
@@ -496,6 +500,83 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     return { completed, updatedBranches };
   }, []);
 
+  // Sakura animation for SMART_FLIP mode
+  const animateSakuraCompletion = useCallback((completedBranches: Branch[], newBranches: Branch[]) => {
+    console.log('🌸 Starting sakura animation for completed branches:', completedBranches.length);
+    
+    // Start sakura animation immediately without flipping tiles first
+    setTimeout(() => {
+      // Animate each completed branch with sakura effect
+      completedBranches.forEach((branch, branchIndex) => {
+        // Add all tiles to sakura animation simultaneously for a more dramatic effect
+        branch.tiles.forEach((tile, tileIndex) => {
+          setTimeout(() => {
+            setSakuraAnimatingTiles(prev => new Set([...prev, tile.id]));
+          }, branchIndex * 150 + tileIndex * 80); // Slightly faster stagger for smoother effect
+        });
+      });
+      
+      // After all sakura animations start, remove tiles
+      const totalAnimationTime = completedBranches.length * 150 + 4 * 80 + 1800; // Extra time for sakura to fall
+      setTimeout(() => {
+        setSakuraAnimatingTiles(new Set());
+        
+        setGameState(currentState => {
+          const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
+          const newLearnedKanaAfter = [...new Set([...currentState.learnedKana, ...newCompleted])];
+          const isCompleteAfter = finalBranches.every(branch => branch.tiles.length === 0);
+
+          return {
+            ...currentState,
+            branches: finalBranches,
+            learnedKana: newLearnedKanaAfter,
+            isComplete: isCompleteAfter,
+          };
+        });
+      }, totalAnimationTime);
+    }, 50); // Reduced delay for more immediate response
+  }, [checkForCompletion]);
+
+  // Regular flip animation for other display modes
+  const animateFlipCompletion = useCallback((completedBranches: Branch[], newBranches: Branch[]) => {
+    console.log('🎉 Starting flip animation for completed branches:', completedBranches.length);
+    
+    setTimeout(() => {
+      // Animate each completed branch sequentially
+      completedBranches.forEach((branch, branchIndex) => {
+        const branchIndexInGame = newBranches.findIndex(b => b.id === branch.id);
+        const isRightColumn = branchIndexInGame >= Math.ceil(newBranches.length / 2);
+        const tileIndices = isRightColumn ? [3, 2, 1, 0] : [3, 2, 1, 0];
+
+        tileIndices.forEach((tileIndex, animationIndex) => {
+          setTimeout(() => {
+            const tileId = branch.tiles[tileIndex].id;
+            setFlippingTiles(prev => new Set([...prev, tileId]));
+          }, branchIndex * 500 + animationIndex * 400);
+        });
+      });
+      
+      // After all animations, remove tiles and clear flipping
+      const totalAnimationTime = completedBranches.length * 500 + 4 * 400 + 500;
+      setTimeout(() => {
+        setFlippingTiles(new Set());
+        
+        setGameState(currentState => {
+          const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
+          const newLearnedKanaAfter = [...new Set([...currentState.learnedKana, ...newCompleted])];
+          const isCompleteAfter = finalBranches.every(branch => branch.tiles.length === 0);
+
+          return {
+            ...currentState,
+            branches: finalBranches,
+            learnedKana: newLearnedKanaAfter,
+            isComplete: isCompleteAfter,
+          };
+        });
+      }, totalAnimationTime);
+    }, 100);
+  }, [checkForCompletion]);
+
   const moveTile = useCallback((sourceBranchId: string, targetBranchId: string) => {
     console.log('🎲 moveTile called:', { from: sourceBranchId, to: targetBranchId });
     if (sourceBranchId === targetBranchId) {
@@ -577,54 +658,21 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
         }
       });
 
-      // Handle completions with sequential flip animation
+      // Handle completions with appropriate animation based on display mode
       if (completed.length > 0) {
         console.log('🎉 Completed kana detected:', completed);
         
-        // Find completed branches and their alignment
+        // Find completed branches
         const completedBranches = newBranches.filter(branch => 
           branch.tiles.length === 4 && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)
         );
         
-        setTimeout(() => {
-          // Animate each completed branch sequentially
-          completedBranches.forEach((branch, branchIndex) => {
-            // Determine if this is a left or right column branch
-            const branchIndexInGame = newBranches.findIndex(b => b.id === branch.id);
-            const isRightColumn = branchIndexInGame >= Math.ceil(newBranches.length / 2);
-            
-            // For right column: flex-row-reverse means index 0 is visually rightmost, so flip (3,2,1,0) to go left to right visually
-            // For left column: normal order, so flip (3,2,1,0) to go right to left visually  
-            const tileIndices = isRightColumn ? [3, 2, 1, 0] : [3, 2, 1, 0];
-            
-            tileIndices.forEach((tileIndex, animationIndex) => {
-              setTimeout(() => {
-                const tileId = branch.tiles[tileIndex].id;
-                setFlippingTiles(prev => new Set([...prev, tileId]));
-              }, branchIndex * 500 + animationIndex * 400); // 400ms between tiles, 500ms between branches
-            });
-          });
-          
-          // After all animations, remove tiles and clear flipping
-          const totalAnimationTime = completedBranches.length * 500 + 4 * 400 + 500; // Extra 0.5s to show romaji
-          setTimeout(() => {
-            setFlippingTiles(new Set());
-            
-            // Remove completed tiles
-            setGameState(currentState => {
-              const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
-              const newLearnedKana = [...new Set([...currentState.learnedKana, ...newCompleted])];
-              const isComplete = finalBranches.every(branch => branch.tiles.length === 0);
-              
-              return {
-                ...currentState,
-                branches: finalBranches,
-                learnedKana: newLearnedKana,
-                isComplete,
-              };
-            });
-          }, totalAnimationTime);
-        }, 100);
+        // Choose animation based on display mode
+        if (displayMode === DisplayMode.SMART_FLIP) {
+          animateSakuraCompletion(completedBranches, newBranches);
+        } else {
+          animateFlipCompletion(completedBranches, newBranches);
+        }
         
         // Return current state for now
         const newLearnedKana = [...new Set([...prevState.learnedKana, ...completed])];
@@ -665,7 +713,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
         kanaColorMap: prevState.kanaColorMap,
       };
     });
-  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves]);
+  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves, displayMode, animateFlipCompletion, animateSakuraCompletion]);
 
   const selectBranch = useCallback((branchId: string) => {
     console.log('🎯 selectBranch called:', branchId);
@@ -772,7 +820,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
           }
         });
 
-        // If we completed any set(s), run flip animation like in moveTile()
+        // If we completed any set(s), run appropriate animation based on display mode
         if (completed.length > 0) {
           console.log('🎉 Completed kana detected (selectBranch):', completed);
 
@@ -780,41 +828,12 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
             branch.tiles.length === 4 && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)
           );
 
-          setTimeout(() => {
-            // Animate each completed branch sequentially
-            completedBranches.forEach((branch) => {
-              const branchIndexInGame = newBranches.findIndex(b => b.id === branch.id);
-              const isRightColumn = branchIndexInGame >= Math.ceil(newBranches.length / 2);
-              // For both columns we currently flip 3->0 order for a consistent sweep
-              const tileIndices = isRightColumn ? [3, 2, 1, 0] : [3, 2, 1, 0];
-
-              tileIndices.forEach((tileIndex, animationIndex) => {
-                setTimeout(() => {
-                  const tileId = branch.tiles[tileIndex].id;
-                  setFlippingTiles(prev => new Set([...prev, tileId]));
-                }, animationIndex * 400);
-              });
-            });
-
-            // After all animations, remove tiles and clear flipping
-            const totalAnimationTime = completedBranches.length * 500 + 4 * 400 + 500;
-            setTimeout(() => {
-              setFlippingTiles(new Set());
-
-              setGameState(currentState => {
-                const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
-                const newLearnedKanaAfter = [...new Set([...currentState.learnedKana, ...newCompleted])];
-                const isCompleteAfter = finalBranches.every(branch => branch.tiles.length === 0);
-
-                return {
-                  ...currentState,
-                  branches: finalBranches,
-                  learnedKana: newLearnedKanaAfter,
-                  isComplete: isCompleteAfter,
-                };
-              });
-            }, totalAnimationTime);
-          }, 100);
+          // Choose animation based on display mode
+          if (displayMode === DisplayMode.SMART_FLIP) {
+            animateSakuraCompletion(completedBranches, newBranches);
+          } else {
+            animateFlipCompletion(completedBranches, newBranches);
+          }
 
           // Return interim state now (before removal), so UI shows flipping state
           const newLearnedKanaNow = [...new Set([...prevState.learnedKana, ...completed])];
@@ -856,7 +875,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
 
       return prevState;
     });
-  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast]);
+  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast, displayMode, animateFlipCompletion, animateSakuraCompletion]);
 
   const undoMove = useCallback(() => {
     if (gameHistory.length > 0) {
@@ -872,6 +891,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     setGameHistory([]);
     setShowKanaPopup(null);
     setFlippingTiles(new Set());
+    setSakuraAnimatingTiles(new Set());
     setSelectedTileCount(1);
     setIsLevelComplete(false);
     setNewAchievements([]);
@@ -913,6 +933,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     setGameHistory([]);
     setShowKanaPopup(null);
     setFlippingTiles(new Set());
+    setSakuraAnimatingTiles(new Set());
     setSelectedTileCount(1);
     setIsLevelComplete(false);
     setNewAchievements([]);
@@ -944,6 +965,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
     showKanaPopup,
     closeKanaPopup,
     flippingTiles,
+    sakuraAnimatingTiles,
     selectedTileCount,
     currentLevel,
     isLevelComplete,

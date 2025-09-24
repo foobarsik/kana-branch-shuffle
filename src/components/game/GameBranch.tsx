@@ -11,6 +11,7 @@ interface GameBranchProps {
   canPlace: boolean;
   align: 'left' | 'right';
   flippingTiles?: Set<string>;
+  sakuraAnimatingTiles?: Set<string>;
   selectedTileCount?: number;
   getShouldShowRomaji?: (branch: Branch, tileIndex: number, align: 'left' | 'right') => boolean;
 }
@@ -22,6 +23,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   canPlace,
   align,
   flippingTiles = new Set(),
+  sakuraAnimatingTiles = new Set(),
   selectedTileCount = 1,
   getShouldShowRomaji,
 }) => {
@@ -76,6 +78,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
                 isSelected={shouldBeSelected}
                 className="transition-all duration-300"
                 isFlipping={flippingTiles.has(tile.id)}
+                isSakuraAnimating={sakuraAnimatingTiles.has(tile.id)}
                 showRomajiByDefault={getShouldShowRomaji ? getShouldShowRomaji(branch, index, align) : align === 'right'}
               />
             );
