@@ -41,7 +41,10 @@ export const GameBranch: React.FC<GameBranchProps> = ({
           // canPlace && selectedBranch && selectedBranch !== branch.id && "bg-success/10",
           !isEmpty && !isFull && "hover:scale-102"
         )}
-        onClick={() => onBranchClick(branch.id)}
+        onClick={() => {
+          console.log('🖱️ Branch clicked:', branch.id, 'tiles:', branch.tiles.length);
+          onBranchClick(branch.id);
+        }}
       >
         {/* The sakura branch - replaces the old shelf */}
         <div className="absolute bottom-0 left-0 right-0 md:left-4 md:right-4 h-4 md:h-6">

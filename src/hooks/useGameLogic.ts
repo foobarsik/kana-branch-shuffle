@@ -497,13 +497,23 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
   }, []);
 
   const moveTile = useCallback((sourceBranchId: string, targetBranchId: string) => {
-    if (sourceBranchId === targetBranchId) return;
+    console.log('🎲 moveTile called:', { from: sourceBranchId, to: targetBranchId });
+    if (sourceBranchId === targetBranchId) {
+      console.log('❌ Same branch, aborting');
+      return;
+    }
 
     setGameState(prevState => {
       const sourceBranch = prevState.branches.find(b => b.id === sourceBranchId);
       const targetBranch = prevState.branches.find(b => b.id === targetBranchId);
 
+      console.log('🔍 Branches found:', {
+        source: sourceBranch ? `${sourceBranch.tiles.length} tiles` : 'NOT FOUND',
+        target: targetBranch ? `${targetBranch.tiles.length}/${targetBranch.maxCapacity} tiles` : 'NOT FOUND'
+      });
+
       if (!sourceBranch || !targetBranch || sourceBranch.tiles.length === 0) {
+        console.log('❌ Invalid branches or empty source');
         return prevState;
       }
 
@@ -512,8 +522,16 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
       const tilesToMove = sourceBranch.tiles.slice(-consecutiveCount);
       const topTile = tilesToMove[tilesToMove.length - 1];
 
+      console.log('🎴 Tiles to move:', {
+        count: consecutiveCount,
+        selectedTileCount,
+        topTile: topTile?.kana,
+        targetTopTile: targetBranch.tiles.length > 0 ? targetBranch.tiles[targetBranch.tiles.length - 1].kana : 'empty'
+      });
+
       // Check if we can place the top tile
       if (!canPlaceTile(topTile, targetBranch)) {
+        console.log('❌ Cannot place tile - validation failed');
         toast({
           title: "Invalid move",
           description: "You can only place tiles on empty branches or on tiles of the same kana.",
@@ -650,13 +668,20 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
   }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves]);
 
   const selectBranch = useCallback((branchId: string) => {
+    console.log('🎯 selectBranch called:', branchId);
     setGameState(prevState => {
       const branch = prevState.branches.find(b => b.id === branchId);
       
-      if (!branch) return prevState;
+      if (!branch) {
+        console.log('❌ Branch not found:', branchId);
+        return prevState;
+      }
+
+      console.log('🌿 Branch found:', { id: branchId, tilesCount: branch.tiles.length, selectedBranch: prevState.selectedBranch });
 
       // If no branch selected and this branch has tiles, select it
       if (!prevState.selectedBranch && branch.tiles.length > 0) {
+        console.log('✅ Selecting branch with tiles:', branchId);
         // Play sound for the top tile when selecting a branch
         const topTile = branch.tiles[branch.tiles.length - 1];
         if (topTile) {
@@ -670,11 +695,13 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
 
       // If this is the selected branch, deselect
       if (prevState.selectedBranch === branchId) {
+        console.log('🔄 Deselecting branch:', branchId);
         return { ...prevState, selectedBranch: null };
       }
 
       // If another branch is selected, try to move tile
       if (prevState.selectedBranch) {
+        console.log('🚀 Attempting to move from', prevState.selectedBranch, 'to', branchId);
         moveTile(prevState.selectedBranch, branchId);
         return prevState; // moveTile will update the state
       }
