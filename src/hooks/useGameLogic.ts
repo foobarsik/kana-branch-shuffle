@@ -702,13 +702,95 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
       // If another branch is selected, try to move tile
       if (prevState.selectedBranch) {
         console.log('🚀 Attempting to move from', prevState.selectedBranch, 'to', branchId);
-        moveTile(prevState.selectedBranch, branchId);
-        return prevState; // moveTile will update the state
+        
+        // Perform the move directly here instead of calling moveTile
+        const sourceBranch = prevState.branches.find(b => b.id === prevState.selectedBranch);
+        const targetBranch = prevState.branches.find(b => b.id === branchId);
+
+        if (!sourceBranch || !targetBranch || sourceBranch.tiles.length === 0) {
+          console.log('❌ Invalid branches or empty source');
+          return { ...prevState, selectedBranch: null };
+        }
+
+        // Get the tiles to move (consecutive identical tiles from the end)
+        const consecutiveCount = Math.min(selectedTileCount, getConsecutiveCount(sourceBranch));
+        const tilesToMove = sourceBranch.tiles.slice(-consecutiveCount);
+        const topTile = tilesToMove[tilesToMove.length - 1];
+
+        console.log('🎴 Tiles to move:', {
+          count: consecutiveCount,
+          selectedTileCount,
+          topTile: topTile?.kana,
+          targetTopTile: targetBranch.tiles.length > 0 ? targetBranch.tiles[targetBranch.tiles.length - 1].kana : 'empty'
+        });
+
+        // Check if we can place the top tile
+        if (!canPlaceTile(topTile, targetBranch)) {
+          console.log('❌ Cannot place tile - validation failed');
+          toast({
+            title: "Invalid move",
+            description: "You can only place tiles on empty branches or on tiles of the same kana.",
+            variant: "destructive",
+          });
+          return { ...prevState, selectedBranch: null };
+        }
+
+        // Check if target branch has enough space
+        if (targetBranch.tiles.length + tilesToMove.length > targetBranch.maxCapacity) {
+          toast({
+            title: "Invalid move", 
+            description: "Not enough space in the target branch.",
+            variant: "destructive",
+          });
+          return { ...prevState, selectedBranch: null };
+        }
+
+        // Save current state to history
+        setGameHistory(prev => [...prev, prevState]);
+
+        // Create new branches array with the move
+        const newBranches = prevState.branches.map(branch => {
+          if (branch.id === prevState.selectedBranch) {
+            return { ...branch, tiles: branch.tiles.slice(0, -consecutiveCount) };
+          }
+          if (branch.id === branchId) {
+            return { ...branch, tiles: [...branch.tiles, ...tilesToMove] };
+          }
+          return branch;
+        });
+
+        const newMoves = prevState.moves + 1;
+
+        // Check for completions and update state
+        const { completed, updatedBranches } = checkForCompletion(newBranches);
+        const newLearnedKana = [...new Set([...prevState.learnedKana, ...completed])];
+        const isComplete = updatedBranches.every(branch => branch.tiles.length === 0);
+        
+        // Check for deadlock
+        const hasMovesAvailable = hasValidMoves(updatedBranches);
+        if (!isComplete && !hasMovesAvailable) {
+          toast({
+            title: "No moves available! 😔",
+            description: "The game is stuck. Try using the undo button or restart the level.",
+            variant: "destructive",
+            duration: 10000,
+          });
+        }
+
+        return {
+          branches: updatedBranches,
+          selectedBranch: null,
+          moves: newMoves,
+          score: Math.max(0, 1000 - newMoves * 10),
+          isComplete,
+          learnedKana: newLearnedKana,
+          kanaColorMap: prevState.kanaColorMap,
+        };
       }
 
       return prevState;
     });
-  }, [moveTile, getConsecutiveCount]);
+  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast]);
 
   const undoMove = useCallback(() => {
     if (gameHistory.length > 0) {

@@ -34,7 +34,7 @@ export interface KanaGradient {
 export const GAME_GRADIENTS: KanaGradient[] = [
   { primary: '#f44336', secondary: '#f44336', direction: '45deg' },   // 2. Красный
   { primary: '#ff9800', secondary: '#ff9800', direction: '45deg' },   // 3. Оранжевый
-  { primary: '#ffeb3b', secondary: '#ffeb3b', direction: '45deg' },   // 4. Желтый
+  // { primary: '#ffeb3b', secondary: '#ffeb3b', direction: '45deg' },   // 4. Желтый
   { primary: '#8bc34a', secondary: '#8bc34a', direction: '45deg' },   // 5. Салатовый
   { primary: '#4caf50', secondary: '#4caf50', direction: '45deg' },   // 6. Зеленый
   { primary: '#00acc1', secondary: '#00acc1', direction: '45deg' },   // 7. Бирюзовый
