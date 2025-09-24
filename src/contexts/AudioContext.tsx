@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useRef, useEffect, useCallback, ReactNode } from 'react';
 
 export interface AudioTrack {
   id: string;
@@ -8,28 +8,12 @@ export interface AudioTrack {
 }
 
 // Список треков японской музыки без копирайта
-// Эти треки можно заменить на реальные файлы
 export const JAPANESE_AMBIENT_TRACKS: AudioTrack[] = [
   {
     id: 'sakura-breeze',
     name: 'Sakura Breeze',
     url: '/audio/sakura-breeze.mp3',
   },
-  // {
-  //   id: 'zen-garden',
-  //   name: 'Zen Garden',
-  //   url: '/audio/zen-garden.mp3',
-  // },
-  // {
-  //   id: 'bamboo-forest',
-  //   name: 'Bamboo Forest',
-  //   url: '/audio/bamboo-forest.mp3',
-  // },
-  // {
-  //   id: 'temple-bells',
-  //   name: 'Temple Bells',
-  //   url: '/audio/temple-bells.mp3',
-  // },
 ];
 
 // Проверка доступности аудиофайла
@@ -56,7 +40,31 @@ const getAvailableTracks = async (): Promise<AudioTrack[]> => {
   return availableTracks;
 };
 
-export const useAudioPlayer = () => {
+interface AudioContextType {
+  isPlaying: boolean;
+  currentTrack: AudioTrack | null;
+  volume: number;
+  isEnabled: boolean;
+  tracks: AudioTrack[];
+  currentTrackIndex: number;
+  isLoading: boolean;
+  hasAudioFiles: boolean;
+  setVolume: (volume: number) => void;
+  toggleEnabled: () => void;
+  togglePlayPause: () => void;
+  playNextTrack: () => void;
+  playPreviousTrack: () => void;
+  startPlaylist: () => void;
+  stop: () => void;
+}
+
+const AudioContext = createContext<AudioContextType | undefined>(undefined);
+
+interface AudioProviderProps {
+  children: ReactNode;
+}
+
+export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<AudioTrack | null>(null);
   const [volume, setVolume] = useState(0.1); // Очень низкая громкость по умолчанию
@@ -78,7 +86,7 @@ export const useAudioPlayer = () => {
         audioRef.current = null;
       }
     };
-  }, [volume]);
+  }, []);
 
   // Обновление громкости
   useEffect(() => {
@@ -238,7 +246,7 @@ export const useAudioPlayer = () => {
     };
   }, [isEnabled, playNextTrack]);
 
-  return {
+  const value: AudioContextType = {
     isPlaying,
     currentTrack,
     volume,
@@ -255,4 +263,18 @@ export const useAudioPlayer = () => {
     startPlaylist,
     stop,
   };
+
+  return (
+    <AudioContext.Provider value={value}>
+      {children}
+    </AudioContext.Provider>
+  );
+};
+
+export const useAudioContext = (): AudioContextType => {
+  const context = useContext(AudioContext);
+  if (context === undefined) {
+    throw new Error('useAudioContext must be used within an AudioProvider');
+  }
+  return context;
 };

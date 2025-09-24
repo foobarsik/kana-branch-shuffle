@@ -1,6 +1,6 @@
 import React from 'react';
 import { Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Music } from 'lucide-react';
-import { useAudioPlayer } from '../../hooks/useAudioPlayer';
+import { useAudioContext } from '../../contexts/AudioContext';
 
 interface AudioControlsProps {
   className?: string;
@@ -25,7 +25,7 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
     togglePlayPause,
     playNextTrack,
     playPreviousTrack,
-  } = useAudioPlayer();
+  } = useAudioContext();
 
   if (compact) {
     if (isLoading) {
