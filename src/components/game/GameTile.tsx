@@ -1,6 +1,7 @@
 import React from "react";
 import { KanaTile } from "@/types/game";
 import { cn } from "@/lib/utils";
+import { extractPrimaryColor, isGradient } from "@/utils/colors";
 
 interface GameTileProps {
   tile: KanaTile;
@@ -28,7 +29,11 @@ export const GameTile: React.FC<GameTileProps> = ({
   }
 
   // --- Visual tuning: derive subtle gradients from tile color for ring/surface ---
-  const baseColor = tile.color || '#4b5563';
+  // Extract primary color from gradient or use as-is if it's a solid color
+  const tileColorValue = tile.color || '#4b5563';
+  const baseColor = isGradient(tileColorValue) 
+    ? extractPrimaryColor(tileColorValue) 
+    : tileColorValue;
   const clamp = (n: number, min = 0, max = 255) => Math.max(min, Math.min(max, n));
   const hexToRgb = (hex: string) => {
     const m = hex.replace('#','');
@@ -86,7 +91,9 @@ export const GameTile: React.FC<GameTileProps> = ({
           <div
             className="absolute inset-0.5 rounded-full overflow-hidden"
             style={{ 
-              background: `radial-gradient(circle at 35% 30%, ${light1} 0%, ${baseColor} 55%, ${dark1} 100%)`
+              background: isGradient(tileColorValue) 
+                ? tileColorValue // Use the original gradient
+                : `radial-gradient(circle at 35% 30%, ${light1} 0%, ${baseColor} 55%, ${dark1} 100%)`
             }}
           >
             {/* Decorative pattern background */}
@@ -151,7 +158,11 @@ export const GameTile: React.FC<GameTileProps> = ({
           />
           <div 
             className="absolute inset-0.5 rounded-full overflow-hidden"
-            style={{ background: `radial-gradient(circle at 35% 30%, ${light1} 0%, ${baseColor} 55%, ${dark1} 100%)` }}
+            style={{ 
+              background: isGradient(tileColorValue) 
+                ? tileColorValue // Use the original gradient
+                : `radial-gradient(circle at 35% 30%, ${light1} 0%, ${baseColor} 55%, ${dark1} 100%)`
+            }}
           >
             <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <circle cx="50" cy="50" r="28" stroke="currentColor" strokeWidth="1" fill="none" />
