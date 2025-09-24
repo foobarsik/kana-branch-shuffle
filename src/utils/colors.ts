@@ -42,7 +42,8 @@ export const GAME_GRADIENTS: KanaGradient[] = [
   { primary: '#1E88E5', secondary: '#4CA0EA', direction: '45deg' }, // 8. Океанский синий
   { primary: '#3949AB', secondary: '#5C6BC0', direction: '45deg' }, // 9. Индиго
   { primary: '#5E35B1', secondary: '#7B56C0', direction: '45deg' }, // 10. Аметист
-  { primary: '#8E24AA', secondary: '#A94FC0', direction: '45deg' }, // 11. Виноградный
+  { primary: '#757575', secondary: '#9E9E9E', direction: '45deg' }, // 11. Серый (нейтральный)
+  // { primary: '#8E24AA', secondary: '#A94FC0', direction: '45deg' }, // 11. Виноградный
   { primary: '#6D4C41', secondary: '#8D6E63', direction: '45deg' }, // 12. Коричневый (натуральный)
 ];
 
