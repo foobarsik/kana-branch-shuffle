@@ -95,7 +95,7 @@ export const Game: React.FC = () => {
         return false;
       case DisplayMode.LEFT_KANA_RIGHT_ROMAJI:
         return align === 'right';
-      case DisplayMode.SMART_FLIP:
+      case DisplayMode.SMART_FLIP: {
         // If there are 2+ consecutive identical kana, show romaji for all except the one closest to center
         if (branch.tiles.length < 2) return false;
         
@@ -117,6 +117,7 @@ export const Game: React.FC = () => {
         const isClosestToCenter = tileIndex === branch.tiles.length - 1;
         
         return !isClosestToCenter;
+      }
       default:
         return false;
     }
