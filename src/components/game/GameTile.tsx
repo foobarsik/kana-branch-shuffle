@@ -115,6 +115,7 @@ export const GameTile: React.FC<GameTileProps> = ({
         "w-[43px] h-[43px] md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
         "active:scale-95",
         !isSelectable && "cursor-default",
+        isSelected && "z-20",
         className
       )}
       style={{ ...(style || {}), perspective: 600 }}
@@ -124,9 +125,12 @@ export const GameTile: React.FC<GameTileProps> = ({
       <div
         className="absolute inset-0 [transform-style:preserve-3d] transition-transform duration-500"
         style={{ 
-          transform: showRomajiByDefault 
-            ? ((isSelected || isFlipping) ? 'rotateY(0deg)' : 'rotateY(180deg)')
-            : ((isSelected || isFlipping) ? 'rotateY(180deg)' : 'rotateY(0deg)')
+          transform: `${isSelected ? 'scale(1.25)' : 'scale(1)'} ` + (
+            showRomajiByDefault 
+              ? ((isSelected || isFlipping) ? 'rotateY(0deg)' : 'rotateY(180deg)')
+              : ((isSelected || isFlipping) ? 'rotateY(180deg)' : 'rotateY(0deg)')
+          ),
+          willChange: 'transform'
         }}
       >
         {/* FRONT FACE: kana */}
@@ -189,9 +193,9 @@ export const GameTile: React.FC<GameTileProps> = ({
                 className={cn(
                   "font-medium text-white select-none",
                   "text-xl md:text-3xl",
-                  isSelected && "text-yellow-200"
+                  isSelected && "opacity-0"
                 )}
-                style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }} // Enhanced shadow for readability
+                style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
               >
                 {tile.kana}
               </span>
@@ -225,7 +229,8 @@ export const GameTile: React.FC<GameTileProps> = ({
               <span 
                 className={cn(
                   "font-medium drop-shadow-lg select-none text-lg md:text-3xl",
-                  showRomajiByDefault ? "text-white" : "text-yellow-300"
+                  showRomajiByDefault ? "text-white" : "text-yellow-300",
+                  isSelected && "opacity-0"
                 )}
                 style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
               >
@@ -235,6 +240,23 @@ export const GameTile: React.FC<GameTileProps> = ({
           </div>
         </div>
       </div>
+      {/* Selected overlay showing both kana and romaji together */}
+      {isSelected && (
+        <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-center justify-center">
+          <span
+            className="font-bold text-white text-xl md:text-3xl"
+            style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.6)' }}
+          >
+            {tile.kana}
+          </span>
+          <span
+            className="mt-0.5 text-[11px] md:text-sm font-semibold text-yellow-200"
+            style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}
+          >
+            {tile.romaji}
+          </span>
+        </div>
+      )}
     </div>
   );
 };
