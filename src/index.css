@@ -153,3 +153,29 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Audio slider styles */
+.slider {
+  background: linear-gradient(to right, #8b5cf6 0%, #8b5cf6 var(--value, 30%), #e5e7eb var(--value, 30%), #e5e7eb 100%);
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

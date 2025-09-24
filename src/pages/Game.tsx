@@ -12,6 +12,7 @@ import { getLevelConfig, getMaxLevel } from "@/config/levels";
 import { getPlayerProgress } from "@/utils/progress";
 import { AchievementNotificationManager } from "@/components/ui/AchievementNotification";
 import { ScoreAnimation } from "@/components/ui/ScoreAnimation";
+import { AudioControls } from "@/components/ui/AudioControls";
 
 export const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -167,8 +168,10 @@ export const Game: React.FC = () => {
               </div>
             </div>
 
-            {/* Reserve space for alignment */}
-            <div className="w-9 md:w-[72px]" />
+            {/* Audio Controls */}
+            <div className="flex items-center">
+              <AudioControls compact={true} />
+            </div>
           </div>
 
           {/* Row 2: Progress & Metrics */}

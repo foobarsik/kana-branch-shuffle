@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { getPlayerProgress } from "@/utils/progress";
 import { getMaxLevel } from "@/config/levels";
 import { getAchievementStats } from "@/utils/achievements";
+import { AudioControls } from "@/components/ui/AudioControls";
 import "@/utils/levelAnalysis"; // Анализ уровней в консоли
 
 const Index = () => {
@@ -17,7 +18,12 @@ const Index = () => {
   const achievementStats = getAchievementStats();
 
   return (
-    <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4 relative">
+      {/* Audio Controls */}
+      <div className="absolute top-4 right-4">
+        <AudioControls compact={true} />
+      </div>
+      
       <div className="text-center space-y-8 max-w-md">
         {/* Logo/Title */}
         <div className="space-y-4">
