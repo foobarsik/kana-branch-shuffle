@@ -15,21 +15,21 @@ export const JAPANESE_AMBIENT_TRACKS: AudioTrack[] = [
     name: 'Sakura Breeze',
     url: '/audio/sakura-breeze.mp3',
   },
-  {
-    id: 'zen-garden',
-    name: 'Zen Garden',
-    url: '/audio/zen-garden.mp3',
-  },
-  {
-    id: 'bamboo-forest',
-    name: 'Bamboo Forest',
-    url: '/audio/bamboo-forest.mp3',
-  },
-  {
-    id: 'temple-bells',
-    name: 'Temple Bells',
-    url: '/audio/temple-bells.mp3',
-  },
+  // {
+  //   id: 'zen-garden',
+  //   name: 'Zen Garden',
+  //   url: '/audio/zen-garden.mp3',
+  // },
+  // {
+  //   id: 'bamboo-forest',
+  //   name: 'Bamboo Forest',
+  //   url: '/audio/bamboo-forest.mp3',
+  // },
+  // {
+  //   id: 'temple-bells',
+  //   name: 'Temple Bells',
+  //   url: '/audio/temple-bells.mp3',
+  // },
 ];
 
 // Проверка доступности аудиофайла
@@ -59,7 +59,7 @@ const getAvailableTracks = async (): Promise<AudioTrack[]> => {
 export const useAudioPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<AudioTrack | null>(null);
-  const [volume, setVolume] = useState(0.3); // Низкая громкость по умолчанию
+  const [volume, setVolume] = useState(0.1); // Очень низкая громкость по умолчанию
   const [isEnabled, setIsEnabled] = useState(false); // Выключено по умолчанию
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
