@@ -2,6 +2,7 @@ import React from "react";
 import { GameBranch } from "@/components/game/GameBranch";
 import { KanaPopup } from "@/components/game/KanaPopup";
 import { useGameLogic } from "@/hooks/useGameLogic";
+import { Branch } from "@/types/game";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -13,10 +14,13 @@ import { getPlayerProgress } from "@/utils/progress";
 import { AchievementNotificationManager } from "@/components/ui/AchievementNotification";
 import { ScoreAnimation } from "@/components/ui/ScoreAnimation";
 import { AudioControls } from "@/components/ui/AudioControls";
+import { DisplayMode, DISPLAY_MODE_LABELS } from "@/types/displayMode";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const Game: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [displayMode, setDisplayMode] = React.useState<DisplayMode>(DisplayMode.LEFT_KANA_RIGHT_ROMAJI);
   
   // Get level from URL params, default to 1, and clamp to available range
   const levelParam = searchParams.get('level');
@@ -82,6 +86,39 @@ export const Game: React.FC = () => {
     
     const topTile = targetBranch.tiles[targetBranch.tiles.length - 1];
     return topTile.kana === tileToMove.kana;
+  };
+
+  const getShouldShowRomaji = (branch: Branch, tileIndex: number, align: 'left' | 'right'): boolean => {
+    switch (displayMode) {
+      case DisplayMode.KANA_ONLY:
+        return false;
+      case DisplayMode.LEFT_KANA_RIGHT_ROMAJI:
+        return align === 'right';
+      case DisplayMode.SMART_FLIP:
+        // If there are 2+ consecutive identical kana, show romaji for all except the one closest to center
+        if (branch.tiles.length < 2) return false;
+        
+        const tile = branch.tiles[tileIndex];
+        const nextTileIndex = tileIndex + 1;
+        const prevTileIndex = tileIndex - 1;
+        
+        // Check if this tile has identical neighbors
+        const hasIdenticalNext = nextTileIndex < branch.tiles.length && 
+          branch.tiles[nextTileIndex].kana === tile.kana;
+        const hasIdenticalPrev = prevTileIndex >= 0 && 
+          branch.tiles[prevTileIndex].kana === tile.kana;
+        
+        if (!hasIdenticalNext && !hasIdenticalPrev) return false;
+        
+        // For tiles that have identical neighbors, show romaji for all except the closest to center
+        // Closest to center is the rightmost in left column, leftmost in right column
+        // Since right column uses flex-row-reverse, the last tile in array is visually leftmost
+        const isClosestToCenter = tileIndex === branch.tiles.length - 1;
+        
+        return !isClosestToCenter;
+      default:
+        return false;
+    }
   };
 
   if (gameState.isComplete) {
@@ -168,8 +205,20 @@ export const Game: React.FC = () => {
               </div>
             </div>
 
-            {/* Audio Controls */}
-            <div className="flex items-center">
+            {/* Display Mode & Audio Controls */}
+            <div className="flex items-center gap-2">
+              <Select value={displayMode} onValueChange={(value) => setDisplayMode(value as DisplayMode)}>
+                <SelectTrigger className="w-[140px] h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(DISPLAY_MODE_LABELS).map(([mode, label]) => (
+                    <SelectItem key={mode} value={mode} className="text-xs">
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <AudioControls compact={true} />
             </div>
           </div>
@@ -290,6 +339,7 @@ export const Game: React.FC = () => {
                   align="left"
                   flippingTiles={flippingTiles}
                   selectedTileCount={selectedTileCount}
+                  getShouldShowRomaji={getShouldShowRomaji}
                 />
               ))}
             </div>
@@ -305,6 +355,7 @@ export const Game: React.FC = () => {
                   align="right"
                   flippingTiles={flippingTiles}
                   selectedTileCount={selectedTileCount}
+                  getShouldShowRomaji={getShouldShowRomaji}
                 />
               ))}
             </div>
