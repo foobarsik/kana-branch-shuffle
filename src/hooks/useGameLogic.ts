@@ -761,12 +761,78 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
 
         const newMoves = prevState.moves + 1;
 
-        // Check for completions and update state
-        const { completed, updatedBranches } = checkForCompletion(newBranches);
-        const newLearnedKana = [...new Set([...prevState.learnedKana, ...completed])];
+        // Check for completions manually (without removing tiles yet)
+        const completed: string[] = [];
+        const tilesToDisappear = new Set<string>();
+        
+        newBranches.forEach(branch => {
+          if (branch.tiles.length === 4 && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)) {
+            completed.push(branch.tiles[0].kana);
+            branch.tiles.forEach(tile => tilesToDisappear.add(tile.id));
+          }
+        });
+
+        // If we completed any set(s), run flip animation like in moveTile()
+        if (completed.length > 0) {
+          console.log('🎉 Completed kana detected (selectBranch):', completed);
+
+          const completedBranches = newBranches.filter(branch => 
+            branch.tiles.length === 4 && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)
+          );
+
+          setTimeout(() => {
+            // Animate each completed branch sequentially
+            completedBranches.forEach((branch) => {
+              const branchIndexInGame = newBranches.findIndex(b => b.id === branch.id);
+              const isRightColumn = branchIndexInGame >= Math.ceil(newBranches.length / 2);
+              // For both columns we currently flip 3->0 order for a consistent sweep
+              const tileIndices = isRightColumn ? [3, 2, 1, 0] : [3, 2, 1, 0];
+
+              tileIndices.forEach((tileIndex, animationIndex) => {
+                setTimeout(() => {
+                  const tileId = branch.tiles[tileIndex].id;
+                  setFlippingTiles(prev => new Set([...prev, tileId]));
+                }, animationIndex * 400);
+              });
+            });
+
+            // After all animations, remove tiles and clear flipping
+            const totalAnimationTime = completedBranches.length * 500 + 4 * 400 + 500;
+            setTimeout(() => {
+              setFlippingTiles(new Set());
+
+              setGameState(currentState => {
+                const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
+                const newLearnedKanaAfter = [...new Set([...currentState.learnedKana, ...newCompleted])];
+                const isCompleteAfter = finalBranches.every(branch => branch.tiles.length === 0);
+
+                return {
+                  ...currentState,
+                  branches: finalBranches,
+                  learnedKana: newLearnedKanaAfter,
+                  isComplete: isCompleteAfter,
+                };
+              });
+            }, totalAnimationTime);
+          }, 100);
+
+          // Return interim state now (before removal), so UI shows flipping state
+          const newLearnedKanaNow = [...new Set([...prevState.learnedKana, ...completed])];
+          return {
+            branches: newBranches,
+            selectedBranch: null,
+            moves: newMoves,
+            score: Math.max(0, 1000 - newMoves * 10),
+            isComplete: false,
+            learnedKana: newLearnedKanaNow,
+            kanaColorMap: prevState.kanaColorMap,
+          };
+        }
+
+        // No completions - normal flow (with deadlock check)
+        const { completed: normalCompleted, updatedBranches } = checkForCompletion(newBranches);
         const isComplete = updatedBranches.every(branch => branch.tiles.length === 0);
         
-        // Check for deadlock
         const hasMovesAvailable = hasValidMoves(updatedBranches);
         if (!isComplete && !hasMovesAvailable) {
           toast({
@@ -783,7 +849,7 @@ export const useGameLogic = ({ level = 1 }: UseGameLogicProps = {}) => {
           moves: newMoves,
           score: Math.max(0, 1000 - newMoves * 10),
           isComplete,
-          learnedKana: newLearnedKana,
+          learnedKana: prevState.learnedKana,
           kanaColorMap: prevState.kanaColorMap,
         };
       }
