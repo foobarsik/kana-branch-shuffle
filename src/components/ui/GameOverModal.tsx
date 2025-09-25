@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 
 interface GameOverModalProps {
@@ -33,6 +34,9 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
             <p className="text-muted-foreground text-center">
               The game is stuck. Try using the undo button or restart the level.
             </p>
+            <DialogClose className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
+              Close
+            </DialogClose>
           </div>
         </DialogHeader>
       </DialogContent>
