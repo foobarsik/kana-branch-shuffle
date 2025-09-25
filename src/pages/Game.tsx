@@ -14,6 +14,7 @@ import { getPlayerProgress } from "@/utils/progress";
 import { AchievementNotificationManager } from "@/components/ui/AchievementNotification";
 import { ScoreAnimation } from "@/components/ui/ScoreAnimation";
 import { AudioControls } from "@/components/ui/AudioControls";
+import { GameOverModal } from "@/components/ui/GameOverModal";
 import { DisplayMode, DISPLAY_MODE_LABELS } from "@/types/displayMode";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -21,6 +22,8 @@ export const Game: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [displayMode, setDisplayMode] = React.useState<DisplayMode>(DisplayMode.LARGE);
+  const [showGameOverModal, setShowGameOverModal] = React.useState(false);
+  const [gameOverModalClosed, setGameOverModalClosed] = React.useState(false);
   
   // Get level from URL params, default to 1, and clamp to available range
   const levelParam = searchParams.get('level');
@@ -46,6 +49,7 @@ export const Game: React.FC = () => {
     newAchievements,
     clearNewAchievements,
     disappearingBranchIds,
+    hasValidMoves,
   } = useGameLogic({ level: currentLevelNumber, displayMode });
 
   // Get level configuration and player progress
@@ -56,6 +60,39 @@ export const Game: React.FC = () => {
   React.useEffect(() => {
     initializeVoices();
   }, []);
+
+  // Check for game over state (no moves available)
+  React.useEffect(() => {
+    const isComplete = gameState.branches.every(branch => branch.tiles.length === 0);
+    const hasMovesAvailable = hasValidMoves();
+    
+    console.log('🎮 Game over check:', {
+      isComplete,
+      hasMovesAvailable,
+      showGameOverModal,
+      gameOverModalClosed,
+      shouldShow: !isComplete && !hasMovesAvailable && !showGameOverModal && !gameOverModalClosed
+    });
+    
+    // Show game over modal if no moves available and game is not complete
+    if (!isComplete && !hasMovesAvailable && !showGameOverModal && !gameOverModalClosed) {
+      console.log('🚨 Showing game over modal!');
+      setShowGameOverModal(true);
+    }
+  }, [gameState.branches, showGameOverModal, gameOverModalClosed, hasValidMoves]);
+
+  // Reset the modal closed flag when game state changes
+  React.useEffect(() => {
+    if (gameOverModalClosed) {
+      const isComplete = gameState.branches.every(branch => branch.tiles.length === 0);
+      const hasMovesAvailable = hasValidMoves();
+      
+      if (isComplete || hasMovesAvailable) {
+        console.log('🔄 Resetting game over modal closed flag');
+        setGameOverModalClosed(false);
+      }
+    }
+  }, [gameState.branches, gameOverModalClosed, hasValidMoves]);
 
   // Navigation functions
   const goToNextLevel = () => {
@@ -72,6 +109,25 @@ export const Game: React.FC = () => {
 
   const goToLevelSelect = () => {
     navigate('/levels');
+  };
+
+  // Game over modal handlers
+  const handleCloseGameOverModal = () => {
+    setShowGameOverModal(false);
+    setGameOverModalClosed(true);
+    console.log('🔒 Game over modal closed, setting closed flag');
+  };
+
+  const handleRestartFromModal = () => {
+    setShowGameOverModal(false);
+    // Reset flag is not needed here as resetGame will change game state
+    resetGame();
+  };
+
+  const handleGoHomeFromModal = () => {
+    setShowGameOverModal(false);
+    // Reset flag is not needed here as we're navigating away
+    navigate('/');
   };
 
   const getCanPlaceStatus = (branchId: string): boolean => {
@@ -354,6 +410,14 @@ export const Game: React.FC = () => {
           onClose={closeKanaPopup}
         />
       )}
+
+      {/* Game Over Modal */}
+      <GameOverModal
+        isOpen={showGameOverModal}
+        onClose={handleCloseGameOverModal}
+        onReset={handleRestartFromModal}
+        onGoHome={handleGoHomeFromModal}
+      />
 
       {/* Achievement Notifications */}
       <AchievementNotificationManager

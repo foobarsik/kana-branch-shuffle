@@ -454,17 +454,6 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       // Track level complete telemetry
       telemetry.trackLevelComplete(gameState.score);
 
-      // Show completion message with achievements info
-      const achievementText = unlockedAchievements.length > 0 
-        ? ` Разблокировано достижений: ${unlockedAchievements.length}!`
-        : '';
-      
-      toast({
-        title: "Уровень завершен! 🎉",
-        description: `Уровень ${currentLevel} завершен с ${gameState.score} очками!${achievementText}`,
-        duration: 5000,
-      });
-
       console.log('Level completed! Progress saved:', updatedProgress);
       console.log('Streak updated:', updatedStreak);
       console.log('New achievements:', unlockedAchievements);
@@ -1179,14 +1168,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         const isComplete = updatedBranches.every(branch => branch.tiles.length === 0);
         
         const hasMovesAvailable = hasValidMoves(updatedBranches);
-        if (!isComplete && !hasMovesAvailable) {
-          toast({
-            title: "No moves available! 😔",
-            description: "The game is stuck. Try using the undo button or restart the level.",
-            variant: "destructive",
-            duration: 10000,
-          });
-        }
+        // Toast notification removed - now using GameOverModal component
 
         return {
           branches: updatedBranches,
