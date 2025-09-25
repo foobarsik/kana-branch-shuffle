@@ -1,5 +1,5 @@
 import React from "react";
-import { Branch, KanaTile } from "@/types/game";
+import { Branch, KanaTile, BranchType } from "@/types/game";
 import { GameTile } from "./GameTile";
 import { SakuraBranch } from "@/components/ui/SakuraBranch";
 import { cn } from "@/lib/utils";
@@ -34,7 +34,23 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   const isSelected = selectedBranch === branch.id;
   const isEmpty = branch.tiles.length === 0;
   const isFull = branch.tiles.length >= branch.maxCapacity;
+  const isWave = branch.type === BranchType.WAVE;
   const topTile = branch.tiles[branch.tiles.length - 1];
+
+  // For wave branches, show empty space
+  if (isWave) {
+    return (
+      <div className={cn(
+        "flex flex-col items-center space-y-2 transition-all duration-300",
+        isDisappearing && "opacity-0 translate-y-2 pointer-events-none"
+      )}>
+        <div className="relative w-full md:max-w-80 md:mx-auto h-14 md:h-24">
+          {/* Empty space - no visual element */}
+          <div className="absolute bottom-0 left-0 right-0 md:left-4 md:right-4 h-4 md:h-6" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn(

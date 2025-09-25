@@ -5,10 +5,16 @@ export interface KanaTile {
   color?: string;
 }
 
+export enum BranchType {
+  NORMAL = 'normal',
+  WAVE = 'wave'
+}
+
 export interface Branch {
   id: string;
   tiles: KanaTile[];
   maxCapacity: number;
+  type?: BranchType;
 }
 
 export interface GameState {

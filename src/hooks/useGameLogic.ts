@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { Branch, GameState, KanaTile, HIRAGANA_SET } from "@/types/game";
+import { Branch, GameState, KanaTile, HIRAGANA_SET, BranchType } from "@/types/game";
 import { playMoveSound } from "@/utils/audio";
 import { useToast } from "@/hooks/use-toast";
 import { getLevelConfig, type LevelConfig } from "@/config/levels";
@@ -21,6 +21,9 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
   // Keep an immutable snapshot of the initially generated branches for the current preset
   const initialBranchesRef = useRef<Branch[] | null>(null);
+
+  // Max number of empty NORMAL branches allowed before triggering wave replacement
+  const MAX_EMPTY_NORMAL_BRANCHES = 2;
 
   // Helper to check if a branch is complete
   const isBranchComplete = useCallback((branch: Branch, capacity: number): boolean => {
@@ -116,7 +119,8 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       branches.push({
         id: `branch-${i}`,
         tiles: [],
-        maxCapacity: levelConfig.branchCapacity
+        maxCapacity: levelConfig.branchCapacity,
+        type: BranchType.NORMAL,
       });
     }
     
@@ -206,6 +210,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         id: `branch-${i}`,
         tiles: [],
         maxCapacity: config.branchCapacity,
+        type: BranchType.NORMAL,
       });
     }
 
@@ -473,23 +478,24 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       // Only run the effect when branches change or when we need to re-check
       const emptyBranchIds: string[] = [];
       gameState.branches.forEach((b) => {
-        if (b.tiles.length === 0) emptyBranchIds.push(b.id);
+        // Treat branches without explicit type as NORMAL, and only exclude WAVE branches
+        if (b.tiles.length === 0 && b.type !== BranchType.WAVE) emptyBranchIds.push(b.id);
       });
 
-      console.log(`🌿 Empty branches check: found ${emptyBranchIds.length} empty branches, disappearing: ${disappearingBranchIds.size}, queue: ${branchRemovalQueue.length}`);
+      console.log(`🌿 Empty branches check: found ${emptyBranchIds.length} empty normal branches (threshold ${MAX_EMPTY_NORMAL_BRANCHES}), disappearing: ${disappearingBranchIds.size}, queue: ${branchRemovalQueue.length}`);
       console.log(`📊 Total branches: ${gameState.branches.length}`);
 
-      // If 2 or fewer empty branches, don't remove anything
-      if (emptyBranchIds.length <= 2) {
-        console.log(`✅ Empty branches count is OK: ${emptyBranchIds.length} <= 2`);
+      // If at or below threshold, don't replace anything
+      if (emptyBranchIds.length <= MAX_EMPTY_NORMAL_BRANCHES) {
+        console.log(`✅ Empty branches count is OK: ${emptyBranchIds.length} <= ${MAX_EMPTY_NORMAL_BRANCHES}`);
         return;
       }
 
-      // If total branches (empty + non-empty) is 6 or less, don't remove anything
-      if (gameState.branches.length <= 6) {
-        console.log(`✅ Total branches count is OK: ${gameState.branches.length} <= 6 - no removal needed for gameplay`);
-        return;
-      }
+      // Previously: do not replace on small boards (<=6). Removed to ensure replacement always triggers when needed.
+      // if (gameState.branches.length <= 6) {
+      //   console.log(`✅ Total branches count is OK: ${gameState.branches.length} <= 6 - no removal needed for gameplay`);
+      //   return;
+      // }
 
       // If there's already a branch disappearing or in queue, don't add more
       if (disappearingBranchIds.size > 0 || branchRemovalQueue.length > 0) {
@@ -523,8 +529,8 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         return;
       }
 
-      console.log(`🗑️ Adding branch to removal queue: ${idToRemove} (${emptyBranchIds.length} -> ${emptyBranchIds.length - 1})`);
-      console.log(`📋 Total branches before removal: ${gameState.branches.length}, will be: ${gameState.branches.length - 1}`);
+      console.log(`🌊 Adding branch to wave replacement queue: ${idToRemove} (${emptyBranchIds.length} -> ${emptyBranchIds.length - 1})`);
+      console.log(`📋 Total branches: ${gameState.branches.length} (will remain same after replacement)`);
       
       // Add to queue
       setBranchRemovalQueue([idToRemove]);
@@ -533,35 +539,37 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     }
   }, [gameState.branches, disappearingBranchIds, branchRemovalQueue, emptyBranchCheckTrigger]);
 
-  // Process branch removal queue
+  // Process branch wave replacement queue
   useEffect(() => {
     if (branchRemovalQueue.length === 0) return;
     
     try {
-      const idToRemove = branchRemovalQueue[0];
-      const branchToRemove = gameState.branches.find(b => b.id === idToRemove);
-      if (!branchToRemove) {
-        console.warn(`⚠️ Branch to remove not found in queue processing: ${idToRemove}`);
+      const idToReplace = branchRemovalQueue[0];
+      const branchToReplace = gameState.branches.find(b => b.id === idToReplace);
+      if (!branchToReplace) {
+        console.warn(`⚠️ Branch to replace not found in queue processing: ${idToReplace}`);
         // Branch not found, remove from queue
         setBranchRemovalQueue(prev => prev.slice(1));
         return;
       }
 
-      console.log(`🚀 Processing branch removal from queue: ${idToRemove}`);
+      console.log(`🚀 Processing branch wave replacement from queue: ${idToReplace}`);
 
       // Mark as disappearing to trigger UI animation
-      setDisappearingBranchIds(prev => new Set(prev).add(idToRemove));
+      setDisappearingBranchIds(prev => new Set(prev).add(idToReplace));
 
-      // After animation duration, remove the branch
+      // After animation duration, replace the branch with wave
       const ANIMATION_DURATION_MS = 350;
       const removalTimer = setTimeout(() => {
         try {
           setGameState(prev => {
-            const nextBranches = prev.branches.filter((b) => b.id !== idToRemove);
-            const nextSelected = prev.selectedBranch === idToRemove ? null : prev.selectedBranch;
+            const nextBranches = prev.branches.map((b) => 
+              b.id === idToReplace ? { ...b, type: BranchType.WAVE, tiles: [] } : b
+            );
+            const nextSelected = prev.selectedBranch === idToReplace ? null : prev.selectedBranch;
             
-            const remainingEmpty = nextBranches.filter(b => b.tiles.length === 0).length;
-            console.log(`✅ Branch ${idToRemove} removed. Remaining branches: ${nextBranches.length}, empty: ${remainingEmpty}`);
+            const remainingEmpty = nextBranches.filter(b => b.tiles.length === 0 && b.type === BranchType.NORMAL).length;
+            console.log(`✅ Branch ${idToReplace} replaced with wave. Total branches: ${nextBranches.length}, normal empty: ${remainingEmpty}`);
             
             return { ...prev, branches: nextBranches, selectedBranch: nextSelected };
           });
@@ -571,7 +579,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
             try {
               setDisappearingBranchIds(prev => {
                 const next = new Set(prev);
-                next.delete(idToRemove);
+                next.delete(idToReplace);
                 return next;
               });
               
@@ -581,13 +589,13 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
               // Trigger a re-check by incrementing the trigger
               setEmptyBranchCheckTrigger(prev => prev + 1);
               
-              console.log(`🎯 Branch removal process completed for: ${idToRemove}`);
+              console.log(`🎯 Branch wave replacement process completed for: ${idToReplace}`);
             } catch (error) {
-              console.error('❌ Error in branch removal cleanup:', error);
+              console.error('❌ Error in branch wave replacement cleanup:', error);
               // Force cleanup even if there's an error
               setDisappearingBranchIds(prev => {
                 const next = new Set(prev);
-                next.delete(idToRemove);
+                next.delete(idToReplace);
                 return next;
               });
               setBranchRemovalQueue(prev => prev.slice(1));
@@ -597,11 +605,11 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           // Store timer ID for cleanup
           (cleanupTimer as unknown as { isBranchCleanup?: boolean }).isBranchCleanup = true;
         } catch (error) {
-          console.error('❌ Error in branch removal execution:', error);
+          console.error('❌ Error in branch wave replacement execution:', error);
           // Force cleanup even if there's an error
           setDisappearingBranchIds(prev => {
             const next = new Set(prev);
-            next.delete(idToRemove);
+            next.delete(idToReplace);
             return next;
           });
           setBranchRemovalQueue(prev => prev.slice(1));
