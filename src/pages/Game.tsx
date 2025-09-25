@@ -309,10 +309,10 @@ export const Game: React.FC = () => {
 
       {/* Game Board - with bottom padding for floating buttons */}
       <div className="flex-1 flex justify-center items-center px-3 mt-4 pb-32">
-        <div className="w-full max-w-md">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="w-full max-w-2xl">
+          <div className="grid grid-cols-2 gap-6">
             {/* First column */}
-            <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-3">
+            <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-4">
               {gameState.branches.slice(0, Math.ceil(gameState.branches.length / 2)).map((branch) => (
                 <div key={`wrapper-${branch.id}`} className="branch-wrapper">
                   <GameBranch
@@ -333,7 +333,7 @@ export const Game: React.FC = () => {
               ))}
             </div>
             {/* Second column */}
-            <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-3 mt-6">
+            <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-4 mt-8">
               {gameState.branches.slice(Math.ceil(gameState.branches.length / 2)).map((branch) => (
                 <div key={`wrapper-${branch.id}`} className="branch-wrapper">
                   <GameBranch
