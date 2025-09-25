@@ -9,6 +9,7 @@ import { checkAndUnlockAchievements, updateStreak } from '@/utils/achievements';
 import { Achievement, GameSession } from '@/types/achievements';
 import { addLeaderboardEntry } from '@/utils/leaderboard';
 import { DisplayMode } from '@/types/displayMode';
+import { telemetry } from '@/utils/telemetry';
 
 interface UseGameLogicProps {
   level?: number;
@@ -249,11 +250,13 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       isComplete: false,
       learnedKana: [],
       kanaColorMap,
+      completedSets: new Set<string>(),
     };
   }, [level]);
 
   // Create initial state with solvable board generation
   const createInitialState = useCallback(() => {
+    console.log(`🎮 Creating initial state for level ${level}`);
     const config = getLevelConfig(level);
     if (!config) {
       // Fallback to default config
@@ -271,7 +274,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       const colorMapObject = Object.fromEntries(kanaColorMap);
       const solvableBranches = generateSolvableBoard(defaultConfig, colorMapObject);
       
-      return {
+      const newState = {
         branches: solvableBranches,
         selectedBranch: null,
         moves: 0,
@@ -279,7 +282,11 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         isComplete: false,
         learnedKana: [],
         kanaColorMap,
+        completedSets: new Set<string>(),
       };
+      
+      console.log(`📊 Default state created with score: ${newState.score}`);
+      return newState;
     }
 
     const kanaColorMap = generateKanaColorMap(config.kanaSubset);
@@ -294,7 +301,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       tiles: b.tiles.map(t => ({ ...t }))
     }));
     
-    return {
+    const newState = {
       branches: solvableBranches,
       selectedBranch: null,
       moves: 0,
@@ -302,10 +309,16 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       isComplete: false,
       learnedKana: [],
       kanaColorMap,
+      completedSets: new Set<string>(),
     };
+    
+    console.log(`📊 Level ${level} state created with score: ${newState.score}`);
+    return newState;
   }, [level, generateSolvableBoard]);
 
   const [gameState, setGameState] = useState<GameState>(() => createInitialState());
+  const gameStateRef = useRef(gameState);
+  gameStateRef.current = gameState;
   const [gameHistory, setGameHistory] = useState<GameState[]>([]);
   const [showKanaPopup, setShowKanaPopup] = useState<{kana: string; romaji: string; learned: boolean} | null>(null);
   const [flippingTiles, setFlippingTiles] = useState<Set<string>>(new Set());
@@ -319,12 +332,39 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const [disappearingBranchIds, setDisappearingBranchIds] = useState<Set<string>>(new Set());
   // Force re-check of empty branches after removal
   const [emptyBranchCheckTrigger, setEmptyBranchCheckTrigger] = useState<number>(0);
+  // Queue for sequential branch removal
+  const [branchRemovalQueue, setBranchRemovalQueue] = useState<string[]>([]);
+  // Track active animation timers to cancel on level transition
+  const animationTimersRef = useRef<NodeJS.Timeout[]>([]);
+  // Track if animations are currently in progress
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
+
+  // Clean up all active animation timers
+  const cleanupAnimationTimers = useCallback(() => {
+    console.log(`🧹 Cleaning up ${animationTimersRef.current.length} animation timers`);
+    animationTimersRef.current.forEach(timer => {
+      clearTimeout(timer);
+    });
+    animationTimersRef.current = [];
+    setIsAnimating(false); // Reset animation state
+  }, []);
 
   // Update game when level changes
   useEffect(() => {
     if (currentLevel !== level) {
+      console.log(`🔄 Level transition: ${currentLevel} -> ${level}`);
+      console.log(`📊 Current score before transition: ${gameStateRef.current.score}`);
+      
+      // Cancel all pending animation timers to prevent score updates after transition
+      cleanupAnimationTimers();
+      
       setCurrentLevel(level);
-      setGameState(createInitialState());
+      const newState = createInitialState();
+      console.log(`📊 New state score after createInitialState: ${newState.score}`);
+      setGameState(newState);
+      console.log(`📊 GameState set - checking if update is synchronous...`);
+      // Note: setGameState is async, so we can't immediately check the updated value
+      // But we can add a useEffect to monitor gameState changes
       setGameHistory([]);
       setShowKanaPopup(null);
       setFlippingTiles(new Set());
@@ -334,13 +374,31 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       setNewAchievements([]);
       setGameStartTime(new Date());
       setDisappearingBranchIds(new Set());
+      setBranchRemovalQueue([]);
+      
+      // Track game start telemetry
+      const config = getLevelConfig(level);
+      const kanaCount = config?.kanaCount || HIRAGANA_SET.length;
+      telemetry.trackGameStart(`level_${level}`, kanaCount);
+      
+      console.log(`✅ Level ${level} initialized with score: ${newState.score}`);
     }
-  }, [level, currentLevel, createInitialState]);
+  }, [level, currentLevel, createInitialState, cleanupAnimationTimers]);
+
+  // Monitor gameState changes for debugging
+  useEffect(() => {
+    console.log(`🔄 GameState updated - score: ${gameState.score}, level: ${currentLevel}, moves: ${gameState.moves}`);
+  }, [gameState.score, gameState.moves, currentLevel]);
 
   // Initialize game start time
   useEffect(() => {
     setGameStartTime(new Date());
-  }, []);
+    
+    // Clean up all timers on component unmount
+    return () => {
+      cleanupAnimationTimers();
+    };
+  }, [cleanupAnimationTimers]);
 
   // Handle level completion
   useEffect(() => {
@@ -388,6 +446,9 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         gameState.learnedKana
       );
 
+      // Track level complete telemetry
+      telemetry.trackLevelComplete(gameState.score);
+
       // Show completion message with achievements info
       const achievementText = unlockedAchievements.length > 0 
         ? ` Разблокировано достижений: ${unlockedAchievements.length}!`
@@ -406,15 +467,17 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   }, [gameState.isComplete, isLevelComplete, currentLevel, gameState.score, gameState.moves, gameState.learnedKana, gameStartTime, toast]);
 
   // Enforce: at most 2 EMPTY branches on the board
-  // Use interval for continuous monitoring to ensure all excess branches are removed
+  // Use queue-based approach for reliable sequential removal
   useEffect(() => {
-    const checkAndRemoveEmptyBranches = () => {
+    try {
+      // Only run the effect when branches change or when we need to re-check
       const emptyBranchIds: string[] = [];
       gameState.branches.forEach((b) => {
         if (b.tiles.length === 0) emptyBranchIds.push(b.id);
       });
 
-      console.log(`🌿 Empty branches check: found ${emptyBranchIds.length} empty branches, disappearing: ${disappearingBranchIds.size}`);
+      console.log(`🌿 Empty branches check: found ${emptyBranchIds.length} empty branches, disappearing: ${disappearingBranchIds.size}, queue: ${branchRemovalQueue.length}`);
+      console.log(`📊 Total branches: ${gameState.branches.length}`);
 
       // If 2 or fewer empty branches, don't remove anything
       if (emptyBranchIds.length <= 2) {
@@ -422,63 +485,146 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         return;
       }
 
-      // If there's already a branch disappearing, wait for it to finish
-      if (disappearingBranchIds.size > 0) {
-        console.log(`⏳ Waiting for ${disappearingBranchIds.size} branch(es) to finish disappearing`);
+      // If total branches (empty + non-empty) is 6 or less, don't remove anything
+      if (gameState.branches.length <= 6) {
+        console.log(`✅ Total branches count is OK: ${gameState.branches.length} <= 6 - no removal needed for gameplay`);
+        return;
+      }
+
+      // If there's already a branch disappearing or in queue, don't add more
+      if (disappearingBranchIds.size > 0 || branchRemovalQueue.length > 0) {
+        console.log(`⏳ Waiting for current removal to finish. Disappearing: ${disappearingBranchIds.size}, Queue: ${branchRemovalQueue.length}`);
         return;
       }
 
       // Find the lowest empty branch (with highest index) to remove
-      const emptyBranchesWithIndex = emptyBranchIds.map(id => ({
-        id,
-        index: parseInt(id.replace('branch-', ''))
-      }));
+      const emptyBranchesWithIndex = emptyBranchIds.map(id => {
+        const index = parseInt(id.replace('branch-', ''));
+        if (isNaN(index)) {
+          console.warn(`⚠️ Invalid branch ID format: ${id}`);
+          return { id, index: -1 };
+        }
+        return { id, index };
+      }).filter(branch => branch.index >= 0); // Filter out invalid branches
+      
+      if (emptyBranchesWithIndex.length === 0) {
+        console.warn(`⚠️ No valid empty branches found to remove`);
+        return;
+      }
+      
       const branchWithHighestIndex = emptyBranchesWithIndex.reduce((prev, current) => 
         prev.index > current.index ? prev : current
       );
       const idToRemove = branchWithHighestIndex.id;
       const branchToRemove = gameState.branches.find(b => b.id === idToRemove);
-      if (!branchToRemove) return;
+      
+      if (!branchToRemove) {
+        console.warn(`⚠️ Branch to remove not found: ${idToRemove}`);
+        return;
+      }
 
-      console.log(`🗑️ Removing excess empty branch: ${idToRemove} (${emptyBranchIds.length} -> ${emptyBranchIds.length - 1})`);
+      console.log(`🗑️ Adding branch to removal queue: ${idToRemove} (${emptyBranchIds.length} -> ${emptyBranchIds.length - 1})`);
+      console.log(`📋 Total branches before removal: ${gameState.branches.length}, will be: ${gameState.branches.length - 1}`);
+      
+      // Add to queue
+      setBranchRemovalQueue([idToRemove]);
+    } catch (error) {
+      console.error('❌ Error in empty branch check:', error);
+    }
+  }, [gameState.branches, disappearingBranchIds, branchRemovalQueue, emptyBranchCheckTrigger]);
+
+  // Process branch removal queue
+  useEffect(() => {
+    if (branchRemovalQueue.length === 0) return;
+    
+    try {
+      const idToRemove = branchRemovalQueue[0];
+      const branchToRemove = gameState.branches.find(b => b.id === idToRemove);
+      if (!branchToRemove) {
+        console.warn(`⚠️ Branch to remove not found in queue processing: ${idToRemove}`);
+        // Branch not found, remove from queue
+        setBranchRemovalQueue(prev => prev.slice(1));
+        return;
+      }
+
+      console.log(`🚀 Processing branch removal from queue: ${idToRemove}`);
 
       // Mark as disappearing to trigger UI animation
-      setDisappearingBranchIds(prev => new Set(prev).add(branchToRemove.id));
+      setDisappearingBranchIds(prev => new Set(prev).add(idToRemove));
 
-      // After a short delay (animation duration), remove the branch
+      // After animation duration, remove the branch
       const ANIMATION_DURATION_MS = 350;
-      setTimeout(() => {
-        setGameState(prev => {
-          const nextBranches = prev.branches.filter((b) => b.id !== idToRemove);
-          const nextSelected = prev.selectedBranch === idToRemove ? null : prev.selectedBranch;
+      const removalTimer = setTimeout(() => {
+        try {
+          setGameState(prev => {
+            const nextBranches = prev.branches.filter((b) => b.id !== idToRemove);
+            const nextSelected = prev.selectedBranch === idToRemove ? null : prev.selectedBranch;
+            
+            const remainingEmpty = nextBranches.filter(b => b.tiles.length === 0).length;
+            console.log(`✅ Branch ${idToRemove} removed. Remaining branches: ${nextBranches.length}, empty: ${remainingEmpty}`);
+            
+            return { ...prev, branches: nextBranches, selectedBranch: nextSelected };
+          });
           
-          const remainingEmpty = nextBranches.filter(b => b.tiles.length === 0).length;
-          console.log(`✅ Branch ${idToRemove} removed. Remaining branches: ${nextBranches.length}, empty: ${remainingEmpty}`);
+          // Clear disappearing state and remove from queue
+          const cleanupTimer = setTimeout(() => {
+            try {
+              setDisappearingBranchIds(prev => {
+                const next = new Set(prev);
+                next.delete(idToRemove);
+                return next;
+              });
+              
+              // Remove from queue
+              setBranchRemovalQueue(prev => prev.slice(1));
+              
+              // Trigger a re-check by incrementing the trigger
+              setEmptyBranchCheckTrigger(prev => prev + 1);
+              
+              console.log(`🎯 Branch removal process completed for: ${idToRemove}`);
+            } catch (error) {
+              console.error('❌ Error in branch removal cleanup:', error);
+              // Force cleanup even if there's an error
+              setDisappearingBranchIds(prev => {
+                const next = new Set(prev);
+                next.delete(idToRemove);
+                return next;
+              });
+              setBranchRemovalQueue(prev => prev.slice(1));
+            }
+          }, 50);
           
-          return { ...prev, branches: nextBranches, selectedBranch: nextSelected };
-        });
-        
-        // Clear disappearing state after removal
-        setTimeout(() => {
+          // Store timer ID for cleanup
+          (cleanupTimer as unknown as { isBranchCleanup?: boolean }).isBranchCleanup = true;
+        } catch (error) {
+          console.error('❌ Error in branch removal execution:', error);
+          // Force cleanup even if there's an error
           setDisappearingBranchIds(prev => {
             const next = new Set(prev);
             next.delete(idToRemove);
             return next;
           });
-        }, 50);
+          setBranchRemovalQueue(prev => prev.slice(1));
+        }
       }, ANIMATION_DURATION_MS);
-    };
-
-    // Check immediately and then set up interval
-    checkAndRemoveEmptyBranches();
-    
-    // Set up interval to continuously check for empty branches
-    const intervalId = setInterval(checkAndRemoveEmptyBranches, 500); // Check every 500ms
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [gameState.branches, disappearingBranchIds]);
+      
+      // Store timer ID for cleanup
+      (removalTimer as unknown as { isBranchRemoval?: boolean }).isBranchRemoval = true;
+      
+      // Cleanup function to clear timers if component unmounts
+      return () => {
+        clearTimeout(removalTimer);
+        // Clear any cleanup timers that might be pending
+        const timersToClear: NodeJS.Timeout[] = [];
+        // This is a simplified approach - in a real app, we'd use a proper timer management system
+        // For now, we'll just rely on the useEffect cleanup mechanism
+      };
+    } catch (error) {
+      console.error('❌ Error in branch removal queue processing:', error);
+      // Clear the queue to prevent infinite loops
+      setBranchRemovalQueue([]);
+    }
+  }, [branchRemovalQueue, gameState.branches]);
 
   const canPlaceTile = useCallback((sourceTile: KanaTile, targetBranch: Branch): boolean => {
     if (targetBranch.tiles.length >= targetBranch.maxCapacity) return false;
@@ -584,44 +730,126 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const animateSakuraCompletion = useCallback((completedBranches: Branch[], newBranches: Branch[]) => {
     console.log('🌸 Starting sakura animation for completed branches:', completedBranches.length);
     
+    // Update score IMMEDIATELY but keep tiles for animation
+    setGameState(currentState => {
+      const { completed: newCompleted } = checkForCompletion(currentState.branches);
+      const newLearnedKanaAfter = [...new Set([...currentState.learnedKana, ...newCompleted])];
+      const isCompleteAfter = currentState.branches.every(branch => {
+        // Check if branch is completed (all tiles matched) but don't remove tiles yet
+        return branch.tiles.length === 0 || completedBranches.some(cb => cb.id === branch.id);
+      });
+      
+      // Calculate new completed sets and update score
+      const newCompletedSets = new Set(currentState.completedSets);
+      let scoreIncrease = 0;
+      
+      completedBranches.forEach(branch => {
+        const setKey = `${branch.tiles[0].kana}-${branch.id}`;
+        if (!newCompletedSets.has(setKey)) {
+          newCompletedSets.add(setKey);
+          scoreIncrease += 100;
+          console.log(`🎯 Set completed: ${branch.tiles[0].kana} on branch ${branch.id}, +100 points`);
+          
+          // Track set completion telemetry
+          telemetry.trackSetCompleted(newCompletedSets.size, currentState.score + scoreIncrease);
+        }
+      });
+      
+      const newScore = currentState.score + scoreIncrease;
+      
+      return {
+        ...currentState,
+        learnedKana: newLearnedKanaAfter,
+        isComplete: isCompleteAfter,
+        score: newScore,
+        completedSets: newCompletedSets,
+        // Keep branches as they are for animation
+      };
+    });
+    
+    // Now start the animation as a visual effect only
+    setIsAnimating(true);
+    
     // Start sakura animation immediately without flipping tiles first
-    setTimeout(() => {
+    const initialTimer = setTimeout(() => {
       // Animate each completed branch with sakura effect
       completedBranches.forEach((branch, branchIndex) => {
         // Add all tiles to sakura animation simultaneously for a more dramatic effect
         branch.tiles.forEach((tile, tileIndex) => {
-          setTimeout(() => {
+          const tileTimer = setTimeout(() => {
             setSakuraAnimatingTiles(prev => new Set([...prev, tile.id]));
           }, branchIndex * 150 + tileIndex * 80); // Slightly faster stagger for smoother effect
+          animationTimersRef.current.push(tileTimer);
         });
       });
       
-      // After all sakura animations start, remove tiles
+      // After all sakura animations start, remove tiles and clear animation state
       const totalAnimationTime = completedBranches.length * 150 + 4 * 80 + 1800; // Extra time for sakura to fall
-      setTimeout(() => {
+      const cleanupTimer = setTimeout(() => {
         setSakuraAnimatingTiles(new Set());
         
+        // Now actually remove the tiles from branches
         setGameState(currentState => {
           const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
-          const newLearnedKanaAfter = [...new Set([...currentState.learnedKana, ...newCompleted])];
-          const isCompleteAfter = finalBranches.every(branch => branch.tiles.length === 0);
-
           return {
             ...currentState,
             branches: finalBranches,
-            learnedKana: newLearnedKanaAfter,
-            isComplete: isCompleteAfter,
+            learnedKana: [...new Set([...currentState.learnedKana, ...newCompleted])],
           };
         });
+        
+        setIsAnimating(false); // Animation complete
       }, totalAnimationTime);
+      animationTimersRef.current.push(cleanupTimer);
     }, 50); // Reduced delay for more immediate response
+    animationTimersRef.current.push(initialTimer);
   }, [checkForCompletion]);
 
   // Regular flip animation for other display modes
   const animateFlipCompletion = useCallback((completedBranches: Branch[], newBranches: Branch[]) => {
     console.log('🎉 Starting flip animation for completed branches:', completedBranches.length);
     
-    setTimeout(() => {
+    // Update score IMMEDIATELY but keep tiles for animation
+    setGameState(currentState => {
+      const { completed: newCompleted } = checkForCompletion(currentState.branches);
+      const newLearnedKanaAfter = [...new Set([...currentState.learnedKana, ...newCompleted])];
+      const isCompleteAfter = currentState.branches.every(branch => {
+        // Check if branch is completed (all tiles matched) but don't remove tiles yet
+        return branch.tiles.length === 0 || completedBranches.some(cb => cb.id === branch.id);
+      });
+      
+      // Calculate new completed sets and update score
+      const newCompletedSets = new Set(currentState.completedSets);
+      let scoreIncrease = 0;
+      
+      completedBranches.forEach(branch => {
+        const setKey = `${branch.tiles[0].kana}-${branch.id}`;
+        if (!newCompletedSets.has(setKey)) {
+          newCompletedSets.add(setKey);
+          scoreIncrease += 100;
+          console.log(`🎯 Set completed: ${branch.tiles[0].kana} on branch ${branch.id}, +100 points`);
+          
+          // Track set completion telemetry
+          telemetry.trackSetCompleted(newCompletedSets.size, currentState.score + scoreIncrease);
+        }
+      });
+      
+      const newScore = currentState.score + scoreIncrease;
+
+      return {
+        ...currentState,
+        learnedKana: newLearnedKanaAfter,
+        isComplete: isCompleteAfter,
+        score: newScore,
+        completedSets: newCompletedSets,
+        // Keep branches as they are for animation
+      };
+    });
+    
+    // Now start the animation as a visual effect only
+    setIsAnimating(true);
+    
+    const initialTimer = setTimeout(() => {
       // Animate each completed branch sequentially
       completedBranches.forEach((branch, branchIndex) => {
         const branchIndexInGame = newBranches.findIndex(b => b.id === branch.id);
@@ -629,51 +857,40 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         const tileIndices = isRightColumn ? [3, 2, 1, 0] : [3, 2, 1, 0];
 
         tileIndices.forEach((tileIndex, animationIndex) => {
-          setTimeout(() => {
+          const tileTimer = setTimeout(() => {
             const tileId = branch.tiles[tileIndex].id;
             setFlippingTiles(prev => new Set([...prev, tileId]));
           }, branchIndex * 500 + animationIndex * 400);
+          animationTimersRef.current.push(tileTimer);
         });
       });
       
-      // After all animations, remove tiles and clear flipping
+      // After all animations, remove tiles and clear flipping state
       const totalAnimationTime = completedBranches.length * 500 + 4 * 400 + 500;
-      setTimeout(() => {
+      const cleanupTimer = setTimeout(() => {
         setFlippingTiles(new Set());
         
+        // Now actually remove the tiles from branches
         setGameState(currentState => {
           const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
-          const newLearnedKanaAfter = [...new Set([...currentState.learnedKana, ...newCompleted])];
-          const isCompleteAfter = finalBranches.every(branch => branch.tiles.length === 0);
-
           return {
             ...currentState,
             branches: finalBranches,
-            learnedKana: newLearnedKanaAfter,
-            isComplete: isCompleteAfter,
+            learnedKana: [...new Set([...currentState.learnedKana, ...newCompleted])],
           };
         });
+        
+        setIsAnimating(false); // Animation complete
       }, totalAnimationTime);
+      animationTimersRef.current.push(cleanupTimer);
     }, 100);
+    animationTimersRef.current.push(initialTimer);
   }, [checkForCompletion]);
 
-  // Estimate a reasonable "par" number of moves for current level based on the initial board
-  const estimateParMoves = useCallback((): number => {
-    const initial = initialBranchesRef.current;
-    if (!initial || initial.length === 0) return 30; // sensible default
-    const totalTiles = initial.reduce((sum, b) => sum + b.tiles.length, 0);
-    // Heuristic: par ~ tiles * 1.2 (tuned to allow enough slack on higher levels)
-    return Math.max(15, Math.ceil(totalTiles * 1.2));
+  // Simple scoring: +100 points for each completed set
+  const computeScore = useCallback((completedSetsCount: number): number => {
+    return completedSetsCount * 100;
   }, []);
-
-  // Compute score normalized by par so higher levels (with larger boards) are not punished
-  const computeScore = useCallback((moves: number): number => {
-    const par = estimateParMoves();
-    // Allow plenty of headroom before hitting zero
-    const maxMovesForZero = Math.max(par * 2.5, par + 15);
-    const penaltyPerMove = 1000 / maxMovesForZero;
-    return Math.max(0, Math.round(1000 - moves * penaltyPerMove));
-  }, [estimateParMoves]);
 
   const moveTile = useCallback((sourceBranchId: string, targetBranchId: string) => {
     console.log('🎲 moveTile called:', { from: sourceBranchId, to: targetBranchId });
@@ -779,10 +996,11 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           branches: newBranches,
           selectedBranch: null,
           moves: newMoves,
-          score: computeScore(newMoves),
+          score: prevState.score, // Score will be updated after animation
           isComplete: false,
           learnedKana: newLearnedKana,
           kanaColorMap: prevState.kanaColorMap,
+          completedSets: prevState.completedSets,
         };
       }
 
@@ -805,13 +1023,14 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         branches: updatedBranches,
         selectedBranch: null,
         moves: newMoves,
-        score: computeScore(newMoves),
+        score: prevState.score,
         isComplete,
         learnedKana: prevState.learnedKana,
         kanaColorMap: prevState.kanaColorMap,
+        completedSets: prevState.completedSets,
       };
     });
-  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves, displayMode, animateFlipCompletion, animateSakuraCompletion, computeScore]);
+  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves, displayMode, animateFlipCompletion, animateSakuraCompletion]);
 
   const selectBranch = useCallback((branchId: string) => {
     console.log('🎯 selectBranch called:', branchId);
@@ -939,10 +1158,11 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
             branches: newBranches,
             selectedBranch: null,
             moves: newMoves,
-            score: computeScore(newMoves),
+            score: prevState.score, // Score will be updated after animation
             isComplete: false,
             learnedKana: newLearnedKanaNow,
             kanaColorMap: prevState.kanaColorMap,
+            completedSets: prevState.completedSets,
           };
         }
 
@@ -964,16 +1184,17 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           branches: updatedBranches,
           selectedBranch: null,
           moves: newMoves,
-          score: computeScore(newMoves),
+          score: prevState.score,
           isComplete,
           learnedKana: prevState.learnedKana,
           kanaColorMap: prevState.kanaColorMap,
+          completedSets: prevState.completedSets,
         };
       }
 
       return prevState;
     });
-  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast, displayMode, animateFlipCompletion, animateSakuraCompletion, computeScore]);
+  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast, displayMode, animateFlipCompletion, animateSakuraCompletion]);
 
   const undoMove = useCallback(() => {
     if (gameHistory.length > 0) {
@@ -1027,6 +1248,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         moves: 0,
         score: 0,
         isComplete: false,
+        completedSets: new Set<string>(),
       };
       console.log(" board state after restore:", JSON.parse(JSON.stringify(newState.branches)));
       return newState;
@@ -1072,6 +1294,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     selectedTileCount,
     currentLevel,
     isLevelComplete,
+    isAnimating,
     hasValidMoves: () => hasValidMoves(gameState.branches),
     newAchievements,
     clearNewAchievements: () => setNewAchievements([]),

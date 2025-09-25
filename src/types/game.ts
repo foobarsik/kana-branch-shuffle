@@ -19,6 +19,7 @@ export interface GameState {
   isComplete: boolean;
   learnedKana: string[];
   kanaColorMap: Map<string, string>;
+  completedSets: Set<string>; // Track branches that have been scored for completed sets
 }
 
 export interface KanaData {

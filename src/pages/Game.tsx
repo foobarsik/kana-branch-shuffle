@@ -42,6 +42,7 @@ export const Game: React.FC = () => {
     selectedTileCount,
     currentLevel,
     isLevelComplete,
+    isAnimating,
     newAchievements,
     clearNewAchievements,
     disappearingBranchIds,
