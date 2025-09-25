@@ -195,7 +195,7 @@ export const GameTile: React.FC<GameTileProps> = ({
                 className={cn(
                   "font-medium text-white select-none",
                   "text-xl md:text-3xl",
-                  isSelected && "opacity-0"
+                  (isSelected || isLargeMode) && "opacity-0"
                 )}
                 style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
               >
@@ -232,7 +232,7 @@ export const GameTile: React.FC<GameTileProps> = ({
                 className={cn(
                   "font-medium drop-shadow-lg select-none text-lg md:text-3xl",
                   showRomajiByDefault ? "text-white" : "text-yellow-300",
-                  isSelected && "opacity-0"
+                  (isSelected || isLargeMode) && "opacity-0"
                 )}
                 style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
               >
@@ -243,7 +243,7 @@ export const GameTile: React.FC<GameTileProps> = ({
         </div>
       </div>
       {/* Selected overlay showing both kana and romaji together */}
-      {isSelected && (
+      {(isSelected || isLargeMode) && (
         <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-center justify-center">
           <span
             className="font-bold text-white text-xl md:text-3xl"
