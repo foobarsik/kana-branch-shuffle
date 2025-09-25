@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -63,8 +65,8 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Japanese-inspired color palette */
-    --background: 15 20% 97%;
+    /* iOS-inspired semantic color palette */
+    --background: 0 0% 98%;
     --foreground: 240 10% 15%;
 
     --card: 0 0% 100%;
@@ -73,41 +75,52 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 15%;
 
-    /* Cherry blossom pink as primary */
-    --primary: 340 75% 75%;
+    /* iOS Indigo/Blue as primary */
+    --primary: 224 76% 48%;
     --primary-foreground: 0 0% 100%;
 
-    /* Neon yellow as secondary */
-    --secondary: 54 100% 62%;
-    --secondary-foreground: 240 10% 25%;
+    /* iOS Tinted secondary */
+    --secondary: 224 76% 95%;
+    --secondary-foreground: 224 76% 25%;
 
-    --muted: 60 5% 90%;
-    --muted-foreground: 240 5% 45%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
 
-    /* Soft lavender as accent */
-    --accent: 260 30% 85%;
-    --accent-foreground: 240 10% 25%;
+    /* iOS accent colors */
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 10%;
 
-    --destructive: 0 65% 65%;
+    /* iOS semantic colors */
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
+    
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 32 95% 44%;
+    --warning-foreground: 0 0% 100%;
 
-    --border: 240 10% 88%;
-    --input: 240 10% 88%;
-    --ring: 340 75% 75%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 224 76% 48%;
 
-    /* Game-specific colors */
+    /* Game-specific colors - keeping gradients for tiles but glass for UI */
     --branch: 30 25% 75%;
     --tile: 0 0% 98%;
     --tile-shadow: 240 10% 80%;
-    --success: 60 100% 50%;
-    --warning: 45 90% 75%;
 
-    /* Gradients */
-    --gradient-background: linear-gradient(135deg, hsl(15 20% 97%), hsl(340 20% 95%));
+    /* Glass effect colors */
+    --glass-bg: 0 0% 100% / 0.7;
+    --glass-border: 0 0% 100% / 0.4;
+    --glass-shadow: 0 0% 0% / 0.06;
+
+    /* iOS-style gradients */
+    --gradient-background: linear-gradient(135deg, hsl(240 5% 98%), hsl(224 76% 98%));
     --gradient-tile: linear-gradient(145deg, hsl(0 0% 100%), hsl(240 5% 95%));
     --gradient-branch: linear-gradient(90deg, hsl(30 25% 75%), hsl(25 20% 70%));
+    --gradient-glass: linear-gradient(135deg, hsl(var(--glass-bg)), hsl(0 0% 100% / 0.4));
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -171,7 +184,53 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+    font-feature-settings: "cv11", "ss01";
+    font-variation-settings: "opsz" 32;
+  }
+}
+
+/* iOS-style glass utilities */
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-xl bg-white/70 border border-white/40;
+    box-shadow: 0 4px 20px hsl(var(--glass-shadow));
+  }
+  
+  .glass-subtle {
+    @apply backdrop-blur-md bg-white/50 border border-white/30;
+    box-shadow: 0 2px 12px hsl(0 0% 0% / 0.04);
+  }
+  
+  .tile-glass {
+    box-shadow: 
+      0 6px 20px hsl(0 0% 0% / 0.15),
+      inset 0 1px 0 hsl(0 0% 100% / 0.6),
+      inset 0 -1px 8px hsl(0 0% 0% / 0.12);
+  }
+  
+  .ios-button-primary {
+    @apply bg-primary text-primary-foreground font-medium rounded-2xl h-12 px-6 shadow-md;
+    @apply active:scale-[0.98] transition-transform duration-150;
+  }
+  
+  .ios-button-secondary {
+    @apply bg-primary/10 text-primary font-medium rounded-2xl h-12 px-6 border border-primary/20;
+    @apply active:scale-[0.98] transition-transform duration-150;
+  }
+  
+  .ios-button-tertiary {
+    @apply glass font-medium rounded-2xl h-12 px-6 text-foreground/80;
+    @apply active:scale-[0.98] transition-transform duration-150;
+  }
+  
+  .progress-ios {
+    @apply h-2 w-full rounded-full bg-black/5 relative overflow-hidden;
+  }
+  
+  .progress-ios-fill {
+    @apply absolute inset-0 bg-warning rounded-full;
+    mask-image: linear-gradient(90deg, transparent, black 20%, black 80%, transparent);
   }
 }
 

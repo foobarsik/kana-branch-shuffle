@@ -114,10 +114,10 @@ export const GameTile: React.FC<GameTileProps> = ({
   return (
     <div
       className={cn(
-        "w-[43px] h-[43px] md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
-        "active:scale-95",
+        "w-[43px] h-[43px] md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-200 flex-shrink-0",
+        "active:scale-95 tile-glass",
         !isSelectable && "cursor-default",
-        isSelected && "z-20",
+        isSelected && "z-20 scale-110",
         className
       )}
       style={{ ...(style || {}), perspective: 600 }}
@@ -193,11 +193,14 @@ export const GameTile: React.FC<GameTileProps> = ({
             <div className="absolute inset-0 flex items-center justify-center">
               <span
                 className={cn(
-                  "font-medium text-white select-none",
+                  "font-semibold text-white select-none",
                   "text-xl md:text-3xl",
                   (isSelected || isLargeMode) && "opacity-0"
                 )}
-                style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
+                style={{ 
+                  textShadow: '0 1px 0 rgba(0,0,0,0.25)',
+                  fontWeight: 600
+                }}
               >
                 {tile.kana}
               </span>
@@ -230,11 +233,14 @@ export const GameTile: React.FC<GameTileProps> = ({
             <div className="absolute mb-1 inset-0 flex items-center justify-center">
               <span 
                 className={cn(
-                  "font-medium drop-shadow-lg select-none text-lg md:text-3xl",
-                  showRomajiByDefault ? "text-white" : "text-yellow-300",
+                  "font-semibold drop-shadow-lg select-none text-lg md:text-3xl",
+                  showRomajiByDefault ? "text-white" : "text-yellow-200",
                   (isSelected || isLargeMode) && "opacity-0"
                 )}
-                style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
+                style={{ 
+                  textShadow: '0 1px 0 rgba(0,0,0,0.25)',
+                  fontWeight: 600
+                }}
               >
                 {tile.romaji}
               </span>
@@ -247,13 +253,19 @@ export const GameTile: React.FC<GameTileProps> = ({
         <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-center justify-center">
           <span
             className="font-bold text-white text-xl md:text-3xl"
-            style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.6)' }}
+            style={{ 
+              textShadow: '0 1px 0 rgba(0,0,0,0.25)',
+              fontWeight: 700
+            }}
           >
             {tile.kana}
           </span>
           <span
             className="mt-0.5 text-[11px] md:text-sm font-semibold text-yellow-200"
-            style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}
+            style={{ 
+              textShadow: '0 1px 0 rgba(0,0,0,0.25)',
+              fontWeight: 600
+            }}
           >
             {tile.romaji}
           </span>

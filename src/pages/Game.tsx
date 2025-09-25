@@ -6,7 +6,7 @@ import { Branch } from "@/types/game";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon, Crown } from "lucide-react";
+import { Crown, Home, Undo2, RotateCcw, Shuffle as ShuffleIcon, ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
 import { getLevelConfig, getMaxLevel } from "@/config/levels";
@@ -190,11 +190,11 @@ export const Game: React.FC = () => {
         <div className="text-center space-y-6 max-w-md">
           <img src="/success.png" alt="Level Complete!" className="w-48 h-auto mx-auto mb-4" />
           <div>
-            <Badge variant="secondary" className="mb-2">Level {currentLevelNumber}</Badge>
-            <h1 className="text-3xl font-bold text-foreground">Level Complete!</h1>
+            <Badge variant="secondary" className="mb-2 bg-warning/20 text-warning-foreground border-warning/30">Level {currentLevelNumber}</Badge>
+            <h1 className="text-3xl font-semibold text-foreground">Level Complete!</h1>
             <h2 className="text-lg font-medium text-muted-foreground">{levelConfig?.name}</h2>
           </div>
-          <div className="bg-card p-4 rounded-lg border">
+          <div className="glass rounded-2xl p-6">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="text-2xl font-bold text-primary">{gameState.score}</div>
@@ -206,23 +206,23 @@ export const Game: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-3 md:scale-100 scale-90 origin-top">
+          <div className="flex flex-col gap-3">
             {canGoToNext && (
-              <Button onClick={goToNextLevel} className="w-full">
+              <Button onClick={goToNextLevel} className="ios-button-primary">
                 <ArrowRight className="w-4 h-4 mr-2" />
                 Next Level ({currentLevelNumber + 1})
               </Button>
             )}
             <div className="flex gap-2">
-              <Button onClick={goToLevelSelect} variant="outline" className="flex-1">
-                <Trophy className="w-4 h-4 mr-2" />
+              <Button onClick={goToLevelSelect} className="ios-button-secondary flex-1">
+                <Crown className="w-4 h-4 mr-2" />
                 Levels
               </Button>
-              <Button onClick={resetGame} variant="outline" className="flex-1">
+              <Button onClick={resetGame} className="ios-button-tertiary flex-1">
                 <ShuffleIcon className="w-4 h-4 mr-2" />
-                Shuffle and play again
+                Again
               </Button>
-              <Button onClick={() => navigate("/")} variant="outline" className="flex-1">
+              <Button onClick={() => navigate("/")} className="ios-button-tertiary flex-1">
                 <Home className="w-4 h-4 mr-2" />
                 Home
               </Button>
@@ -235,55 +235,56 @@ export const Game: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-background p-0 pb-4 flex flex-col">
-      {/* Header - sticky & compact on mobile */}
-      <div className="sticky top-0 z-40 bg-gradient-background/80 backdrop-blur supports-[backdrop-filter]:bg-gradient-background/60 border-b">
-        <div className="px-3 py-2 md:px-4 md:py-3 space-y-2">
-          {/* Row 1: Context */}
-          <div className="flex items-center justify-between gap-2">
-            <Button
-              onClick={() => navigate("/")}
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 md:h-8 md:w-auto md:px-3"
-              title="Home"
-              aria-label="Home"
-            >
-              <Home className="w-5 h-5 md:w-4 md:h-4" />
-              <span className="hidden md:inline ml-2">Home</span>
-            </Button>
-
-            <div className="flex-1 text-center min-w-0">
-              <button
-                onClick={goToLevelSelect}
-                className="inline-flex items-center gap-2 px-3 py-1 bg-[#ffffff] border border-[#e5e7eb] rounded-lg shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
-                title="Go to level selection"
-                aria-label="Go to level selection"
+      {/* Header - iOS Glass Style */}
+      <div className="sticky top-0 z-40 mx-3 mt-2">
+        <div className="glass rounded-2xl">
+          <div className="px-4 py-3 space-y-3">
+            {/* Row 1: Navigation & Level Info */}
+            <div className="flex items-center justify-between">
+              <Button
+                onClick={() => navigate("/")}
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 rounded-xl glass-subtle"
+                title="Home"
+                aria-label="Home"
               >
-                <Crown className="w-4 h-4 text-yellow-500" />
-                <span className="text-xs md:text-sm font-medium text-gray-700">
-                  Level {currentLevelNumber} · {levelConfig?.name}
-                </span>
-              </button>
+                <Home className="w-5 h-5" />
+              </Button>
+
+              <div className="flex-1 text-center">
+                <button
+                  onClick={goToLevelSelect}
+                  className="inline-flex items-center gap-2 px-4 py-2 glass-subtle rounded-xl hover:bg-white/60 transition-colors cursor-pointer"
+                  title="Go to level selection"
+                  aria-label="Go to level selection"
+                >
+                  <Crown className="w-4 h-4 text-warning" />
+                  <span className="text-sm font-semibold text-foreground">
+                    Level {currentLevelNumber}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {levelConfig?.name}
+                  </span>
+                </button>
+              </div>
+
+              <div className="flex items-center">
+                <AudioControls compact={true} />
+              </div>
             </div>
 
-            {/* Display Mode & Audio Controls */}
-            <div className="flex items-center gap-2">
-              <AudioControls compact={true} />
-            </div>
-          </div>
-
-          {/* Row 2: Progress & Metrics */}
-          <div className="flex flex-col min-[431px]:flex-row items-center justify-center min-[431px]:justify-between gap-2 md:gap-4">
-            <div className="w-full min-[431px]:w-auto min-[431px]:flex-1 flex justify-center min-[431px]:justify-start">
-              <div className="inline-flex bg-gray-100 border border-gray-200 rounded-lg p-1">
+            {/* Row 2: Display Mode Toggle */}
+            <div className="flex justify-center">
+              <div className="inline-flex bg-white/30 backdrop-blur-md border border-white/40 rounded-xl p-1">
                 {Object.entries(DISPLAY_MODE_LABELS).map(([mode, label]) => (
                   <button
                     key={mode}
                     onClick={() => setDisplayMode(mode as DisplayMode)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
                       displayMode === mode
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-white text-foreground shadow-sm'
+                        : 'text-foreground/70 hover:text-foreground'
                     }`}
                   >
                     {label}
@@ -291,20 +292,27 @@ export const Game: React.FC = () => {
                 ))}
               </div>
             </div>
-            <div className="flex items-center justify-center min-[431px]:justify-end gap-4 text-sm md:text-base font-semibold text-muted-foreground shrink-0 whitespace-nowrap">
-              <span>Score: <span className="font-bold text-foreground">{gameState.score}</span></span>
-              <span>Moves: <span className="font-bold text-foreground">{gameState.moves}</span></span>
+
+            {/* Row 3: Progress & Stats */}
+            <div className="space-y-2">
+              <div className="progress-ios">
+                <div className="progress-ios-fill" style={{ width: '24%' }}></div>
+              </div>
+              <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+                <span>Score: <span className="font-semibold text-foreground">{gameState.score}</span></span>
+                <span>Moves: <span className="font-semibold text-foreground">{gameState.moves}</span></span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Game Board */}
-      <div className="flex-1 flex justify-center items-center px-0 md:px-1 mt-3 md:mt-4">
-        <div className="w-full md:max-w-3xl">
-          <div className="grid grid-cols-2 gap-3 md:gap-4">
+      {/* Game Board - with bottom padding for floating buttons */}
+      <div className="flex-1 flex justify-center items-center px-3 mt-4 pb-32">
+        <div className="w-full max-w-md">
+          <div className="grid grid-cols-2 gap-4">
             {/* First column */}
-            <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-2 md:gap-3">
+            <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-3">
               {gameState.branches.slice(0, Math.ceil(gameState.branches.length / 2)).map((branch) => (
                 <div key={`wrapper-${branch.id}`} className="branch-wrapper">
                   <GameBranch
@@ -325,7 +333,7 @@ export const Game: React.FC = () => {
               ))}
             </div>
             {/* Second column */}
-            <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-2 md:gap-3 mt-[25px] md:mt-0">
+            <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-3 mt-6">
               {gameState.branches.slice(Math.ceil(gameState.branches.length / 2)).map((branch) => (
                 <div key={`wrapper-${branch.id}`} className="branch-wrapper">
                   <GameBranch
@@ -346,58 +354,48 @@ export const Game: React.FC = () => {
               ))}
             </div>
           </div>
-          
-          {/* Action Buttons */}
-          <div className="flex justify-center items-center gap-2 md:gap-2 mt-6">
-            <Button
-              onClick={undoMove}
-              disabled={!canUndo}
-              variant="outline"
-              title="Undo"
-              aria-label="Undo"
-              className="h-9 md:h-8 px-3 whitespace-nowrap inline-flex items-center gap-2"
-            >
-              <Undo2 className="w-4 h-4" />
-              <span className="inline">Undo</span>
-            </Button>
-            <Button
-              onClick={restartPreset}
-              variant="outline"
-              title="Restart (return to initial preset)"
-              aria-label="Restart (return to initial preset)"
-              className="h-9 md:h-8 px-3 whitespace-nowrap inline-flex items-center gap-2"
-              disabled={gameState.moves === 0}
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span className="inline">Restart</span>
-            </Button>
-            <Button
-              onClick={resetGame}
-              variant="outline"
-              title="Shuffle (new layout)"
-              aria-label="Shuffle (new layout)"
-              className="h-9 md:h-8 px-3 whitespace-nowrap inline-flex items-center gap-2"
-            >
-              <ShuffleIcon className="w-4 h-4" />
-              <span className="inline">Shuffle</span>
-            </Button>
+          {/* Action Buttons - iOS Style */}
+          <div className="fixed bottom-6 left-3 right-3 z-30">
+            <div className="flex gap-2">
+              <Button
+                onClick={undoMove}
+                disabled={!canUndo}
+                className={`flex-1 ${!canUndo ? 'ios-button-tertiary opacity-50' : 'ios-button-primary'}`}
+                title="Undo"
+                aria-label="Undo"
+              >
+                <Undo2 className="w-4 h-4 mr-2" />
+                Undo
+              </Button>
+              <Button
+                onClick={restartPreset}
+                className="ios-button-secondary flex-1"
+                title="Restart (return to initial preset)"
+                aria-label="Restart (return to initial preset)"
+                disabled={gameState.moves === 0}
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Restart
+              </Button>
+              <Button
+                onClick={resetGame}
+                className="ios-button-tertiary flex-1"
+                title="Shuffle (new layout)"
+                aria-label="Shuffle (new layout)"
+              >
+                <ShuffleIcon className="w-4 h-4 mr-2" />
+                Shuffle
+              </Button>
+            </div>
           </div>
 
-          {/* Instructions */}
-          <div className="text-center mt-4 text-sm text-muted-foreground p-2">
-          <p>Group 4 identical kana.</p>
-          <p>Tap a branch, then another to move.</p>
-          <p>Place only on empty branch or next to same kana.</p>
-            {/* {levelConfig && (
-              <div className="mt-2 flex flex-wrap justify-center gap-1">
-                <span className="text-xs">Kana in this level:</span>
-                {levelConfig.kanaSubset.map((kana) => (
-                  <Badge key={kana} variant="outline" className="text-xs">
-                    {kana}
-                  </Badge>
-                ))}
-              </div>
-            )} */}
+          {/* Instructions - iOS Glass Style */}
+          <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-20">
+            <div className="glass-subtle rounded-2xl px-4 py-2">
+              <p className="text-sm font-medium text-foreground/80 text-center whitespace-nowrap">
+                Make 4 of a kind. Tap → Tap. Empty or same only.
+              </p>
+            </div>
           </div>
         </div>
       </div>
