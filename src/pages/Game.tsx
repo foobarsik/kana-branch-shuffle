@@ -196,12 +196,17 @@ export const Game: React.FC = () => {
             </Button>
 
             <div className="flex-1 text-center min-w-0">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ffffff] border border-[#e5e7eb] rounded-lg shadow-sm">
+              <button
+                onClick={goToLevelSelect}
+                className="inline-flex items-center gap-2 px-3 py-1 bg-[#ffffff] border border-[#e5e7eb] rounded-lg shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
+                title="Go to level selection"
+                aria-label="Go to level selection"
+              >
                 <Crown className="w-4 h-4 text-yellow-500" />
                 <span className="text-xs md:text-sm font-medium text-gray-700">
                   Level {currentLevelNumber} · {levelConfig?.name}
                 </span>
-              </div>
+              </button>
             </div>
 
             {/* Display Mode & Audio Controls */}
