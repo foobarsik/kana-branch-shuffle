@@ -132,7 +132,7 @@ export const Game: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4">
         <div className="text-center space-y-6 max-w-md">
-          <div className="text-6xl">🎉</div>
+          <img src="/success.png" alt="Level Complete!" className="w-48 h-auto mx-auto mb-4" />
           <div>
             <Badge variant="secondary" className="mb-2">Level {currentLevelNumber}</Badge>
             <h1 className="text-3xl font-bold text-foreground">Level Complete!</h1>
@@ -150,7 +150,7 @@ export const Game: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 md:scale-100 scale-90 origin-top">
             {canGoToNext && (
               <Button onClick={goToNextLevel} className="w-full">
                 <ArrowRight className="w-4 h-4 mr-2" />
