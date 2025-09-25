@@ -978,7 +978,10 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const undoMove = useCallback(() => {
     if (gameHistory.length > 0) {
       const previousState = gameHistory[gameHistory.length - 1];
-      setGameState(previousState);
+      setGameState({
+        ...previousState,
+        selectedBranch: null
+      });
       setGameHistory(prev => prev.slice(0, -1));
     }
   }, [gameHistory]);
