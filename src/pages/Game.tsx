@@ -44,6 +44,7 @@ export const Game: React.FC = () => {
     isLevelComplete,
     newAchievements,
     clearNewAchievements,
+    disappearingBranchIds,
   } = useGameLogic({ level: currentLevelNumber, displayMode });
 
   // Get level configuration and player progress
@@ -241,39 +242,45 @@ export const Game: React.FC = () => {
         <div className="w-full md:max-w-3xl">
           <div className="grid grid-cols-2 gap-3 md:gap-4">
             {/* First column */}
-            <div className="flex flex-col gap-2 md:gap-3">
+            <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-2 md:gap-3">
               {gameState.branches.slice(0, Math.ceil(gameState.branches.length / 2)).map((branch) => (
-                <GameBranch
-                  key={branch.id}
-                  branch={branch}
-                  selectedBranch={gameState.selectedBranch}
-                  onBranchClick={selectBranch}
-                  canPlace={getCanPlaceStatus(branch.id)}
-                  align="left"
-                  flippingTiles={flippingTiles}
-                  sakuraAnimatingTiles={sakuraAnimatingTiles}
-                  selectedTileCount={selectedTileCount}
-                  getShouldShowRomaji={getShouldShowRomaji}
-                  isLargeMode={displayMode === DisplayMode.LARGE}
-                />
+                <div key={`wrapper-${branch.id}`} className="branch-wrapper">
+                  <GameBranch
+                    key={branch.id}
+                    branch={branch}
+                    selectedBranch={gameState.selectedBranch}
+                    onBranchClick={selectBranch}
+                    canPlace={getCanPlaceStatus(branch.id)}
+                    align="left"
+                    flippingTiles={flippingTiles}
+                    sakuraAnimatingTiles={sakuraAnimatingTiles}
+                    selectedTileCount={selectedTileCount}
+                    getShouldShowRomaji={getShouldShowRomaji}
+                    isLargeMode={displayMode === DisplayMode.LARGE}
+                    isDisappearing={disappearingBranchIds?.has(branch.id)}
+                  />
+                </div>
               ))}
             </div>
             {/* Second column */}
-            <div className="flex flex-col gap-2 md:gap-3 mt-[25px] md:mt-0">
+            <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-2 md:gap-3 mt-[25px] md:mt-0">
               {gameState.branches.slice(Math.ceil(gameState.branches.length / 2)).map((branch) => (
-                <GameBranch
-                  key={branch.id}
-                  branch={branch}
-                  selectedBranch={gameState.selectedBranch}
-                  onBranchClick={selectBranch}
-                  canPlace={getCanPlaceStatus(branch.id)}
-                  align="right"
-                  flippingTiles={flippingTiles}
-                  sakuraAnimatingTiles={sakuraAnimatingTiles}
-                  selectedTileCount={selectedTileCount}
-                  getShouldShowRomaji={getShouldShowRomaji}
-                  isLargeMode={displayMode === DisplayMode.LARGE}
-                />
+                <div key={`wrapper-${branch.id}`} className="branch-wrapper">
+                  <GameBranch
+                    key={branch.id}
+                    branch={branch}
+                    selectedBranch={gameState.selectedBranch}
+                    onBranchClick={selectBranch}
+                    canPlace={getCanPlaceStatus(branch.id)}
+                    align="right"
+                    flippingTiles={flippingTiles}
+                    sakuraAnimatingTiles={sakuraAnimatingTiles}
+                    selectedTileCount={selectedTileCount}
+                    getShouldShowRomaji={getShouldShowRomaji}
+                    isLargeMode={displayMode === DisplayMode.LARGE}
+                    isDisappearing={disappearingBranchIds?.has(branch.id)}
+                  />
+                </div>
               ))}
             </div>
           </div>

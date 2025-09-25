@@ -15,6 +15,7 @@ interface GameBranchProps {
   selectedTileCount?: number;
   getShouldShowRomaji?: (branch: Branch, tileIndex: number, align: 'left' | 'right') => boolean;
   isLargeMode?: boolean;
+  isDisappearing?: boolean;
 }
 
 export const GameBranch: React.FC<GameBranchProps> = ({
@@ -28,6 +29,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   selectedTileCount = 1,
   getShouldShowRomaji,
   isLargeMode = false,
+  isDisappearing = false,
 }) => {
   const isSelected = selectedBranch === branch.id;
   const isEmpty = branch.tiles.length === 0;
@@ -35,7 +37,10 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   const topTile = branch.tiles[branch.tiles.length - 1];
 
   return (
-    <div className="flex flex-col items-center space-y-2">
+    <div className={cn(
+      "flex flex-col items-center space-y-2 transition-all duration-300",
+      isDisappearing && "opacity-0 translate-y-2 pointer-events-none"
+    )}>
       <div
         className={cn(
           "relative w-full md:max-w-80 md:mx-auto h-14 md:h-24 cursor-pointer transition-all duration-300",

@@ -30,7 +30,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
   // Shuffle board to ensure no branches are complete at the start
   const ensureNoCompletedBranches = useCallback((initialBranches: Branch[], capacity: number): Branch[] => {
-    let branches = [...initialBranches.map(b => ({ ...b, tiles: [...b.tiles] }))];
+    const branches = [...initialBranches.map(b => ({ ...b, tiles: [...b.tiles] }))];
     let attempts = 0;
 
     while (attempts < 50) { // Safety break to avoid infinite loops
@@ -315,6 +315,10 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const [isLevelComplete, setIsLevelComplete] = useState<boolean>(false);
   const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
   const [gameStartTime, setGameStartTime] = useState<Date>(new Date());
+  // Track branches that are in the process of disappearing (for animation)
+  const [disappearingBranchIds, setDisappearingBranchIds] = useState<Set<string>>(new Set());
+  // Force re-check of empty branches after removal
+  const [emptyBranchCheckTrigger, setEmptyBranchCheckTrigger] = useState<number>(0);
 
   // Update game when level changes
   useEffect(() => {
@@ -329,6 +333,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       setIsLevelComplete(false);
       setNewAchievements([]);
       setGameStartTime(new Date());
+      setDisappearingBranchIds(new Set());
     }
   }, [level, currentLevel, createInitialState]);
 
@@ -399,6 +404,81 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       console.log('New achievements:', unlockedAchievements);
     }
   }, [gameState.isComplete, isLevelComplete, currentLevel, gameState.score, gameState.moves, gameState.learnedKana, gameStartTime, toast]);
+
+  // Enforce: at most 2 EMPTY branches on the board
+  // Use interval for continuous monitoring to ensure all excess branches are removed
+  useEffect(() => {
+    const checkAndRemoveEmptyBranches = () => {
+      const emptyBranchIds: string[] = [];
+      gameState.branches.forEach((b) => {
+        if (b.tiles.length === 0) emptyBranchIds.push(b.id);
+      });
+
+      console.log(`🌿 Empty branches check: found ${emptyBranchIds.length} empty branches, disappearing: ${disappearingBranchIds.size}`);
+
+      // If 2 or fewer empty branches, don't remove anything
+      if (emptyBranchIds.length <= 2) {
+        console.log(`✅ Empty branches count is OK: ${emptyBranchIds.length} <= 2`);
+        return;
+      }
+
+      // If there's already a branch disappearing, wait for it to finish
+      if (disappearingBranchIds.size > 0) {
+        console.log(`⏳ Waiting for ${disappearingBranchIds.size} branch(es) to finish disappearing`);
+        return;
+      }
+
+      // Find the lowest empty branch (with highest index) to remove
+      const emptyBranchesWithIndex = emptyBranchIds.map(id => ({
+        id,
+        index: parseInt(id.replace('branch-', ''))
+      }));
+      const branchWithHighestIndex = emptyBranchesWithIndex.reduce((prev, current) => 
+        prev.index > current.index ? prev : current
+      );
+      const idToRemove = branchWithHighestIndex.id;
+      const branchToRemove = gameState.branches.find(b => b.id === idToRemove);
+      if (!branchToRemove) return;
+
+      console.log(`🗑️ Removing excess empty branch: ${idToRemove} (${emptyBranchIds.length} -> ${emptyBranchIds.length - 1})`);
+
+      // Mark as disappearing to trigger UI animation
+      setDisappearingBranchIds(prev => new Set(prev).add(branchToRemove.id));
+
+      // After a short delay (animation duration), remove the branch
+      const ANIMATION_DURATION_MS = 350;
+      setTimeout(() => {
+        setGameState(prev => {
+          const nextBranches = prev.branches.filter((b) => b.id !== idToRemove);
+          const nextSelected = prev.selectedBranch === idToRemove ? null : prev.selectedBranch;
+          
+          const remainingEmpty = nextBranches.filter(b => b.tiles.length === 0).length;
+          console.log(`✅ Branch ${idToRemove} removed. Remaining branches: ${nextBranches.length}, empty: ${remainingEmpty}`);
+          
+          return { ...prev, branches: nextBranches, selectedBranch: nextSelected };
+        });
+        
+        // Clear disappearing state after removal
+        setTimeout(() => {
+          setDisappearingBranchIds(prev => {
+            const next = new Set(prev);
+            next.delete(idToRemove);
+            return next;
+          });
+        }, 50);
+      }, ANIMATION_DURATION_MS);
+    };
+
+    // Check immediately and then set up interval
+    checkAndRemoveEmptyBranches();
+    
+    // Set up interval to continuously check for empty branches
+    const intervalId = setInterval(checkAndRemoveEmptyBranches, 500); // Check every 500ms
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [gameState.branches, disappearingBranchIds]);
 
   const canPlaceTile = useCallback((sourceTile: KanaTile, targetBranch: Branch): boolean => {
     if (targetBranch.tiles.length >= targetBranch.maxCapacity) return false;
@@ -914,6 +994,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     setIsLevelComplete(false);
     setNewAchievements([]);
     setGameStartTime(new Date());
+    setDisappearingBranchIds(new Set());
   }, [createInitialState]);
 
   // Restart to the initially generated preset (no reshuffle)
@@ -956,6 +1037,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     setIsLevelComplete(false);
     setNewAchievements([]);
     setGameStartTime(new Date());
+    setDisappearingBranchIds(new Set());
   }, [resetGame]);
 
   // Zero out moves and clear undo history, keeping the current board
@@ -990,5 +1072,6 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     hasValidMoves: () => hasValidMoves(gameState.branches),
     newAchievements,
     clearNewAchievements: () => setNewAchievements([]),
+    disappearingBranchIds,
   };
 };

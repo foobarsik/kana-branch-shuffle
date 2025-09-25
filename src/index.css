@@ -36,6 +36,27 @@
   }
 }
 
+/* Smooth branch movement animation */
+@keyframes branchSlideUp {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px);
+    opacity: 1;
+  }
+}
+
+.branch-wrapper {
+  transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.branch-wrapper.moving {
+  animation: branchSlideUp 800ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
