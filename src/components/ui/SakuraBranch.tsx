@@ -30,7 +30,7 @@ export const SakuraBranch: React.FC<SakuraBranchProps> = ({
         strokeLinecap="round"
         className={cn(
           "transition-all duration-300",
-          isSelected && "stroke-amber-600",
+          isSelected && "stroke-green-600",
           canPlace && "stroke-green-600"
         )}
       />
@@ -44,7 +44,7 @@ export const SakuraBranch: React.FC<SakuraBranchProps> = ({
         strokeLinecap="round"
         className={cn(
           "transition-all duration-300",
-          isSelected && "stroke-amber-600",
+          isSelected && "stroke-green-600",
           canPlace && "stroke-green-600"
         )}
       />
@@ -58,7 +58,7 @@ export const SakuraBranch: React.FC<SakuraBranchProps> = ({
         strokeLinecap="round"
         className={cn(
           "transition-all duration-300",
-          isSelected && "stroke-amber-600",
+          isSelected && "stroke-green-600",
           canPlace && "stroke-green-600"
         )}
       />
@@ -72,7 +72,7 @@ export const SakuraBranch: React.FC<SakuraBranchProps> = ({
         strokeLinecap="round"
         className={cn(
           "transition-all duration-300",
-          isSelected && "stroke-amber-600",
+          isSelected && "stroke-green-600",
           canPlace && "stroke-green-600"
         )}
       />
@@ -86,7 +86,7 @@ export const SakuraBranch: React.FC<SakuraBranchProps> = ({
         strokeLinecap="round"
         className={cn(
           "transition-all duration-300",
-          isSelected && "stroke-amber-600",
+          isSelected && "stroke-green-600",
           canPlace && "stroke-green-600"
         )}
       />
