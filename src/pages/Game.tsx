@@ -304,6 +304,7 @@ export const Game: React.FC = () => {
               title="Restart (return to initial preset)"
               aria-label="Restart (return to initial preset)"
               className="h-9 md:h-8 px-3 whitespace-nowrap inline-flex items-center gap-2"
+              disabled={gameState.moves === 0}
             >
               <RotateCcw className="w-4 h-4" />
               <span className="inline">Restart</span>
