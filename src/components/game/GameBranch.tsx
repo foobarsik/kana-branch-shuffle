@@ -14,6 +14,7 @@ interface GameBranchProps {
   sakuraAnimatingTiles?: Set<string>;
   selectedTileCount?: number;
   getShouldShowRomaji?: (branch: Branch, tileIndex: number, align: 'left' | 'right') => boolean;
+  isLargeMode?: boolean;
 }
 
 export const GameBranch: React.FC<GameBranchProps> = ({
@@ -26,6 +27,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   sakuraAnimatingTiles = new Set(),
   selectedTileCount = 1,
   getShouldShowRomaji,
+  isLargeMode = false,
 }) => {
   const isSelected = selectedBranch === branch.id;
   const isEmpty = branch.tiles.length === 0;
@@ -80,6 +82,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
                 isFlipping={flippingTiles.has(tile.id)}
                 isSakuraAnimating={sakuraAnimatingTiles.has(tile.id)}
                 showRomajiByDefault={getShouldShowRomaji ? getShouldShowRomaji(branch, index, align) : align === 'right'}
+                isLargeMode={isLargeMode}
               />
             );
           })}

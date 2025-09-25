@@ -254,6 +254,7 @@ export const Game: React.FC = () => {
                   sakuraAnimatingTiles={sakuraAnimatingTiles}
                   selectedTileCount={selectedTileCount}
                   getShouldShowRomaji={getShouldShowRomaji}
+                  isLargeMode={displayMode === DisplayMode.LARGE}
                 />
               ))}
             </div>
@@ -271,6 +272,7 @@ export const Game: React.FC = () => {
                   sakuraAnimatingTiles={sakuraAnimatingTiles}
                   selectedTileCount={selectedTileCount}
                   getShouldShowRomaji={getShouldShowRomaji}
+                  isLargeMode={displayMode === DisplayMode.LARGE}
                 />
               ))}
             </div>

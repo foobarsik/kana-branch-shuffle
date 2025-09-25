@@ -13,6 +13,7 @@ interface GameTileProps {
   isFlipping?: boolean;
   isSakuraAnimating?: boolean;
   showRomajiByDefault?: boolean;
+  isLargeMode?: boolean;
 }
 
 export const GameTile: React.FC<GameTileProps> = ({
@@ -25,6 +26,7 @@ export const GameTile: React.FC<GameTileProps> = ({
   isFlipping = false,
   isSakuraAnimating = false,
   showRomajiByDefault = false,
+  isLargeMode = false,
 }) => {
   if (isFlipping) {
     console.log('🔄 Tile is flipping:', tile.id, tile.kana);
@@ -125,7 +127,7 @@ export const GameTile: React.FC<GameTileProps> = ({
       <div
         className="absolute inset-0 [transform-style:preserve-3d] transition-transform duration-500"
         style={{ 
-          transform: `${isSelected ? 'scale(1.25)' : 'scale(1)'} ` + (
+          transform: `${isSelected || isLargeMode ? 'scale(1.25)' : 'scale(1)'} ` + (
             showRomajiByDefault 
               ? ((isSelected || isFlipping) ? 'rotateY(0deg)' : 'rotateY(180deg)')
               : ((isSelected || isFlipping) ? 'rotateY(180deg)' : 'rotateY(0deg)')
