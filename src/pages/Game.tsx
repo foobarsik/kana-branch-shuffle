@@ -20,7 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export const Game: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [displayMode, setDisplayMode] = React.useState<DisplayMode>(DisplayMode.LEFT_KANA_RIGHT_ROMAJI);
+  const [displayMode, setDisplayMode] = React.useState<DisplayMode>(DisplayMode.LARGE);
   
   // Get level from URL params, default to 1, and clamp to available range
   const levelParam = searchParams.get('level');
