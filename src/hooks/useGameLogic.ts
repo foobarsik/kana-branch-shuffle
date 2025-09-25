@@ -1199,9 +1199,18 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const undoMove = useCallback(() => {
     if (gameHistory.length > 0) {
       const previousState = gameHistory[gameHistory.length - 1];
+      
+      // Deduct 10 points for undo, but don't go below 0
+      const newScore = Math.max(0, previousState.score - 10);
+      console.log(`↩️ Undo move: ${previousState.score} -> ${newScore} (-10 points)`);
+      
+      // Track undo usage telemetry
+      telemetry.trackUndoUsed(previousState.score, newScore);
+      
       setGameState({
         ...previousState,
-        selectedBranch: null
+        selectedBranch: null,
+        score: newScore
       });
       setGameHistory(prev => prev.slice(0, -1));
     }

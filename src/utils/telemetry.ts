@@ -41,11 +41,22 @@ export interface LevelAbandonEvent {
   };
 }
 
+export interface UndoUsedEvent {
+  event: 'undo_used';
+  data: {
+    attempt_id: string;
+    score_before: number;
+    score_after: number;
+    points_deducted: number;
+  };
+}
+
 export type TelemetryEventData = 
   | GameStartEvent 
   | SetCompletedEvent 
   | LevelCompleteEvent 
-  | LevelAbandonEvent;
+  | LevelAbandonEvent
+  | UndoUsedEvent;
 
 class TelemetryService {
   private attemptId: string;
@@ -133,6 +144,23 @@ class TelemetryService {
         attempt_id: this.attemptId,
         score,
         time_ms
+      }
+    };
+    
+    const telemetryEvent = this.createEvent(event);
+    this.events.push(telemetryEvent);
+    this.logEvent(telemetryEvent);
+  }
+
+  public trackUndoUsed(scoreBefore: number, scoreAfter: number): void {
+    const pointsDeducted = scoreBefore - scoreAfter;
+    const event: UndoUsedEvent = {
+      event: 'undo_used',
+      data: {
+        attempt_id: this.attemptId,
+        score_before: scoreBefore,
+        score_after: scoreAfter,
+        points_deducted: pointsDeducted
       }
     };
     
