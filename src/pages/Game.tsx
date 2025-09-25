@@ -237,7 +237,7 @@ export const Game: React.FC = () => {
     <div className="min-h-screen bg-gradient-background p-0 pb-4 flex flex-col">
       {/* Header - sticky & compact on mobile */}
       <div className="sticky top-0 z-40 bg-gradient-background/80 backdrop-blur supports-[backdrop-filter]:bg-gradient-background/60 border-b">
-        <div className="px-3 py-2 md:px-4 md:py-3 space-y-2">
+        <div className="px-3 py-2 md:px-4 md:py-3 space-y-2 max-w-6xl mx-auto w-full">
           {/* Row 1: Context */}
           <div className="flex items-center justify-between gap-2">
             <Button
