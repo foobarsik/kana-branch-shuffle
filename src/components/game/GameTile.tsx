@@ -32,6 +32,16 @@ export const GameTile: React.FC<GameTileProps> = ({
     console.log('🔄 Tile is flipping:', tile.id, tile.kana);
   }
 
+  // Handle tile click - should bubble up to branch
+  const handleClick = (e: React.MouseEvent) => {
+    console.log('🎴 Tile clicked:', tile.id, tile.kana, 'isSelectable:', isSelectable);
+    if (onClick && isSelectable) {
+      e.stopPropagation(); // Prevent branch click
+      onClick();
+    }
+    // If not selectable, let the click bubble up to the branch
+  };
+
   // --- Visual tuning: derive subtle gradients from tile color for ring/surface ---
   // Extract primary color from gradient or use as-is if it's a solid color
   const tileColorValue = tile.color || '#4b5563';
@@ -114,14 +124,15 @@ export const GameTile: React.FC<GameTileProps> = ({
   return (
     <div
       className={cn(
-        "w-[43px] h-[43px] md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-200 flex-shrink-0",
+        "w-[43px] h-[43px] md:w-16 md:h-16 rounded-full relative transition-all duration-200 flex-shrink-0",
         "active:scale-95 tile-glass",
-        !isSelectable && "cursor-default",
+        isSelectable && "cursor-pointer",
+        !isSelectable && "pointer-events-none", // Let clicks bubble to branch
         isSelected && "z-20 scale-110",
         className
       )}
       style={{ ...(style || {}), perspective: 600 }}
-      onClick={isSelectable ? onClick : undefined}
+      onClick={handleClick}
     >
       {/* 3D flipper */}
       <div
