@@ -6,7 +6,7 @@ import { Branch } from "@/types/game";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon, Crown } from "lucide-react";
+import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon, Crown, Star, MoveRight } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
 import { applyThemeForLevel } from "@/utils/themes";
@@ -195,7 +195,7 @@ export const Game: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-6 max-w-md">
-          <div className="relative w-full flex items-center justify-center mb-4">
+          <div className="relative w-full flex items-center justify-center mb-6">
             {/* Subtle sakura halo behind mascot */}
             <div
               className="absolute w-60 h-60 rounded-full pointer-events-none"
@@ -235,25 +235,40 @@ export const Game: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-3 md:scale-100 scale-90 origin-top">
+          <div className="flex flex-col gap-3 -mt-2 md:scale-100 scale-90 origin-top">
             {canGoToNext && (
-              <Button onClick={goToNextLevel} className="w-full">
+              <Button
+                onClick={goToNextLevel}
+                className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold shadow-[0_2px_0_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(244,63,94,0.25)] transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.99] border-0"
+              >
                 <ArrowRight className="w-4 h-4 mr-2" />
                 Next Level ({currentLevelNumber + 1})
               </Button>
             )}
             <div className="flex gap-2">
               <Button onClick={goToLevelSelect} variant="outline" className="flex-1">
-                <Trophy className="w-4 h-4 mr-2" />
-                Levels
+                <span className="inline-flex items-center">
+                  <span className="mr-2 hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm">
+                    <Trophy className="w-5 h-5 text-yellow-500" />
+                  </span>
+                  <span>Levels</span>
+                </span>
               </Button>
               <Button onClick={resetGame} variant="outline" className="flex-1">
-                <ShuffleIcon className="w-4 h-4 mr-2" />
-                Shuffle and play again
+                <span className="inline-flex items-center">
+                  <span className="mr-2 hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm">
+                    <ShuffleIcon className="w-5 h-5 text-primary" />
+                  </span>
+                  <span>Shuffle and play again</span>
+                </span>
               </Button>
               <Button onClick={() => navigate("/")} variant="outline" className="flex-1">
-                <Home className="w-4 h-4 mr-2" />
-                Home
+                <span className="inline-flex items-center">
+                  <span className="mr-2 hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm">
+                    <Home className="w-5 h-5 text-gray-700" />
+                  </span>
+                  <span>Home</span>
+                </span>
               </Button>
             </div>
           </div>
@@ -320,9 +335,15 @@ export const Game: React.FC = () => {
                 ))}
               </div>
             </div>
-            <div className="flex items-center justify-center min-[431px]:justify-end gap-4 text-sm md:text-base font-semibold text-muted-foreground shrink-0 whitespace-nowrap">
-              <span>Score: <span className="font-bold text-foreground">{gameState.score}</span></span>
-              <span>Moves: <span className="font-bold text-foreground">{gameState.moves}</span></span>
+            <div className="flex items-center justify-center min-[431px]:justify-end gap-2 md:gap-3 text-sm md:text-[15px] font-medium shrink-0 whitespace-nowrap">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-gray-200 text-gray-700 shadow-sm">
+                <Star className="w-3.5 h-3.5 text-yellow-500" />
+                <span className="text-gray-900 font-semibold">{gameState.score}</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-gray-200 text-gray-700 shadow-sm">
+                <MoveRight className="w-3.5 h-3.5 text-primary" />
+                <span className="text-gray-900 font-semibold">{gameState.moves}</span>
+              </span>
             </div>
           </div>
         </div>
