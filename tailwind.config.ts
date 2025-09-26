@@ -13,9 +13,6 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        'inter': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'sans-serif'],
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -66,16 +63,11 @@ export default {
         "tile-shadow": "hsl(var(--tile-shadow))",
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
-        // Glass effect colors
-        "glass-bg": "hsl(var(--glass-bg))",
-        "glass-border": "hsl(var(--glass-border))",
-        "glass-shadow": "hsl(var(--glass-shadow))",
       },
       backgroundImage: {
         "gradient-background": "var(--gradient-background)",
         "gradient-tile": "var(--gradient-tile)",  
         "gradient-branch": "var(--gradient-branch)",
-        "gradient-glass": "var(--gradient-glass)",
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -59,8 +59,8 @@ export const GameBranch: React.FC<GameBranchProps> = ({
     )}>
       <div
         className={cn(
-          "relative w-full max-w-md mx-auto h-16 md:h-24 cursor-pointer transition-all duration-300",
-          "flex items-end justify-start gap-1 p-2 md:p-3",
+          "relative w-full md:max-w-80 md:mx-auto h-14 md:h-24 cursor-pointer transition-all duration-300",
+          "flex items-end justify-start gap-1 md:p-2",
           // Selection and interaction states  
           // isSelected && "scale-105",
           // canPlace && selectedBranch && selectedBranch !== branch.id && "bg-success/10",
@@ -72,7 +72,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         }}
       >
         {/* The sakura branch - replaces the old shelf */}
-        <div className="absolute bottom-0 left-0 right-0 h-6 md:h-8">
+        <div className="absolute bottom-0 left-0 right-0 md:left-4 md:right-4 h-4 md:h-6">
           <SakuraBranch
             isSelected={isSelected}
             canPlace={false} // Remove green highlighting
@@ -82,11 +82,11 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         
         {/* Tiles container */}
         <div className={cn(
-          "absolute inset-x-0 bottom-4 md:bottom-6 flex items-end gap-1 px-2 md:px-4",
+          "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-0 md:px-2",
           // Left column: normal flow from left edge
-          align === 'left' ? 'justify-start' : '',
+          align === 'left' ? 'justify-start pl-[1px] pr-2 md:pr-2' : '',
           // Right column: reverse visual order and keep row anchored to the right edge
-          align === 'right' && 'flex-row-reverse justify-start'
+          align === 'right' && 'flex-row-reverse justify-start pr-[1px] pl-2 md:pl-2'
         )}>
           {branch.tiles.map((tile, index) => {
             // Check if this tile should be selected (for multiple consecutive tiles)

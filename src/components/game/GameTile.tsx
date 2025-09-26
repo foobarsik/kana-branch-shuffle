@@ -32,16 +32,6 @@ export const GameTile: React.FC<GameTileProps> = ({
     console.log('🔄 Tile is flipping:', tile.id, tile.kana);
   }
 
-  // Handle tile click - should bubble up to branch
-  const handleClick = (e: React.MouseEvent) => {
-    console.log('🎴 Tile clicked:', tile.id, tile.kana, 'isSelectable:', isSelectable);
-    if (onClick && isSelectable) {
-      e.stopPropagation(); // Prevent branch click
-      onClick();
-    }
-    // If not selectable, let the click bubble up to the branch
-  };
-
   // --- Visual tuning: derive subtle gradients from tile color for ring/surface ---
   // Extract primary color from gradient or use as-is if it's a solid color
   const tileColorValue = tile.color || '#4b5563';
@@ -124,15 +114,14 @@ export const GameTile: React.FC<GameTileProps> = ({
   return (
     <div
       className={cn(
-        "w-[43px] h-[43px] md:w-16 md:h-16 rounded-full relative transition-all duration-200 flex-shrink-0",
-        "active:scale-95 tile-glass",
-        isSelectable && "cursor-pointer",
-        !isSelectable && "pointer-events-none", // Let clicks bubble to branch
-        isSelected && "z-20 scale-110",
+        "w-[43px] h-[43px] md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
+        "active:scale-95",
+        !isSelectable && "cursor-default",
+        isSelected && "z-20",
         className
       )}
       style={{ ...(style || {}), perspective: 600 }}
-      onClick={handleClick}
+      onClick={isSelectable ? onClick : undefined}
     >
       {/* 3D flipper */}
       <div
@@ -204,14 +193,11 @@ export const GameTile: React.FC<GameTileProps> = ({
             <div className="absolute inset-0 flex items-center justify-center">
               <span
                 className={cn(
-                  "font-semibold text-white select-none",
+                  "font-medium text-white select-none",
                   "text-xl md:text-3xl",
                   (isSelected || isLargeMode) && "opacity-0"
                 )}
-                style={{ 
-                  textShadow: '0 1px 0 rgba(0,0,0,0.25)',
-                  fontWeight: 600
-                }}
+                style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
               >
                 {tile.kana}
               </span>
@@ -244,14 +230,11 @@ export const GameTile: React.FC<GameTileProps> = ({
             <div className="absolute mb-1 inset-0 flex items-center justify-center">
               <span 
                 className={cn(
-                  "font-semibold drop-shadow-lg select-none text-lg md:text-3xl",
-                  showRomajiByDefault ? "text-white" : "text-yellow-200",
+                  "font-medium drop-shadow-lg select-none text-lg md:text-3xl",
+                  showRomajiByDefault ? "text-white" : "text-yellow-300",
                   (isSelected || isLargeMode) && "opacity-0"
                 )}
-                style={{ 
-                  textShadow: '0 1px 0 rgba(0,0,0,0.25)',
-                  fontWeight: 600
-                }}
+                style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
               >
                 {tile.romaji}
               </span>
@@ -264,19 +247,13 @@ export const GameTile: React.FC<GameTileProps> = ({
         <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-center justify-center">
           <span
             className="font-bold text-white text-xl md:text-3xl"
-            style={{ 
-              textShadow: '0 1px 0 rgba(0,0,0,0.25)',
-              fontWeight: 700
-            }}
+            style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.6)' }}
           >
             {tile.kana}
           </span>
           <span
             className="mt-0.5 text-[11px] md:text-sm font-semibold text-yellow-200"
-            style={{ 
-              textShadow: '0 1px 0 rgba(0,0,0,0.25)',
-              fontWeight: 600
-            }}
+            style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}
           >
             {tile.romaji}
           </span>
