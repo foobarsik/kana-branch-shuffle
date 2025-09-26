@@ -3,7 +3,7 @@ import { Branch, GameState, KanaTile, HIRAGANA_SET, BranchType } from "@/types/g
 import { playMoveSound } from "@/utils/audio";
 import { useToast } from "@/hooks/use-toast";
 import { getLevelConfig, type LevelConfig } from "@/config/levels";
-import { getPlayerProgress, updateProgressAfterLevel } from "@/utils/progress";
+import { getPlayerProgress, updateProgressAfterLevel, incrementBranchesCollected } from "@/utils/progress";
 import { generateKanaColorMap } from '@/utils/colors';
 import { checkAndUnlockAchievements, updateStreak } from '@/utils/achievements';
 import { Achievement, GameSession } from '@/types/achievements';
@@ -345,6 +345,8 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const animationTimersRef = useRef<NodeJS.Timeout[]>([]);
   // Track if animations are currently in progress
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  // Global metric: total branches collected across games/levels
+  const [branchesCollected, setBranchesCollected] = useState<number>(() => getPlayerProgress().branchesCollected || 0);
 
   // Clean up all active animation timers
   const cleanupAnimationTimers = useCallback(() => {
@@ -564,6 +566,15 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
             
             return { ...prev, branches: nextBranches, selectedBranch: nextSelected };
           });
+
+          // Increment global branches collected counter and sync local state
+          try {
+            const updated = incrementBranchesCollected(1);
+            setBranchesCollected(updated.branchesCollected);
+            console.log(`🌊 branchesCollected incremented: ${updated.branchesCollected}`);
+          } catch (e) {
+            console.warn('⚠️ Failed to increment branchesCollected', e);
+          }
           
           // Clear disappearing state and remove from queue
           const cleanupTimer = setTimeout(() => {
@@ -1313,5 +1324,6 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     newAchievements,
     clearNewAchievements: () => setNewAchievements([]),
     disappearingBranchIds,
+    branchesCollected,
   };
 };

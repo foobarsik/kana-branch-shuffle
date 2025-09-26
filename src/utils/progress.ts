@@ -8,6 +8,8 @@ export interface PlayerProgress {
   bestScores: Record<number, number>; // level -> best score
   totalMoves: number;
   totalGamesPlayed: number;
+  // Total number of branches collected (e.g., when empty normal branches are transformed to waves)
+  branchesCollected: number;
 }
 
 const PROGRESS_COOKIE_NAME = 'kana_game_progress';
@@ -67,7 +69,8 @@ export const updateProgressAfterLevel = (
       [level]: Math.max(currentProgress.bestScores[level] || 0, score)
     },
     totalMoves: currentProgress.totalMoves + moves,
-    totalGamesPlayed: currentProgress.totalGamesPlayed + 1
+    totalGamesPlayed: currentProgress.totalGamesPlayed + 1,
+    branchesCollected: currentProgress.branchesCollected || 0,
   };
 
   savePlayerProgress(updatedProgress);
@@ -103,20 +106,34 @@ const getDefaultProgress = (): PlayerProgress => ({
   totalKanaLearned: [],
   bestScores: {},
   totalMoves: 0,
-  totalGamesPlayed: 0
+  totalGamesPlayed: 0,
+  branchesCollected: 0,
 });
 
-const validateAndMigrateProgress = (progress: any): PlayerProgress => {
+const validateAndMigrateProgress = (progress: unknown): PlayerProgress => {
   const defaultProgress = getDefaultProgress();
+  const p = (typeof progress === 'object' && progress !== null) ? progress as Record<string, unknown> : {};
   
   return {
-    currentLevel: typeof progress.currentLevel === 'number' ? progress.currentLevel : defaultProgress.currentLevel,
-    completedLevels: Array.isArray(progress.completedLevels) ? progress.completedLevels : defaultProgress.completedLevels,
-    totalKanaLearned: Array.isArray(progress.totalKanaLearned) ? progress.totalKanaLearned : defaultProgress.totalKanaLearned,
-    bestScores: typeof progress.bestScores === 'object' ? progress.bestScores : defaultProgress.bestScores,
-    totalMoves: typeof progress.totalMoves === 'number' ? progress.totalMoves : defaultProgress.totalMoves,
-    totalGamesPlayed: typeof progress.totalGamesPlayed === 'number' ? progress.totalGamesPlayed : defaultProgress.totalGamesPlayed
+    currentLevel: typeof p.currentLevel === 'number' ? p.currentLevel : defaultProgress.currentLevel,
+    completedLevels: Array.isArray(p.completedLevels) ? p.completedLevels as number[] : defaultProgress.completedLevels,
+    totalKanaLearned: Array.isArray(p.totalKanaLearned) ? p.totalKanaLearned as string[] : defaultProgress.totalKanaLearned,
+    bestScores: (p.bestScores && typeof p.bestScores === 'object') ? p.bestScores as Record<number, number> : defaultProgress.bestScores,
+    totalMoves: typeof p.totalMoves === 'number' ? p.totalMoves : defaultProgress.totalMoves,
+    totalGamesPlayed: typeof p.totalGamesPlayed === 'number' ? p.totalGamesPlayed : defaultProgress.totalGamesPlayed,
+    branchesCollected: typeof p.branchesCollected === 'number' ? p.branchesCollected : defaultProgress.branchesCollected,
   };
+};
+
+// Increment the global number of collected branches and persist
+export const incrementBranchesCollected = (amount: number = 1): PlayerProgress => {
+  const current = getPlayerProgress();
+  const updated: PlayerProgress = {
+    ...current,
+    branchesCollected: Math.max(0, (current.branchesCollected || 0) + amount),
+  };
+  savePlayerProgress(updated);
+  return updated;
 };
 
 // Утилиты для работы с куками

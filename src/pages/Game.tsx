@@ -8,7 +8,7 @@ import { Branch } from "@/types/game";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon, Crown, Star, MoveRight } from "lucide-react";
+import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon, Crown, Star, MoveRight, Leaf } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
 import { applyThemeForLevel } from "@/utils/themes";
@@ -27,6 +27,10 @@ export const Game: React.FC = () => {
   const [displayMode, setDisplayMode] = React.useState<DisplayMode>(DisplayMode.LARGE);
   const [showGameOverModal, setShowGameOverModal] = React.useState(false);
   const [gameOverModalClosed, setGameOverModalClosed] = React.useState(false);
+  // Visual feedback for branchesCollected increments
+  const [branchGain, setBranchGain] = React.useState<number>(0);
+  const [showBranchGain, setShowBranchGain] = React.useState<boolean>(false);
+  const prevBranchesCollectedRef = React.useRef<number | null>(null);
   
   // Get level from URL params, default to 1, and clamp to available range
   const levelParam = searchParams.get('level');
@@ -55,6 +59,7 @@ export const Game: React.FC = () => {
     disappearingBranchIds,
     recentlyMovedTileIds,
     hasValidMoves,
+    branchesCollected,
   } = useGameLogic({ level: currentLevelNumber, displayMode });
 
   const {
@@ -79,6 +84,25 @@ export const Game: React.FC = () => {
   React.useEffect(() => {
     applyThemeForLevel(currentLevelNumber);
   }, [currentLevelNumber]);
+
+  // Detect global branchesCollected increments and show visual feedback
+  React.useEffect(() => {
+    const prev = prevBranchesCollectedRef.current;
+    // Skip initial render to avoid false-positive animation
+    if (prev === null) {
+      prevBranchesCollectedRef.current = branchesCollected;
+      return;
+    }
+    if (branchesCollected > prev) {
+      const delta = branchesCollected - prev;
+      setBranchGain(delta);
+      setShowBranchGain(true);
+      const t = setTimeout(() => setShowBranchGain(false), 900);
+      prevBranchesCollectedRef.current = branchesCollected;
+      return () => clearTimeout(t);
+    }
+    prevBranchesCollectedRef.current = branchesCollected;
+  }, [branchesCollected]);
 
   // Check for game over state (no moves available)
   React.useEffect(() => {
@@ -245,6 +269,10 @@ export const Game: React.FC = () => {
                 <div className="text-2xl font-bold text-primary">{gameState.moves}</div>
                 <div className="text-muted-foreground">Moves</div>
               </div>
+              <div className="col-span-2">
+                <div className="text-2xl font-bold text-primary">{branchesCollected}</div>
+                <div className="text-muted-foreground">Branches collected (global)</div>
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-3 -mt-2 md:scale-100 scale-90 origin-top">
@@ -348,6 +376,18 @@ export const Game: React.FC = () => {
               </div>
             </div>
             <div id="game-progress-bar" className="flex items-center justify-center min-[431px]:justify-end gap-2 md:gap-3 text-sm md:text-[15px] font-medium shrink-0 whitespace-nowrap">
+            <span className={`relative inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border ${showBranchGain ? 'border-emerald-300 ring-2 ring-emerald-200 scale-[1.06]' : 'border-gray-200'} text-gray-700 shadow-sm transition-all duration-300`}
+              >
+                <Leaf className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="text-gray-900 font-semibold">{branchesCollected}</span>
+                {showBranchGain && (
+                  <span
+                    className="absolute -top-4 -right-1 bg-emerald-50 border border-emerald-200 rounded px-1.5 py-[1px] text-emerald-700 text-sm md:text-base font-extrabold select-none shadow-sm"
+                  >
+                    +{branchGain}
+                  </span>
+                )}
+              </span>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-gray-200 text-gray-700 shadow-sm">
                 <Star className="w-3.5 h-3.5 text-yellow-500" />
                 <span className="text-gray-900 font-semibold">{gameState.score}</span>
