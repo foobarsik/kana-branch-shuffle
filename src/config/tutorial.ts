@@ -8,7 +8,6 @@ export interface TutorialStep {
 
 export const tutorialSteps: TutorialStep[] = [
     {
-      elementSelector: '#game-progress-bar',
       title: 'Your Goal',
       description: 'Collect sets of identical kana characters to earn points and complete the level.',
       placement: 'bottom',

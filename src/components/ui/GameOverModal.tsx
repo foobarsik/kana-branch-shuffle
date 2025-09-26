@@ -23,11 +23,22 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center">
           <div className="flex flex-col items-center space-y-4">
-            <img 
-              src="/fail.png" 
-              alt="Game Over" 
-              className="w-32 mx-auto object-contain"
-            />
+            <div className="relative inline-block mx-auto">
+              {/* Soft sakura glow behind the mascot */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-5 rounded-full -z-10"
+                style={{
+                  background: "radial-gradient(circle, rgba(255,182,193,0.25) 0%, rgba(255,182,193,0.12) 40%, transparent 70%)",
+                  filter: "blur(40px)",
+                }}
+              />
+              <img 
+                src="/fail.png" 
+                alt="Game Over" 
+                className="w-32 object-contain"
+              />
+            </div>
             <DialogTitle className="text-2xl font-bold text-destructive">
               No moves available!
             </DialogTitle>
