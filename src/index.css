@@ -230,7 +230,7 @@ body.sakura {
 
 /* Бумажная фактура (еле-еле) */
 body.sakura::after{
-  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-1;
   background-image:
     repeating-linear-gradient(0deg,   var(--paper-line) 0 1px, transparent 1px 2px),
     repeating-linear-gradient(90deg,  var(--paper-line) 0 1px, transparent 1px 2px);
@@ -239,7 +239,7 @@ body.sakura::after{
 
 /* Угловые «сакура-боке» — 4 мягких пятна по углам */
 body.sakura .bg-corners{
-  position:fixed; inset:0; pointer-events:none; z-index:0;
+  position:fixed; inset:0; pointer-events:none; z-index:-1;
   background:
     radial-gradient(360px 260px at 0%   0%,   color-mix(in srgb, var(--sakura-1) 20%, transparent) 0 70%, transparent 71%),
     radial-gradient(340px 240px at 100% 0%,   color-mix(in srgb, var(--sakura-2) 18%, transparent) 0 70%, transparent 71%),
@@ -251,7 +251,7 @@ body.sakura .bg-corners{
 
 /* Деликатная верхняя вуаль-подсветка */
 body.sakura .bg-topglow{
-  position:fixed; inset:0; pointer-events:none; z-index:0;
+  position:fixed; inset:0; pointer-events:none; z-index:-1;
   background:
     radial-gradient(120% 80% at 50% -20%, rgba(255,255,255,.85) 0%, transparent 60%);
 }
@@ -276,3 +276,153 @@ html, #root { background-color: transparent !important; }
 /* Strong fallback to guarantee light background is applied */
 body.sakura { background-color: var(--bg-base-1) !important; }
 
+
+/* ==========================
+   Per-level Sakura modifiers
+   ========================== */
+/* Common themed layer: use ::before as extra texture layer under content */
+body.sakura::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  opacity:.18; /* base opacity, individual themes may override */
+}
+
+/* 1) Dots — very thin dotted texture */
+body.sakura.theme-dots::before{
+  background-image:
+    radial-gradient(circle at center, rgba(0,0,0,.12) 1.1px, transparent 1.8px);
+  background-size: 16px 16px;
+  mix-blend-mode: multiply;
+}
+
+/* 2) Grid — fine grid structure */
+body.sakura.theme-grid::before{
+  opacity:.18;
+  background-image:
+    repeating-linear-gradient(0deg,   rgba(0,0,0,.08) 0 1px, transparent 1px 11px),
+    repeating-linear-gradient(90deg,  rgba(0,0,0,.08) 0 1px, transparent 1px 11px);
+  mix-blend-mode: multiply;
+}
+
+/* 3) Stripes — subtle vertical guidance */
+body.sakura.theme-stripes::before{
+  opacity:.16;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(0,0,0,.10) 0 1px, transparent 1px 16px);
+}
+
+/* 4) Rice Paper — fibrous paper texture using noise-like layered gradients */
+body.sakura.theme-ricepaper::before{
+  opacity:.20;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(0,0,0,.08), transparent 60%),
+    radial-gradient(1px 1px at 30% 80%, rgba(0,0,0,.07), transparent 60%),
+    radial-gradient(1px 1px at 70% 40%, rgba(0,0,0,.08), transparent 60%),
+    radial-gradient(1px 1px at 85% 65%, rgba(0,0,0,.07), transparent 60%);
+  background-size: 240px 240px, 210px 210px, 250px 250px, 230px 230px;
+  background-blend-mode: multiply;
+}
+
+/* 5) Mountains — faint silhouettes on horizon */
+body.sakura.theme-mountains::before{
+  opacity:.26;
+  background:
+    /* left foothill */
+    radial-gradient(80% 35% at 15% 115%, rgba(0,0,0,.12) 0 60%, transparent 61%),
+    /* central massif */
+    radial-gradient(90% 40% at 55% 118%, rgba(0,0,0,.11) 0 60%, transparent 61%),
+    /* right ridge */
+    radial-gradient(70% 30% at 90% 112%, rgba(0,0,0,.10) 0 60%, transparent 61%);
+}
+
+/* 6) Sakura branches — very thin strokes from corners */
+body.sakura.theme-branches::before{
+  opacity:.20;
+  background:
+    conic-gradient(from 200deg at 0% 0%, color-mix(in srgb, var(--sakura-2) 16%, transparent) 0 10%, transparent 10% 100%),
+    conic-gradient(from 20deg  at 100% 0%, color-mix(in srgb, var(--sakura-1) 16%, transparent) 0 10%, transparent 10% 100%),
+    conic-gradient(from 200deg at 0% 100%, color-mix(in srgb, var(--sakura-3) 14%, transparent) 0 10%, transparent 10% 100%),
+    conic-gradient(from 20deg  at 100% 100%, color-mix(in srgb, var(--sakura-4) 14%, transparent) 0 10%, transparent 10% 100%);
+  background-blend-mode: screen;
+}
+
+/* 7) Waves — traditional japanese wave arcs (very delicate) */
+body.sakura.theme-waves::before{
+  opacity:.20;
+  background-image:
+    radial-gradient(circle at 0 50%, rgba(0,0,0,.10) 2.2px, transparent 2.4px),
+    radial-gradient(circle at 10px 50%, rgba(0,0,0,.08) 2.2px, transparent 2.4px);
+  background-size: 22px 11px;
+  background-position: 0 0, 10px 5px;
+  mix-blend-mode: multiply;
+}
+
+/* 8) Geometry — subtle hex-like pattern via conic gradients */
+body.sakura.theme-geo::before{
+  opacity:.18;
+  background:
+    conic-gradient(from 30deg, rgba(0,0,0,.08) 0 60deg, transparent 60deg 120deg,
+                             rgba(0,0,0,.08) 120deg 180deg, transparent 180deg 240deg,
+                             rgba(0,0,0,.08) 240deg 300deg, transparent 300deg 360deg);
+  background-size: 26px 26px;
+}
+
+/* 9) Tsunami — sweeping wave arcs with cool blue tint */
+body.sakura.theme-tsunami::before{
+  opacity:.22;
+  background:
+    /* large sweeping arc */
+    conic-gradient(from 210deg at 100% 0%, color-mix(in srgb, var(--sakura-3) 16%, transparent) 0 12%, transparent 12% 100%),
+    /* counter arc */
+    conic-gradient(from 30deg at 0% 100%, color-mix(in srgb, var(--sakura-3) 12%, transparent) 0 10%, transparent 10% 100%),
+    /* fine ripples */
+    repeating-linear-gradient(135deg, rgba(0,0,0,.06) 0 1px, transparent 1px 14px);
+  background-blend-mode: screen, screen, multiply;
+}
+
+
+/* ==========================
+   Level-specific overrides
+   ========================== */
+/* Level 1 — slightly stronger presentation to be clearly noticeable */
+body.sakura.level-1 {
+  --vignette: rgba(0,0,0,.06);
+}
+body.sakura.level-1 .bg-corners{
+  opacity: .85;
+}
+/* If level 1 uses ricepaper, make texture a bit denser */
+body.sakura.level-1.theme-ricepaper::before{
+  opacity:.28;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(0,0,0,.10), transparent 60%),
+    radial-gradient(1px 1px at 30% 80%, rgba(0,0,0,.09), transparent 60%),
+    radial-gradient(1px 1px at 70% 40%, rgba(0,0,0,.10), transparent 60%),
+    radial-gradient(1px 1px at 85% 65%, rgba(0,0,0,.09), transparent 60%);
+  background-size: 220px 220px, 200px 200px, 230px 230px, 210px 210px;
+}
+
+/* If level 1 uses tsunami, make arc more expressive */
+body.sakura.level-1.theme-tsunami::before{
+  opacity:.30;
+  background:
+    conic-gradient(from 210deg at 100% 0%, color-mix(in srgb, var(--sakura-3) 22%, transparent) 0 14%, transparent 14% 100%),
+    conic-gradient(from 30deg at 0% 100%, color-mix(in srgb, var(--sakura-3) 18%, transparent) 0 12%, transparent 12% 100%),
+    repeating-linear-gradient(135deg, rgba(0,0,0,.08) 0 1px, transparent 1px 12px);
+}
+
+/* Level 5 — stronger branches theme presentation */
+body.sakura.level-5 {
+  --vignette: rgba(0,0,0,.055);
+}
+body.sakura.level-5 .bg-corners{
+  opacity: .82;
+}
+body.sakura.level-5.theme-branches::before{
+  opacity:.26;
+  background:
+    conic-gradient(from 200deg at 0% 0%, color-mix(in srgb, var(--sakura-2) 20%, transparent) 0 10%, transparent 10% 100%),
+    conic-gradient(from 20deg  at 100% 0%, color-mix(in srgb, var(--sakura-1) 20%, transparent) 0 10%, transparent 10% 100%),
+    conic-gradient(from 200deg at 0% 100%, color-mix(in srgb, var(--sakura-3) 18%, transparent) 0 10%, transparent 10% 100%),
+    conic-gradient(from 20deg  at 100% 100%, color-mix(in srgb, var(--sakura-4) 18%, transparent) 0 10%, transparent 10% 100%);
+  background-blend-mode: screen;
+}

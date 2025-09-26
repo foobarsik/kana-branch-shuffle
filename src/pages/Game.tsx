@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon, Crown } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
+import { applyThemeForLevel } from "@/utils/themes";
 import { getLevelConfig, getMaxLevel } from "@/config/levels";
 import { getPlayerProgress } from "@/utils/progress";
 import { AchievementNotificationManager } from "@/components/ui/AchievementNotification";
@@ -60,6 +61,11 @@ export const Game: React.FC = () => {
   React.useEffect(() => {
     initializeVoices();
   }, []);
+
+  // Apply per-level Sakura theme to the body
+  React.useEffect(() => {
+    applyThemeForLevel(currentLevelNumber);
+  }, [currentLevelNumber]);
 
   // Check for game over state (no moves available)
   React.useEffect(() => {
