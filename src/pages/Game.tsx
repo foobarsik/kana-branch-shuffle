@@ -248,7 +248,7 @@ export const Game: React.FC = () => {
             <div className="flex gap-2">
               <Button onClick={goToLevelSelect} variant="outline" className="flex-1">
                 <span className="inline-flex items-center">
-                  <span className="mr-2 hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm">
+                  <span className="mr-0 hidden sm:inline-flex items-center justify-center w-8 h-8">
                     <Trophy className="w-5 h-5 text-yellow-500" />
                   </span>
                   <span>Levels</span>
@@ -256,7 +256,7 @@ export const Game: React.FC = () => {
               </Button>
               <Button onClick={resetGame} variant="outline" className="flex-1">
                 <span className="inline-flex items-center">
-                  <span className="mr-2 hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm">
+                  <span className="mr-0 hidden sm:inline-flex items-center justify-center w-8 h-8">
                     <ShuffleIcon className="w-5 h-5 text-primary" />
                   </span>
                   <span>Shuffle and play again</span>
@@ -264,7 +264,7 @@ export const Game: React.FC = () => {
               </Button>
               <Button onClick={() => navigate("/")} variant="outline" className="flex-1">
                 <span className="inline-flex items-center">
-                  <span className="mr-2 hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm">
+                  <span className="mr-0 hidden sm:inline-flex items-center justify-center w-8 h-8">
                     <Home className="w-5 h-5 text-gray-700" />
                   </span>
                   <span>Home</span>
