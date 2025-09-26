@@ -142,10 +142,11 @@ export const GameTile: React.FC<GameTileProps> = ({
     >
       {/* Oval shadow underneath the tile */}
       <div 
-        className="absolute left-1/2 w-[70%] h-[16%] bg-black/35 rounded-full -translate-x-1/2 -z-10"
+        className="absolute left-1/2 w-[60%] h-[14%] rounded-full -translate-x-1/2 -z-10"
         style={{ 
-          bottom: '-6px',
-          filter: 'blur(3px)',
+          bottom: '-3px',
+          background: 'rgba(0,0,0,0.12)',
+          filter: 'blur(5px)',
           transition: 'all 0.3s ease',
           transform: `translateX(-50%) scale(${isSelected ? 1.25 : 1})`
         }}
