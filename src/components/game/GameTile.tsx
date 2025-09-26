@@ -136,7 +136,9 @@ export const GameTile: React.FC<GameTileProps> = ({
         isSelected && "z-20 tile-lift",
         (isFlipping || justDropped || isDropping) && "tile-drop",
         // Enamel contour effect
-        'shadow-[inset_0_1px_1px_rgba(255,255,255,0.25),0_1px_2px_rgba(0,0,0,0.08)]',
+        isSelected
+          ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.45),0_3px_6px_rgba(0,0,0,0.2)]'
+          : 'shadow-[inset_0_1px_1px_rgba(255,255,255,0.25),0_1px_2px_rgba(0,0,0,0.08)]',
         className
       )}
       style={{ ...(style || {}), perspective: 600 }}
@@ -175,9 +177,7 @@ export const GameTile: React.FC<GameTileProps> = ({
           <div
             className="absolute inset-0 rounded-full bg-gradient-to-br"
             style={{
-              background: isSelected
-                ? 'linear-gradient(135deg, #fbbf24, #f59e0b, #d97706)'
-                : `linear-gradient(135deg, ${dark1}, ${dark2})`
+              background: `linear-gradient(135deg, ${dark1}, ${dark2})`
             }}
           />
           {/* Main surface with texture pattern (expanded accordingly) */}
@@ -186,7 +186,7 @@ export const GameTile: React.FC<GameTileProps> = ({
             style={{
               background: isGradient(tileColorValue)
                 ? tileColorValue // Use the original gradient
-                : `radial-gradient(circle at center, ${baseColor} 60%, ${dark1} 100%)`
+                : `radial-gradient(circle at center, ${baseColor} ${isSelected ? '55%' : '60%'}, ${dark1} 100%)`
             }}
           >
             {/* Very light inner shadow at bottom for embossed effect */}
@@ -198,7 +198,7 @@ export const GameTile: React.FC<GameTileProps> = ({
             <div
               className="absolute inset-0 rounded-full pointer-events-none"
               style={{
-                background: 'linear-gradient(to bottom, rgba(255,255,255,0.14), rgba(255,255,255,0) 45%)'
+                background: `linear-gradient(to bottom, rgba(255,255,255,${isSelected ? 0.25 : 0.14}), rgba(255,255,255,0) ${isSelected ? '60%' : '45%'})`
               }}
             />
             {/* Decorative pattern background */}
@@ -256,9 +256,7 @@ export const GameTile: React.FC<GameTileProps> = ({
           <div
             className="absolute inset-0 rounded-full bg-gradient-to-br"
             style={{
-              background: isSelected
-                ? 'linear-gradient(135deg, #fbbf24, #f59e0b, #d97706)'
-                : `linear-gradient(135deg, ${dark1}, ${dark2})`
+              background: `linear-gradient(135deg, ${dark1}, ${dark2})`
             }}
           />
           <div
@@ -266,7 +264,7 @@ export const GameTile: React.FC<GameTileProps> = ({
             style={{
               background: isGradient(tileColorValue)
                 ? tileColorValue // Use the original gradient
-                : `radial-gradient(circle at center, ${baseColor} 60%, ${dark1} 100%)`
+                : `radial-gradient(circle at center, ${baseColor} ${isSelected ? '55%' : '60%'}, ${dark1} 100%)`
             }}
           >
             {/* Very light inner shadow at bottom for embossed effect (back face) */}
