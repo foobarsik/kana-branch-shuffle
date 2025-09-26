@@ -73,23 +73,26 @@ export const Tutorial: React.FC<TutorialProps> = ({ step, onNext, onSkip, isFirs
   const getTooltipPosition = () => {
     const isMobile = window.innerWidth <= 480;
     if (isMobile) {
-      // Try to place just below the lowest visible branch
-      const branches = Array.from(document.querySelectorAll('[data-tutorial="branch"]')) as HTMLElement[];
-      const rects = branches
-        .map(el => el.getBoundingClientRect())
-        .filter(r => r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < window.innerHeight);
-      if (rects.length > 0) {
-        const maxBottom = Math.max(...rects.map(r => r.bottom));
-        const top = Math.min(maxBottom + 12, window.innerHeight - 100); // keep on screen
-        return {
-          top,
-          left: 0,
-          right: 0,
-          margin: '0 auto',
-          paddingLeft: '16px',
-          paddingRight: '16px',
-        } as React.CSSProperties;
+      // Special behavior for the first step: position under the bottom-left branch
+      if (step?.title === 'Your Goal') {
+        const branches = Array.from(document.querySelectorAll('[data-tutorial="branch"]')) as HTMLElement[];
+        const midX = window.innerWidth / 2;
+        // pick branches in the left half of the screen
+        const leftRects = branches
+          .map(el => el.getBoundingClientRect())
+          .filter(r => r.width > 0 && r.height > 0 && r.left < midX && r.bottom > 0 && r.top < window.innerHeight);
+        if (leftRects.length > 0) {
+          // Choose the lowest one (max bottom)
+          const target = leftRects.reduce((a, b) => (b.bottom > a.bottom ? b : a));
+          const top = Math.min(target.bottom + 12, window.innerHeight - 100);
+          return {
+            top,
+            left: target.left + target.width / 2,
+            transform: 'translateX(-50%)',
+          } as React.CSSProperties;
+        }
       }
+      // Default mobile placement: bottom-centered with safe areas
       // Fallback: bottom-centered
       return {
         bottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)',
@@ -100,6 +103,24 @@ export const Tutorial: React.FC<TutorialProps> = ({ step, onNext, onSkip, isFirs
         paddingRight: '16px',
       } as React.CSSProperties;
     }
+    // Desktop: also place the first step under the bottom-left branch
+    if (step?.title === 'Your Goal') {
+      const branches = Array.from(document.querySelectorAll('[data-tutorial="branch"]')) as HTMLElement[];
+      const midX = window.innerWidth / 2;
+      const leftRects = branches
+        .map(el => el.getBoundingClientRect())
+        .filter(r => r.width > 0 && r.height > 0 && r.left < midX && r.bottom > 0 && r.top < window.innerHeight);
+      if (leftRects.length > 0) {
+        const target = leftRects.reduce((a, b) => (b.bottom > a.bottom ? b : a));
+        const top = Math.min(target.bottom + 12, window.innerHeight - 120);
+        return {
+          top,
+          left: target.left + target.width / 2,
+          transform: 'translateX(-50%)',
+        } as React.CSSProperties;
+      }
+    }
+
     if (!targetRect) {
       return {
         top: '50%',
