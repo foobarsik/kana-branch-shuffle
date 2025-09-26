@@ -1,8 +1,8 @@
 // Telemetry system for tracking game events
-export interface TelemetryEvent {
-  event: string;
+export interface TelemetryEvent<T extends TelemetryEventData = TelemetryEventData> {
+  event: T['event'];
   timestamp: number;
-  data: Record<string, any>;
+  data: T['data'];
 }
 
 export interface GameStartEvent {
@@ -60,7 +60,7 @@ export type TelemetryEventData =
 
 class TelemetryService {
   private attemptId: string;
-  private events: TelemetryEvent[] = [];
+  private events: TelemetryEvent<TelemetryEventData>[] = [];
   private gameStartTime: number | null = null;
 
   constructor() {
@@ -71,7 +71,7 @@ class TelemetryService {
     return `attempt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private createEvent<T extends TelemetryEventData>(eventData: T): TelemetryEvent {
+  private createEvent<T extends TelemetryEventData>(eventData: T): TelemetryEvent<T> {
     return {
       event: eventData.event,
       timestamp: Date.now(),
@@ -169,13 +169,13 @@ class TelemetryService {
     this.logEvent(telemetryEvent);
   }
 
-  private logEvent(event: TelemetryEvent): void {
+  private logEvent<T extends TelemetryEventData>(event: TelemetryEvent<T>): void {
     console.log('📊 Telemetry Event:', event);
     // In a real implementation, this would send to an analytics service
     // For now, we'll just log to console
   }
 
-  public getEvents(): TelemetryEvent[] {
+  public getEvents(): TelemetryEvent<TelemetryEventData>[] {
     return [...this.events];
   }
 
