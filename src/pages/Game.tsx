@@ -224,7 +224,7 @@ export const Game: React.FC = () => {
     }
   };
 
-  if (gameState.isComplete) {
+  if (gameState.isComplete && !isAnimating) {
     const canGoToNext = currentLevelNumber < maxLevel;
     const isLevelUnlocked = playerProgress.completedLevels.includes(currentLevelNumber - 1) || currentLevelNumber === 1;
     
@@ -271,7 +271,7 @@ export const Game: React.FC = () => {
               </div>
               <div className="col-span-2">
                 <div className="text-2xl font-bold text-primary">{branchesCollected}</div>
-                <div className="text-muted-foreground">Branches collected (global)</div>
+                <div className="text-muted-foreground">Branches collected (total)</div>
               </div>
             </div>
           </div>

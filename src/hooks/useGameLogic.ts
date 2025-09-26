@@ -470,6 +470,11 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   // Use queue-based approach for reliable sequential removal
   useEffect(() => {
     try {
+      // Do not trigger disappearing/wave replacement after level is complete
+      if (gameState.isComplete) {
+        console.log('✅ Level complete - skipping empty branch checks and replacements');
+        return;
+      }
       // Only run the effect when branches change or when we need to re-check
       const emptyBranchIds: string[] = [];
       gameState.branches.forEach((b) => {
@@ -546,10 +551,18 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     } catch (error) {
       console.error('❌ Error in empty branch check:', error);
     }
-  }, [gameState.branches, disappearingBranchIds, branchRemovalQueue, emptyBranchCheckTrigger]);
+  }, [gameState.branches, disappearingBranchIds, branchRemovalQueue, emptyBranchCheckTrigger, gameState.isComplete]);
 
   // Process branch wave replacement queue
   useEffect(() => {
+    // Stop processing if the level is complete
+    if (gameState.isComplete) {
+      if (branchRemovalQueue.length > 0) {
+        console.log('✅ Level complete - clearing branch replacement queue');
+        setBranchRemovalQueue([]);
+      }
+      return;
+    }
     if (branchRemovalQueue.length === 0) return;
     
     try {
@@ -650,7 +663,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       // Clear the queue to prevent infinite loops
       setBranchRemovalQueue([]);
     }
-  }, [branchRemovalQueue, gameState.branches]);
+  }, [branchRemovalQueue, gameState.branches, gameState.isComplete]);
 
   const canPlaceTile = useCallback((sourceTile: KanaTile, targetBranch: Branch): boolean => {
     if (targetBranch.tiles.length >= targetBranch.maxCapacity) return false;
