@@ -23,7 +23,7 @@ export const Collection: React.FC = () => {
   const completionPercentage = Math.round((learnedKana.length / totalKana) * 100);
 
   return (
-    <div className="min-h-screen bg-gradient-background p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">

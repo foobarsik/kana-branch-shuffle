@@ -18,7 +18,7 @@ const Index = () => {
   const achievementStats = getAchievementStats();
 
   return (
-    <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4 relative">
+    <div className="min-h-screen flex items-center justify-center p-4 relative">
       {/* Audio Controls */}
       <div className="absolute top-4 right-4">
         <AudioControls compact={true} />

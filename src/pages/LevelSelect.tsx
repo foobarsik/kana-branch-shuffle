@@ -29,7 +29,7 @@ export const LevelSelect: React.FC = () => {
   };
 
   if (!progress) {
-    return <div className="min-h-screen bg-gradient-background flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">Loading...</div>
     </div>;
   }
@@ -39,9 +39,9 @@ export const LevelSelect: React.FC = () => {
   const progressPercentage = (progress.completedLevels.length / maxLevel) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-background p-0">
+    <div className="min-h-screen p-0">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-40 bg-gradient-background/80 backdrop-blur supports-[backdrop-filter]:bg-gradient-background/60 border-b">
+      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="max-w-6xl mx-auto px-3 py-2 md:px-4 md:py-3">
           <div className="flex items-center justify-between gap-2">
             <Button

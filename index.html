@@ -37,8 +37,28 @@ Try not to get stuck! Players can Undo or Restart at any time.">
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
   </head>
 
-  <body>
+  <body class="sakura">
+    <div class="bg-topglow"></div>
+    <div class="bg-corners"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      (function(){
+        const el = document.querySelector('.bg-corners');
+        if(!el) return;
+        const desktop = matchMedia('(pointer:fine)').matches;
+        const reduce  = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if(!desktop || reduce) return;
+        let rafId=null;
+        window.addEventListener('mousemove', (e)=>{
+          if(rafId) cancelAnimationFrame(rafId);
+          rafId=requestAnimationFrame(()=>{
+            const x = (e.clientX / window.innerWidth  - .5) * 2; // -1..1
+            const y = (e.clientY / window.innerHeight - .5) * 2;
+            el.style.transform = `translate(${x*6}px, ${y*4}px)` ; /* 0.5–1% экрана */
+          });
+        });
+      })();
+    </script>
   </body>
 </html>

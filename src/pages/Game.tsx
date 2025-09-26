@@ -186,7 +186,7 @@ export const Game: React.FC = () => {
     const isLevelUnlocked = playerProgress.completedLevels.includes(currentLevelNumber - 1) || currentLevelNumber === 1;
     
     return (
-      <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-6 max-w-md">
           <img src="/success.png" alt="Level Complete!" className="w-48 h-auto mx-auto mb-4" />
           <div>
@@ -234,9 +234,9 @@ export const Game: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-background p-0 pb-4 flex flex-col">
+    <div className="min-h-screen p-0 pb-4 flex flex-col">
       {/* Header - sticky & compact on mobile */}
-      <div className="sticky top-0 z-40 bg-gradient-background/80 backdrop-blur supports-[backdrop-filter]:bg-gradient-background/60 border-b">
+      <div className="sticky top-0 z-40 bg-transparent backdrop-blur supports-[backdrop-filter]:bg-transparent border-b border-transparent">
         <div className="px-3 py-2 md:px-4 md:py-3 space-y-2 max-w-6xl mx-auto w-full">
           {/* Row 1: Context */}
           <div className="flex items-center justify-between gap-2">

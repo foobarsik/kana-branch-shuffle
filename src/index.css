@@ -200,3 +200,79 @@ All colors MUST be HSL.
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* Sakura theme — premium, без картинок */
+:root{
+  --bg-base-1: #FAFAF8;     /* off-white lighter */
+  --bg-base-2: #F7F7F4;     /* subtle vertical drift */
+  --sakura-1:  #ffc7da;     /* light pink */
+  --sakura-2:  #ff9fc3;     /* warm pink */
+  --sakura-3:  #b5e3ff;     /* cold bloom */
+  --sakura-4:  #c5f2cf;     /* mint bloom */
+  --vignette:  rgba(0,0,0,.02);
+  --paper-line: rgba(0,0,0,.006);
+}
+
+/* База: тёплый градиент + мягкая виньетка */
+body.sakura {
+  background:
+    /* Edge vignette: subtle darkening near edges to focus center */
+    radial-gradient(120% 120% at 50% 50%, transparent 62%, rgba(0,0,0,.04) 100%),
+    /* Bottom vignette */
+    radial-gradient(90% 70% at 50% 120%, var(--vignette) 0%, transparent 55%),
+    /* Base paper gradient */
+    linear-gradient(180deg, var(--bg-base-1), var(--bg-base-2));
+  background-color: var(--bg-base-1);
+  position: relative;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+/* Бумажная фактура (еле-еле) */
+body.sakura::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    repeating-linear-gradient(0deg,   var(--paper-line) 0 1px, transparent 1px 2px),
+    repeating-linear-gradient(90deg,  var(--paper-line) 0 1px, transparent 1px 2px);
+  mix-blend-mode:multiply; opacity:.4;  /* итоговая видимость ~4% */
+}
+
+/* Угловые «сакура-боке» — 4 мягких пятна по углам */
+body.sakura .bg-corners{
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(360px 260px at 0%   0%,   color-mix(in srgb, var(--sakura-1) 20%, transparent) 0 70%, transparent 71%),
+    radial-gradient(340px 240px at 100% 0%,   color-mix(in srgb, var(--sakura-2) 18%, transparent) 0 70%, transparent 71%),
+    radial-gradient(360px 260px at 100% 100%, color-mix(in srgb, var(--sakura-3) 18%, transparent) 0 70%, transparent 71%),
+    radial-gradient(340px 240px at 0%   100%, color-mix(in srgb, var(--sakura-4) 18%, transparent) 0 70%, transparent 71%);
+  opacity: .7;
+  filter: blur(0.3px); /* убирает «полосинг» на ретине */
+}
+
+/* Деликатная верхняя вуаль-подсветка */
+body.sakura .bg-topglow{
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(120% 80% at 50% -20%, rgba(255,255,255,.85) 0%, transparent 60%);
+}
+
+/* Дарк (Night Dojo) совместимость — на будущее */
+@media (prefers-color-scheme: dark) {
+  /* Всегда держим светлую версию Sakura, даже в дарке */
+  body.sakura {
+    --bg-base-1: #FAFAF8;
+    --bg-base-2: #F7F7F4;
+    --vignette: rgba(0,0,0,.02);
+  }
+  body.sakura .bg-corners{
+    opacity:.65; /* можно чуть усилить в дарке, но база остаётся светлой */
+  }
+}
+
+/* Ensure app root doesn't paint over background and content stays above bg layers */
+html, #root { background-color: transparent !important; }
+#root { position: relative; z-index: 1; }
+
+/* Strong fallback to guarantee light background is applied */
+body.sakura { background-color: var(--bg-base-1) !important; }
+
