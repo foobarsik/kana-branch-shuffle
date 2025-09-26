@@ -349,6 +349,15 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   // Global metric: total branches collected across games/levels
   const [branchesCollected, setBranchesCollected] = useState<number>(() => getPlayerProgress().branchesCollected || 0);
+  // State for the end-of-level quiz
+  const [quizState, setQuizState] = useState<{ 
+    isOpen: boolean;
+    kana: string;
+    options: string[];
+    correctAnswer: string;
+    answered: boolean;
+    wasCorrect: boolean | null;
+  } | null>(null);
 
   // Clean up all active animation timers
   const cleanupAnimationTimers = useCallback(() => {
@@ -413,58 +422,48 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
   // Handle level completion
   useEffect(() => {
-    if (gameState.isComplete && !isLevelComplete) {
+    if (gameState.isComplete && !isLevelComplete && !quizState) {
       setIsLevelComplete(true);
-      
-      // Calculate game session data
-      const gameEndTime = new Date();
-      const timeSpent = Math.floor((gameEndTime.getTime() - gameStartTime.getTime()) / 1000);
-      const isPerfect = gameState.score === 1000; // Perfect score means no mistakes
-      
-      const gameSession: GameSession = {
-        level: currentLevel,
-        score: gameState.score,
-        moves: gameState.moves,
-        timeSpent,
-        learnedKana: gameState.learnedKana,
-        isPerfect,
-        completedAt: gameEndTime
-      };
 
-      // Update streak
-      const updatedStreak = updateStreak();
-      
-      // Check for new achievements
-      const unlockedAchievements = checkAndUnlockAchievements(gameSession);
-      if (unlockedAchievements.length > 0) {
-        setNewAchievements(unlockedAchievements);
+      // --- Start of Quiz Generation ---
+      const levelConfig = getLevelConfig(currentLevel);
+      if (levelConfig && levelConfig.kanaSubset.length > 0) {
+        // Pick a random kana from the level
+        const questionKana = levelConfig.kanaSubset[Math.floor(Math.random() * levelConfig.kanaSubset.length)];
+        const kanaInfo = HIRAGANA_SET.find(k => k.kana === questionKana);
+
+        if (kanaInfo) {
+          const correctAnswer = kanaInfo.romaji;
+
+          // Get 3 other random options
+          const otherOptions = HIRAGANA_SET
+            .filter(k => k.romaji !== correctAnswer)
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3)
+            .map(k => k.romaji);
+
+          const options = [...otherOptions, correctAnswer].sort(() => 0.5 - Math.random());
+
+          console.log(`🧠 Generating quiz for level ${currentLevel}. Kana: ${questionKana}`);
+          setQuizState({
+            isOpen: true,
+            kana: questionKana,
+            options,
+            correctAnswer,
+            answered: false,
+            wasCorrect: null,
+          });
+        } else {
+          // If for some reason we can't generate a quiz, just proceed
+          setIsLevelComplete(false); // Allow the final screen to show
+        }
+      } else {
+        // No kana in level, can't make a quiz
+        setIsLevelComplete(false);
       }
-      
-      // Add to leaderboard
-      addLeaderboardEntry(
-        currentLevel,
-        gameState.score,
-        gameState.moves,
-        timeSpent,
-        gameState.learnedKana.length
-      );
-      
-      // Save progress
-      const updatedProgress = updateProgressAfterLevel(
-        currentLevel,
-        gameState.score,
-        gameState.moves,
-        gameState.learnedKana
-      );
-
-      // Track level complete telemetry
-      telemetry.trackLevelComplete(gameState.score);
-
-      console.log('Level completed! Progress saved:', updatedProgress);
-      console.log('Streak updated:', updatedStreak);
-      console.log('New achievements:', unlockedAchievements);
+      // --- End of Quiz Generation ---
     }
-  }, [gameState.isComplete, isLevelComplete, currentLevel, gameState.score, gameState.moves, gameState.learnedKana, gameStartTime, toast]);
+  }, [gameState.isComplete, isLevelComplete, currentLevel, quizState]);
 
   // Enforce: at most 2 EMPTY branches on the board
   // Use queue-based approach for reliable sequential removal
@@ -1368,6 +1367,66 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     setGameStartTime(new Date()); // Reset timer for achievements
   }, []);
 
+  const handleQuizAnswer = useCallback((answer: string) => {
+    if (!quizState) return;
+
+    const isCorrect = answer === quizState.correctAnswer;
+    let finalScore = gameState.score;
+
+    if (isCorrect) {
+      finalScore += 100;
+      console.log('✅ Correct quiz answer, +100 points');
+    } else {
+      console.log('❌ Incorrect quiz answer');
+    }
+
+    setQuizState(prev => prev ? { ...prev, answered: true, wasCorrect: isCorrect } : null);
+
+    // Wait a moment before closing the quiz and updating the score
+    setTimeout(() => {
+      setGameState(prev => ({ ...prev, score: finalScore }));
+      setQuizState(null); // Close and reset quiz state
+
+      // --- Finalize Level Completion after Quiz ---
+      const gameEndTime = new Date();
+      const timeSpent = Math.floor((gameEndTime.getTime() - gameStartTime.getTime()) / 1000);
+      const gameSession: GameSession = {
+        level: currentLevel,
+        score: finalScore,
+        moves: gameState.moves,
+        timeSpent,
+        learnedKana: gameState.learnedKana,
+        isPerfect: false, // Can't be perfect if there was a quiz
+        completedAt: gameEndTime
+      };
+
+      // Update streak
+      const updatedStreak = updateStreak();
+
+      // Check for new achievements with final score
+      const unlockedAchievements = checkAndUnlockAchievements(gameSession);
+      if (unlockedAchievements.length > 0) {
+        setNewAchievements(unlockedAchievements);
+      }
+
+      // Add to leaderboard with final score
+      addLeaderboardEntry(currentLevel, finalScore, gameState.moves, timeSpent, gameState.learnedKana.length);
+
+      // Save progress with final score
+      updateProgressAfterLevel(currentLevel, finalScore, gameState.moves, gameState.learnedKana);
+
+      // Track level complete telemetry
+      telemetry.trackLevelComplete(finalScore);
+
+      console.log('Level completed! Final score:', finalScore);
+      console.log('Streak updated:', updatedStreak);
+      console.log('New achievements after quiz:', unlockedAchievements);
+
+    }, 1500); // Show result for 1.5s
+
+  }, [quizState, gameState.score, currentLevel, gameState.moves, gameState.learnedKana, gameStartTime]);
+
+
   const closeKanaPopup = useCallback(() => {
     setShowKanaPopup(null);
   }, []);
@@ -1382,6 +1441,8 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     canUndo: gameHistory.length > 0,
     showKanaPopup,
     closeKanaPopup,
+    quizState,
+    handleQuizAnswer,
     flippingTiles,
     sakuraAnimatingTiles,
     recentlyMovedTileIds,

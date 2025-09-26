@@ -18,6 +18,7 @@ import { AchievementNotificationManager } from "@/components/ui/AchievementNotif
 import { ScoreAnimation } from "@/components/ui/ScoreAnimation";
 import { AudioControls } from "@/components/ui/AudioControls";
 import { GameOverModal } from "@/components/ui/GameOverModal";
+import { LevelEndQuiz } from '@/components/ui/LevelEndQuiz';
 import { DisplayMode, DISPLAY_MODE_LABELS } from "@/types/displayMode";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -60,6 +61,8 @@ export const Game: React.FC = () => {
     recentlyMovedTileIds,
     hasValidMoves,
     branchesCollected,
+    quizState,
+    handleQuizAnswer,
   } = useGameLogic({ level: currentLevelNumber, displayMode });
 
   const {
@@ -224,7 +227,23 @@ export const Game: React.FC = () => {
     }
   };
 
-  if (gameState.isComplete && !isAnimating) {
+  // Show quiz if it's active
+  if (quizState?.isOpen) {
+    return (
+      <LevelEndQuiz 
+        isOpen={quizState.isOpen}
+        kana={quizState.kana}
+        options={quizState.options}
+        correctAnswer={quizState.correctAnswer}
+        onAnswer={handleQuizAnswer}
+        answered={quizState.answered}
+        wasCorrect={quizState.wasCorrect}
+      />
+    );
+  }
+
+  // Show level complete screen only after animations and quiz are done
+  if (gameState.isComplete && !isAnimating && !quizState) {
     const canGoToNext = currentLevelNumber < maxLevel;
     const isLevelUnlocked = playerProgress.completedLevels.includes(currentLevelNumber - 1) || currentLevelNumber === 1;
     
