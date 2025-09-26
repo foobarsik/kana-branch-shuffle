@@ -12,6 +12,7 @@ interface GameTileProps {
   style?: React.CSSProperties;
   isFlipping?: boolean;
   isSakuraAnimating?: boolean;
+  isDropping?: boolean;
   showRomajiByDefault?: boolean;
   isLargeMode?: boolean;
 }
@@ -25,6 +26,7 @@ export const GameTile: React.FC<GameTileProps> = ({
   style,
   isFlipping = false,
   isSakuraAnimating = false,
+  isDropping = false,
   showRomajiByDefault = false,
   isLargeMode = false,
 }) => {
@@ -60,7 +62,21 @@ export const GameTile: React.FC<GameTileProps> = ({
   const dark2 = shade(baseColor, -32);
   const light1 = shade(baseColor, 10);
 
-  // If sakura animating, show sakura petals falling
+  // --- Drop micro animation: when selection (drag) ends, briefly play scale-up ---
+  const prevSelectedRef = React.useRef<boolean>(isSelected);
+  const [justDropped, setJustDropped] = React.useState(false);
+  React.useEffect(() => {
+    const wasSelected = prevSelectedRef.current;
+    if (wasSelected && !isSelected) {
+      setJustDropped(true);
+      const timer = setTimeout(() => setJustDropped(false), 140);
+      prevSelectedRef.current = isSelected;
+      return () => clearTimeout(timer);
+    }
+    prevSelectedRef.current = isSelected;
+  }, [isSelected]);
+
+  // If sakura animating, show sakura petals falling (hooks declared above)
   if (isSakuraAnimating) {
     return (
       <div
@@ -117,7 +133,8 @@ export const GameTile: React.FC<GameTileProps> = ({
         "w-[43px] h-[43px] md:w-16 md:h-16 rounded-full relative cursor-pointer transition-all duration-300 flex-shrink-0",
         "active:scale-95",
         !isSelectable && "cursor-default",
-        isSelected && "z-20",
+        isSelected && "z-20 tile-lift",
+        (isFlipping || justDropped || isDropping) && "tile-drop",
         className
       )}
       style={{ ...(style || {}), perspective: 600 }}

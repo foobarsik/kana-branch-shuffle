@@ -201,6 +201,25 @@ All colors MUST be HSL.
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* ==========================
+   Tile drag/drop micro animations
+   ========================== */
+.tile-lift {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.22);
+  will-change: transform, box-shadow;
+}
+
+@keyframes tileMicroDrop {
+  0% { transform: scale(0.94); }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+.tile-drop {
+  animation: tileMicroDrop 220ms cubic-bezier(.2,.7,.2,1);
+  will-change: transform;
+}
+
 /* Enameled button style (matches tile material but with white base) */
 .btn-enameled {
   background: #ffffff;

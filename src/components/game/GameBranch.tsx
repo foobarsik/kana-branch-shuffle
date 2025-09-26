@@ -16,6 +16,7 @@ interface GameBranchProps {
   getShouldShowRomaji?: (branch: Branch, tileIndex: number, align: 'left' | 'right') => boolean;
   isLargeMode?: boolean;
   isDisappearing?: boolean;
+  recentlyMovedTileIds?: Set<string>;
 }
 
 export const GameBranch: React.FC<GameBranchProps> = ({
@@ -30,6 +31,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   getShouldShowRomaji,
   isLargeMode = false,
   isDisappearing = false,
+  recentlyMovedTileIds,
 }) => {
   const isSelected = selectedBranch === branch.id;
   const isEmpty = branch.tiles.length === 0;
@@ -84,14 +86,12 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         <div className={cn(
           "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-0 md:px-2",
           // Left column: normal flow from left edge
-          align === 'left' ? 'justify-start pl-[1px] pr-2 md:pr-2' : '',
           // Right column: reverse visual order and keep row anchored to the right edge
           align === 'right' && 'flex-row-reverse justify-start pr-[1px] pl-2 md:pl-2'
         )}>
           {branch.tiles.map((tile, index) => {
             // Check if this tile should be selected (for multiple consecutive tiles)
-            const shouldBeSelected = isSelected && 
-              index >= branch.tiles.length - selectedTileCount;
+            const shouldBeSelected = isSelected && index >= branch.tiles.length - selectedTileCount;
             
             return (
               <GameTile
@@ -102,33 +102,14 @@ export const GameBranch: React.FC<GameBranchProps> = ({
                 className="transition-all duration-300"
                 isFlipping={flippingTiles.has(tile.id)}
                 isSakuraAnimating={sakuraAnimatingTiles.has(tile.id)}
+                isDropping={recentlyMovedTileIds?.has(tile.id)}
                 showRomajiByDefault={getShouldShowRomaji ? getShouldShowRomaji(branch, index, align) : align === 'right'}
                 isLargeMode={isLargeMode}
               />
             );
           })}
         </div>
-        
-        {/* Empty shelf indicator */}
-        {/* {isEmpty && (
-          <div className="absolute left-2 md:left-6 bottom-1 md:bottom-3 w-8 md:w-12 h-8 md:h-12 rounded-xl border-2 border-dashed border-muted-foreground/30 flex items-center justify-center">
-            <span className="text-xs text-muted-foreground">空</span>
-          </div>
-        )} */}
       </div>
-      
-      {/* Capacity indicator */}
-      {/* <div className="flex space-x-1">
-        {Array.from({ length: branch.maxCapacity }).map((_, index) => (
-          <div
-            key={index}
-            className={cn(
-              "w-2 h-2 rounded-full transition-colors",
-              index < branch.tiles.length ? "bg-primary" : "bg-muted"
-            )}
-          />
-        ))}
-      </div> */}
     </div>
   );
 };

@@ -328,6 +328,8 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const [showKanaPopup, setShowKanaPopup] = useState<{kana: string; romaji: string; learned: boolean} | null>(null);
   const [flippingTiles, setFlippingTiles] = useState<Set<string>>(new Set());
   const [sakuraAnimatingTiles, setSakuraAnimatingTiles] = useState<Set<string>>(new Set());
+  // Track tiles that just moved to trigger micro drop animation in UI
+  const [recentlyMovedTileIds, setRecentlyMovedTileIds] = useState<Set<string>>(new Set());
   const [selectedTileCount, setSelectedTileCount] = useState<number>(1);
   const [currentLevel, setCurrentLevel] = useState<number>(level);
   const [isLevelComplete, setIsLevelComplete] = useState<boolean>(false);
@@ -1134,6 +1136,18 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           }
         });
 
+        // Signal UI about just moved tiles to play micro drop animation
+        try {
+          const movedIds = new Set<string>(tilesToMove.map(t => t.id));
+          setRecentlyMovedTileIds(movedIds);
+          const clearDropTimer = setTimeout(() => {
+            setRecentlyMovedTileIds(new Set());
+          }, 180);
+          animationTimersRef.current.push(clearDropTimer);
+        } catch (e) {
+          // no-op safeguard
+        }
+
         // If we completed any set(s), run appropriate animation based on display mode
         if (completed.length > 0) {
           console.log('🎉 Completed kana detected (selectBranch):', completed);
@@ -1290,6 +1304,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     closeKanaPopup,
     flippingTiles,
     sakuraAnimatingTiles,
+    recentlyMovedTileIds,
     selectedTileCount,
     currentLevel,
     isLevelComplete,

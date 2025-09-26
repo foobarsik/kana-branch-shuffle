@@ -50,6 +50,7 @@ export const Game: React.FC = () => {
     newAchievements,
     clearNewAchievements,
     disappearingBranchIds,
+    recentlyMovedTileIds,
     hasValidMoves,
   } = useGameLogic({ level: currentLevelNumber, displayMode });
 
@@ -326,6 +327,7 @@ export const Game: React.FC = () => {
                     getShouldShowRomaji={getShouldShowRomaji}
                     isLargeMode={displayMode === DisplayMode.LARGE}
                     isDisappearing={disappearingBranchIds?.has(branch.id)}
+                    recentlyMovedTileIds={recentlyMovedTileIds}
                   />
                 </div>
               ))}
@@ -347,6 +349,7 @@ export const Game: React.FC = () => {
                     getShouldShowRomaji={getShouldShowRomaji}
                     isLargeMode={displayMode === DisplayMode.LARGE}
                     isDisappearing={disappearingBranchIds?.has(branch.id)}
+                    recentlyMovedTileIds={recentlyMovedTileIds}
                   />
                 </div>
               ))}
