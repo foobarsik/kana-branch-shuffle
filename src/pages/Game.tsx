@@ -195,7 +195,29 @@ export const Game: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-6 max-w-md">
-          <img src="/success.png" alt="Level Complete!" className="w-48 h-auto mx-auto mb-4" />
+          <div className="relative w-full flex items-center justify-center mb-4">
+            {/* Subtle sakura halo behind mascot */}
+            <div
+              className="absolute w-60 h-60 rounded-full pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(255,182,193,0.25) 0%, rgba(255,182,193,0.12) 40%, transparent 70%)",
+                filter: "blur(40px)",
+              }}
+            />
+            {/* Mascot */}
+            <img
+              src="/success.png"
+              alt="Level Complete!"
+              className="w-48 h-auto relative z-[1]"
+              style={{
+                filter:
+                  "drop-shadow(0 2px 4px rgba(0,0,0,0.15)) drop-shadow(0 8px 20px rgba(0,0,0,0.08))",
+              }}
+            />
+            {/* Soft oval shadow under feet */}
+            <div className="absolute bottom-0 w-32 h-4 rounded-full bg-[rgba(0,0,0,0.12)] blur-sm" />
+          </div>
           <div>
             <Badge variant="secondary" className="mb-2">Level {currentLevelNumber}</Badge>
             <h1 className="text-3xl font-bold text-foreground">Level Complete!</h1>
