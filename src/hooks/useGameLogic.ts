@@ -496,25 +496,39 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         return;
       }
 
-      // Find the lowest empty branch (with highest index) to remove
-      const emptyBranchesWithIndex = emptyBranchIds.map(id => {
-        const index = parseInt(id.replace('branch-', ''));
-        if (isNaN(index)) {
-          console.warn(`⚠️ Invalid branch ID format: ${id}`);
-          return { id, index: -1 };
+      // Find the visually lowest empty branch considering 2-column layout
+      // Left column: indices [0 .. leftCount-1], Right column: indices [leftCount .. total-1]
+      const total = gameState.branches.length;
+      const leftCount = Math.ceil(total / 2);
+
+      const emptyBranchesWithPlacement = emptyBranchIds.map(id => {
+        const pos = gameState.branches.findIndex(b => b.id === id);
+        if (pos < 0) {
+          console.warn(`⚠️ Empty branch id not found in current array order: ${id}`);
+          return { id, pos: -1, row: -1, isRight: false };
         }
-        return { id, index };
-      }).filter(branch => branch.index >= 0); // Filter out invalid branches
-      
-      if (emptyBranchesWithIndex.length === 0) {
+        const isRight = pos >= leftCount;
+        const row = isRight ? (pos - leftCount) : pos; // 0-based visual row across both columns
+        return { id, pos, row, isRight };
+      }).filter(b => b.pos >= 0);
+
+      if (emptyBranchesWithPlacement.length === 0) {
         console.warn(`⚠️ No valid empty branches found to remove`);
         return;
       }
-      
-      const branchWithHighestIndex = emptyBranchesWithIndex.reduce((prev, current) => 
-        prev.index > current.index ? prev : current
-      );
-      const idToRemove = branchWithHighestIndex.id;
+
+      // Prefer the lowest row; if tie, prefer right column (so the bottom-most right disappears first)
+      const branchVisuallyLowest = emptyBranchesWithPlacement.reduce((best, cur) => {
+        if (!best) return cur;
+        if (cur.row > best.row) return cur;
+        if (cur.row === best.row) {
+          if (cur.isRight && !best.isRight) return cur; // prefer right on same row
+          if (cur.isRight === best.isRight) return cur.pos > best.pos ? cur : best; // fallback to deeper position
+        }
+        return best;
+      }, emptyBranchesWithPlacement[0]);
+
+      const idToRemove = branchVisuallyLowest.id;
       const branchToRemove = gameState.branches.find(b => b.id === idToRemove);
       
       if (!branchToRemove) {
