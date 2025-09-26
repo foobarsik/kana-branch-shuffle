@@ -38,6 +38,14 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   const isFull = branch.tiles.length >= branch.maxCapacity;
   const isWave = branch.type === BranchType.WAVE;
   const topTile = branch.tiles[branch.tiles.length - 1];
+  
+  // Only apply disappearing animation to empty branches that are being converted to waves
+  const shouldApplyDisappearingAnimation = isDisappearing && isEmpty;
+  
+  // Debug logging for disappearing branches
+  if (isDisappearing) {
+    console.log(`🔍 Branch ${branch.id} is disappearing - isEmpty: ${isEmpty}, tiles: ${branch.tiles.length}, type: ${branch.type}`);
+  }
 
   // For wave branches, show empty space
   if (isWave) {
@@ -55,16 +63,16 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   }
 
   return (
-    <div className="flex flex-col items-center space-y-2 transition-all duration-300">
+    <div className="flex flex-col items-center space-y-2 transition-all duration-300 overflow-visible">
       <div
         className={cn(
-          "relative w-full md:max-w-80 md:mx-auto h-14 md:h-24 cursor-pointer transition-all duration-300",
+          "relative w-full md:max-w-80 md:mx-auto h-14 md:h-24 cursor-pointer transition-all duration-300 overflow-visible",
           "flex items-end justify-start gap-1 md:p-2",
           // Selection and interaction states  
           // isSelected && "scale-105",
           // canPlace && selectedBranch && selectedBranch !== branch.id && "bg-success/10",
           !isEmpty && !isFull && "hover:scale-102",
-          isDisappearing && "pointer-events-none"
+          shouldApplyDisappearingAnimation && "pointer-events-none"
         )}
         onClick={() => {
           console.log('🖱️ Branch clicked:', branch.id, 'tiles:', branch.tiles.length);
@@ -72,7 +80,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         }}
       >
         {/* The sakura branch - replaces the old shelf */}
-        <div className="absolute bottom-0 left-0 right-0 md:left-4 md:right-4 h-4 md:h-6">
+        <div className="absolute bottom-0 left-0 right-0 md:left-4 md:right-4 h-4 md:h-6 z-10">
           <SakuraBranch
             isSelected={isSelected}
             canPlace={false} // Remove green highlighting
@@ -82,11 +90,11 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         
         {/* Tiles container */}
         <div className={cn(
-          "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-0 md:px-2 transition-all duration-300",
+          "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-0 md:px-2 transition-all duration-300 z-20",
           // Left column: normal flow from left edge
           // Right column: reverse visual order and keep row anchored to the right edge
           align === 'right' && 'flex-row-reverse justify-start pr-[1px] pl-2 md:pl-2',
-          isDisappearing && "opacity-0 translate-y-2"
+          shouldApplyDisappearingAnimation && "opacity-0 translate-y-2"
         )}>
           {branch.tiles.map((tile, index) => {
             // Check if this tile should be selected (for multiple consecutive tiles)
