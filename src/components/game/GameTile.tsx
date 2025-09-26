@@ -163,8 +163,8 @@ export const GameTile: React.FC<GameTileProps> = ({
         style={{
           transform: `${isSelected || isLargeMode ? 'scale(1.25)' : 'scale(1)'} ` + (
             showRomajiByDefault
-              ? ((isSelected || isFlipping) ? 'rotateY(0deg)' : 'rotateY(180deg)')
-              : ((isSelected || isFlipping) ? 'rotateY(180deg)' : 'rotateY(0deg)')
+              ? (isFlipping ? 'rotateY(0deg)' : 'rotateY(180deg)')
+              : (isFlipping ? 'rotateY(180deg)' : 'rotateY(0deg)')
           ),
           willChange: 'transform'
         }}
