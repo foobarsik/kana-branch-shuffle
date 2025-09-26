@@ -298,9 +298,9 @@ export const Game: React.FC = () => {
             <div className="flex gap-2">
               <Button
                 onClick={resetGame}
-                className="flex-1 bg-gradient-to-r from-pink-400 to-rose-400 text-white font-semibold shadow-[0_2px_0_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(244,63,94,0.2)] transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.99] border-0"
+                className="flex-1 bg-gradient-to-r from-rose-100 to-pink-200 text-rose-700 font-semibold border border-rose-200 shadow-[0_1px_0_rgba(0,0,0,0.08)] hover:from-rose-200 hover:to-pink-300 hover:shadow-[0_3px_10px_rgba(244,63,94,0.18)] transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.99]"
               >
-                <ShuffleIcon className="w-4 h-4 mr-2" />
+                <ShuffleIcon className="w-4 h-4 mr-2 text-rose-700" />
                 Shuffle and play again
               </Button>
               {canGoToNext && (
@@ -316,7 +316,7 @@ export const Game: React.FC = () => {
             <div className="flex gap-2">
               <Button onClick={goToLevelSelect} variant="outline" className="flex-1">
                 <span className="inline-flex items-center">
-                  <span className="mr-0 hidden sm:inline-flex items-center justify-center w-8 h-8">
+                  <span className="mr-0 inline-flex items-center justify-center w-8 h-8">
                     <Trophy className="w-5 h-5 text-yellow-500" />
                   </span>
                   <span>Levels</span>
@@ -324,7 +324,7 @@ export const Game: React.FC = () => {
               </Button>
               <Button onClick={() => navigate("/")} variant="outline" className="flex-1">
                 <span className="inline-flex items-center">
-                  <span className="mr-0 hidden sm:inline-flex items-center justify-center w-8 h-8">
+                  <span className="mr-0 inline-flex items-center justify-center w-8 h-8">
                     <Home className="w-5 h-5 text-gray-700" />
                   </span>
                   <span>Home</span>
