@@ -172,6 +172,11 @@ export const GameTile: React.FC<GameTileProps> = ({
                 : `radial-gradient(circle at 35% 30%, ${light1} 0%, ${baseColor} 55%, ${dark1} 100%)`
             }}
           >
+            {/* Very light inner shadow at bottom for embossed effect */}
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{ boxShadow: 'inset 0 -2px 4px rgba(0,0,0,0.16), inset 0 1px 1px rgba(255,255,255,0.18)' }}
+            />
             {/* Decorative pattern background */}
             <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <g stroke="currentColor" strokeWidth="1" fill="none">
@@ -240,6 +245,11 @@ export const GameTile: React.FC<GameTileProps> = ({
                 : `radial-gradient(circle at 35% 30%, ${light1} 0%, ${baseColor} 55%, ${dark1} 100%)`
             }}
           >
+            {/* Very light inner shadow at bottom for embossed effect (back face) */}
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{ boxShadow: 'inset 0 -1px 2px rgba(0,0,0,0.10)' }}
+            />
             <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <circle cx="50" cy="50" r="28" stroke="currentColor" strokeWidth="1" fill="none" />
               <circle cx="50" cy="50" r="18" stroke="currentColor" strokeWidth="1" fill="none" />
