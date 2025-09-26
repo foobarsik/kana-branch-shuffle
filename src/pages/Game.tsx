@@ -455,7 +455,7 @@ export const Game: React.FC = () => {
           <div id="game-controls" className="flex justify-center items-center gap-2 md:gap-2 mt-6">
             <Button
               onClick={undoMove}
-              disabled={!canUndo}
+              disabled={!canUndo || branchesCollected === 0}
               variant="outline"
               title="Undo (costs 1 branch)"
               aria-label="Undo (costs 1 branch)"
@@ -476,7 +476,7 @@ export const Game: React.FC = () => {
               title="Restart (return to initial preset, costs 1 branch)"
               aria-label="Restart (return to initial preset, costs 1 branch)"
               className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100"
-              disabled={gameState.moves === 0}
+              disabled={gameState.moves === 0 || branchesCollected === 0}
             >
               <RotateCcw className="w-4 h-4" />
               <span className="inline flex items-center gap-1">
@@ -493,6 +493,7 @@ export const Game: React.FC = () => {
               title="Shuffle (new layout, costs 1 branch)"
               aria-label="Shuffle (new layout, costs 1 branch)"
               className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100"
+              disabled={branchesCollected === 0}
             >
               <ShuffleIcon className="w-4 h-4" />
               <span className="inline flex items-center gap-1">
