@@ -144,9 +144,9 @@ export const GameTile: React.FC<GameTileProps> = ({
       <div 
         className="absolute left-1/2 w-[60%] h-[14%] rounded-full -translate-x-1/2 -z-10"
         style={{ 
-          bottom: '-3px',
-          background: 'rgba(0,0,0,0.12)',
-          filter: 'blur(5px)',
+          bottom: '-4px',
+          background: 'rgba(0,0,0,0.15)',
+          filter: 'blur(4px)',
           transition: 'all 0.3s ease',
           transform: `translateX(-50%) scale(${isSelected ? 1.25 : 1})`
         }}
