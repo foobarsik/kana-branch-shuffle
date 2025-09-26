@@ -37,8 +37,8 @@ export const GameTile: React.FC<GameTileProps> = ({
   // --- Visual tuning: derive subtle gradients from tile color for ring/surface ---
   // Extract primary color from gradient or use as-is if it's a solid color
   const tileColorValue = tile.color || '#4b5563';
-  const baseColor = isGradient(tileColorValue) 
-    ? extractPrimaryColor(tileColorValue) 
+  const baseColor = isGradient(tileColorValue)
+    ? extractPrimaryColor(tileColorValue)
     : tileColorValue;
   const clamp = (n: number, min = 0, max = 255) => Math.max(min, Math.min(max, n));
   const hexToRgb = (hex: string) => {
@@ -90,9 +90,9 @@ export const GameTile: React.FC<GameTileProps> = ({
         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300 animate-pulse">
           {/* Center text fading out elegantly */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <span 
+            <span
               className="text-lg md:text-2xl font-bold text-pink-700 drop-shadow-sm"
-              style={{ 
+              style={{
                 fontFamily: 'Noto Sans JP, sans-serif',
                 opacity: 1,
                 transform: 'scale(1)',
@@ -103,7 +103,7 @@ export const GameTile: React.FC<GameTileProps> = ({
               {showRomajiByDefault ? tile.romaji : tile.kana}
             </span>
           </div>
-          
+
           {/* Add elegant fade animation */}
           <style>{`
             @keyframes fadeOutScale {
@@ -122,7 +122,7 @@ export const GameTile: React.FC<GameTileProps> = ({
             }
           `}</style>
         </div>
-        
+
       </div>
     );
   }
@@ -135,15 +135,17 @@ export const GameTile: React.FC<GameTileProps> = ({
         !isSelectable && "cursor-default",
         isSelected && "z-20 tile-lift",
         (isFlipping || justDropped || isDropping) && "tile-drop",
+        // Enamel contour effect
+        'shadow-[inset_0_1px_1px_rgba(255,255,255,0.25),0_1px_2px_rgba(0,0,0,0.08)]',
         className
       )}
       style={{ ...(style || {}), perspective: 600 }}
       onClick={isSelectable ? onClick : undefined}
     >
       {/* Oval shadow underneath the tile */}
-      <div 
+      <div
         className="absolute left-1/2 w-[65%] h-[16%] rounded-full -translate-x-1/2 -z-10"
-        style={{ 
+        style={{
           bottom: '-4px',
           background: 'rgba(0,0,0,0.25)',
           filter: 'blur(4px)',
@@ -151,12 +153,16 @@ export const GameTile: React.FC<GameTileProps> = ({
           transform: `translateX(-50%) scale(${isSelected ? 1.15 : 1})`
         }}
       />
+      {/* Oval drop shadow */}
+      {!isSelected && (
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-3 bg-black/20 rounded-[50%] blur-sm -z-10" />
+      )}
       {/* 3D flipper */}
       <div
         className="absolute inset-0 [transform-style:preserve-3d] transition-transform duration-500"
-        style={{ 
+        style={{
           transform: `${isSelected || isLargeMode ? 'scale(1.25)' : 'scale(1)'} ` + (
-            showRomajiByDefault 
+            showRomajiByDefault
               ? ((isSelected || isFlipping) ? 'rotateY(0deg)' : 'rotateY(180deg)')
               : ((isSelected || isFlipping) ? 'rotateY(180deg)' : 'rotateY(0deg)')
           ),
@@ -166,10 +172,10 @@ export const GameTile: React.FC<GameTileProps> = ({
         {/* FRONT FACE: kana */}
         <div className="absolute inset-0 [backface-visibility:hidden]">
           {/* Inner ring (expanded because outer ring removed) */}
-          <div 
+          <div
             className="absolute inset-0 rounded-full bg-gradient-to-br"
             style={{
-              background: isSelected 
+              background: isSelected
                 ? 'linear-gradient(135deg, #fbbf24, #f59e0b, #d97706)'
                 : `linear-gradient(135deg, ${dark1}, ${dark2})`
             }}
@@ -177,16 +183,23 @@ export const GameTile: React.FC<GameTileProps> = ({
           {/* Main surface with texture pattern (expanded accordingly) */}
           <div
             className="absolute inset-0.5 rounded-full overflow-hidden"
-            style={{ 
-              background: isGradient(tileColorValue) 
+            style={{
+              background: isGradient(tileColorValue)
                 ? tileColorValue // Use the original gradient
-                : `radial-gradient(circle at 35% 30%, ${light1} 0%, ${baseColor} 55%, ${dark1} 100%)`
+                : `radial-gradient(circle at center, ${baseColor} 60%, ${dark1} 100%)`
             }}
           >
             {/* Very light inner shadow at bottom for embossed effect */}
             <div
               className="absolute inset-0 rounded-full pointer-events-none"
               style={{ boxShadow: 'inset 0 -2px 4px rgba(0,0,0,0.16), inset 0 1px 1px rgba(255,255,255,0.18)' }}
+            />
+            {/* Subtle top highlight (0→10% white) */}
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                background: 'linear-gradient(to bottom, rgba(255,255,255,0.14), rgba(255,255,255,0) 45%)'
+              }}
             />
             {/* Decorative pattern background */}
             <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -240,33 +253,33 @@ export const GameTile: React.FC<GameTileProps> = ({
 
         {/* BACK FACE: romaji */}
         <div className="absolute inset-0 [backface-visibility:hidden]" style={{ transform: 'rotateY(180deg)' }}>
-          <div 
+          <div
             className="absolute inset-0 rounded-full bg-gradient-to-br"
             style={{
-              background: isSelected 
+              background: isSelected
                 ? 'linear-gradient(135deg, #fbbf24, #f59e0b, #d97706)'
                 : `linear-gradient(135deg, ${dark1}, ${dark2})`
             }}
           />
-          <div 
+          <div
             className="absolute inset-0.5 rounded-full overflow-hidden"
-            style={{ 
-              background: isGradient(tileColorValue) 
+            style={{
+              background: isGradient(tileColorValue)
                 ? tileColorValue // Use the original gradient
-                : `radial-gradient(circle at 35% 30%, ${light1} 0%, ${baseColor} 55%, ${dark1} 100%)`
+                : `radial-gradient(circle at center, ${baseColor} 60%, ${dark1} 100%)`
             }}
           >
             {/* Very light inner shadow at bottom for embossed effect (back face) */}
             <div
               className="absolute inset-0 rounded-full pointer-events-none"
-              style={{ boxShadow: 'inset 0 -1px 2px rgba(0,0,0,0.10)' }}
+              style={{ boxShadow: 'inset 0 -2px 4px rgba(0,0,0,0.16), inset 0 1px 1px rgba(255,255,255,0.18)' }}
             />
             <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <circle cx="50" cy="50" r="28" stroke="currentColor" strokeWidth="1" fill="none" />
               <circle cx="50" cy="50" r="18" stroke="currentColor" strokeWidth="1" fill="none" />
             </svg>
             <div className="absolute mb-1 inset-0 flex items-center justify-center">
-              <span 
+              <span
                 className={cn(
                   "font-medium drop-shadow-lg select-none text-lg md:text-3xl",
                   showRomajiByDefault ? "text-white" : "text-yellow-300",
