@@ -276,15 +276,24 @@ export const Game: React.FC = () => {
             </div>
           </div>
           <div className="flex flex-col gap-3 -mt-2 md:scale-100 scale-90 origin-top">
-            {canGoToNext && (
+            <div className="flex gap-2">
               <Button
-                onClick={goToNextLevel}
-                className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold shadow-[0_2px_0_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(244,63,94,0.25)] transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.99] border-0"
+                onClick={resetGame}
+                className="flex-1 bg-gradient-to-r from-pink-400 to-rose-400 text-white font-semibold shadow-[0_2px_0_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(244,63,94,0.2)] transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.99] border-0"
               >
-                <ArrowRight className="w-4 h-4 mr-2" />
-                Next Level ({currentLevelNumber + 1})
+                <ShuffleIcon className="w-4 h-4 mr-2" />
+                Shuffle and play again
               </Button>
-            )}
+              {canGoToNext && (
+                <Button
+                  onClick={goToNextLevel}
+                  className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold shadow-[0_2px_0_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(244,63,94,0.25)] transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.99] border-0"
+                >
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Next Level ({currentLevelNumber + 1})
+                </Button>
+              )}
+            </div>
             <div className="flex gap-2">
               <Button onClick={goToLevelSelect} variant="outline" className="flex-1">
                 <span className="inline-flex items-center">
@@ -292,14 +301,6 @@ export const Game: React.FC = () => {
                     <Trophy className="w-5 h-5 text-yellow-500" />
                   </span>
                   <span>Levels</span>
-                </span>
-              </Button>
-              <Button onClick={resetGame} variant="outline" className="flex-1">
-                <span className="inline-flex items-center">
-                  <span className="mr-0 hidden sm:inline-flex items-center justify-center w-8 h-8">
-                    <ShuffleIcon className="w-5 h-5 text-primary" />
-                  </span>
-                  <span>Shuffle and play again</span>
                 </span>
               </Button>
               <Button onClick={() => navigate("/")} variant="outline" className="flex-1">
