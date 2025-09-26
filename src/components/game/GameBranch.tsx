@@ -39,6 +39,18 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   const isWave = branch.type === BranchType.WAVE;
   const topTile = branch.tiles[branch.tiles.length - 1];
   
+  // Dynamic scale for tile circles so they fit on the branch when capacity > 4
+  // Base design optimized for 4; scale down proportionally for larger capacities
+  const baseCapacity = 4;
+  const capacity = Math.max(1, branch.maxCapacity || baseCapacity);
+  const computedScale = Math.min(1, baseCapacity / capacity);
+  // Avoid making them too small — and make them a bit larger than before
+  const tilesScale = Math.max(0.82, computedScale);
+  // Tighten gaps slightly more for higher capacities
+  const gapClass = capacity > 4 ? 'gap-px md:gap-[2px]' : 'gap-1';
+  // Keep visual alignment clean depending on column
+  const originClass = align === 'right' ? 'origin-bottom-right' : 'origin-bottom-left';
+  
   // Only apply disappearing animation to empty branches that are being converted to waves
   const shouldApplyDisappearingAnimation = isDisappearing && isEmpty;
   
@@ -90,13 +102,18 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         </div>
         
         {/* Tiles container */}
-        <div className={cn(
-          "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-0 md:px-2 transition-all duration-300 z-20",
-          // Left column: normal flow from left edge
-          // Right column: reverse visual order and keep row anchored to the right edge
-          align === 'right' && 'flex-row-reverse justify-start pr-[1px] pl-2 md:pl-2',
-          shouldApplyDisappearingAnimation && "opacity-0 translate-y-2"
-        )}>
+        <div
+          className={cn(
+            "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end px-0 md:px-2 transition-all duration-300 z-20",
+            gapClass,
+            originClass,
+            // Left column: normal flow from left edge
+            // Right column: reverse visual order and keep row anchored to the right edge
+            align === 'right' && 'flex-row-reverse justify-start pr-[1px] pl-2 md:pl-2',
+            shouldApplyDisappearingAnimation && "opacity-0 translate-y-2"
+          )}
+          style={{ transform: `scale(${tilesScale})` }}
+        >
           {branch.tiles.map((tile, index) => {
             // Check if this tile should be selected (for multiple consecutive tiles)
             const shouldBeSelected = isSelected && index >= branch.tiles.length - selectedTileCount;

@@ -20,25 +20,27 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const { toast } = useToast();
 
   // Keep an immutable snapshot of the initially generated branches for the current preset
-  const initialBranchesRef = useRef<Branch[] | null>(null);
+  const initialBranchesRef = useRef<Array<{ id: string; maxCapacity: number; tiles: KanaTile[] }>>([]);
 
   // Max number of empty NORMAL branches allowed before triggering wave replacement
   const MAX_EMPTY_NORMAL_BRANCHES = 2;
 
   // Helper to check if a branch is complete
-  const isBranchComplete = useCallback((branch: Branch, capacity: number): boolean => {
-    if (branch.tiles.length !== capacity || branch.tiles.length === 0) return false;
+  const isBranchComplete = useCallback((branch: Branch, levelConfig: LevelConfig): boolean => {
+    // Check if branch is complete (must have exactly tilesPerKana tiles of the same kana)
+    if (branch.tiles.length === 0) return false;
     const firstKana = branch.tiles[0].kana;
-    return branch.tiles.every(tile => tile.kana === firstKana);
+    return branch.tiles.length === levelConfig.tilesPerKana && 
+           branch.tiles.every(tile => tile.kana === firstKana);
   }, []);
 
   // Shuffle board to ensure no branches are complete at the start
-  const ensureNoCompletedBranches = useCallback((initialBranches: Branch[], capacity: number): Branch[] => {
+  const ensureNoCompletedBranches = useCallback((initialBranches: Branch[], levelConfig: LevelConfig): Branch[] => {
     const branches = [...initialBranches.map(b => ({ ...b, tiles: [...b.tiles] }))];
     let attempts = 0;
 
     while (attempts < 50) { // Safety break to avoid infinite loops
-      const completedBranchIndex = branches.findIndex(b => isBranchComplete(b, capacity));
+      const completedBranchIndex = branches.findIndex(b => isBranchComplete(b, levelConfig));
 
       if (completedBranchIndex === -1) {
         console.log('✅ Board is valid, no pre-completed branches.');
@@ -90,7 +92,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const generateSolvableBoard = useCallback((levelConfig: LevelConfig, colorMap: Record<string, string>): Branch[] => {
     console.log(`🎮 Generating board for level ${levelConfig.level}`);
     
-    // Create all tiles first - exactly 4 of each kana
+    // Create all tiles first - using tilesPerKana from level config
     const allTiles: KanaTile[] = [];
     levelConfig.kanaSubset.forEach((kana) => {
       const kanaData = HIRAGANA_SET.find(h => h.kana === kana);
@@ -99,8 +101,8 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         return;
       }
       
-      // Create exactly 4 tiles of this kana
-      for (let i = 0; i < 4; i++) {
+      // Create the specified number of tiles for this kana
+      for (let i = 0; i < levelConfig.tilesPerKana; i++) {
         allTiles.push({
           id: `${kana}-${i}`,
           kana: kana,
@@ -126,7 +128,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     
     // Distribute tiles using the proven strategy from memory
     // Fill branches densely, leaving some empty for strategy
-    const tilesPerFilledBranch = Math.min(levelConfig.branchCapacity, 4);
+    const tilesPerFilledBranch = levelConfig.branchCapacity;
     const branchesToFill = Math.min(levelConfig.branchCount - 1, Math.ceil(shuffledTiles.length / tilesPerFilledBranch));
     
     let tileIndex = 0;
@@ -158,7 +160,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     }
 
     // Ensure no branches are already completed
-    const finalBranches = ensureNoCompletedBranches(branches, levelConfig.branchCapacity);
+    const finalBranches = ensureNoCompletedBranches(branches, levelConfig);
 
     return finalBranches;
   }, [ensureNoCompletedBranches]);
@@ -170,7 +172,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       name: "Default",
       description: "Default level",
       kanaCount: 5,
-      tilesPerKana: 4,
+      tilesPerKana: levelConfig?.tilesPerKana || 4,
       branchCount: 5,
       branchCapacity: 4,
       kanaSubset: ["あ", "い", "う", "え", "お"]
@@ -731,16 +733,16 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const checkForCompletion = useCallback((branches: Branch[]): { completed: string[], updatedBranches: Branch[] } => {
     const completed: string[] = [];
     const updatedBranches: Branch[] = [];
+    const levelConfig = getLevelConfig(level);
 
     branches.forEach(branch => {
-      if (branch.tiles.length === 4 && 
+      if (branch.tiles.length === levelConfig.tilesPerKana && 
           branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)) {
         completed.push(branch.tiles[0].kana);
         // Replace completed branch with empty one in the same position
         updatedBranches.push({
-          id: `branch-${Date.now()}-${Math.random()}`,
+          ...branch,
           tiles: [],
-          maxCapacity: 4,
         });
       } else {
         updatedBranches.push(branch);
@@ -748,7 +750,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     });
 
     return { completed, updatedBranches };
-  }, []);
+  }, [level]);
 
   // Sakura animation for SMART_FLIP mode
   const animateSakuraCompletion = useCallback((completedBranches: Branch[], newBranches: Branch[]) => {
@@ -808,7 +810,9 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       });
       
       // After all sakura animations start, remove tiles and clear animation state
-      const totalAnimationTime = completedBranches.length * 150 + 4 * 80 + 1800; // Extra time for sakura to fall
+      // Use dynamic tile count instead of hardcoded 4
+      const maxTilesPerBranch = completedBranches.reduce((max, b) => Math.max(max, b.tiles.length), 0);
+      const totalAnimationTime = completedBranches.length * 150 + maxTilesPerBranch * 80 + 1800; // Extra time for sakura to fall
       const cleanupTimer = setTimeout(() => {
         setSakuraAnimatingTiles(new Set());
         
@@ -878,7 +882,9 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       completedBranches.forEach((branch, branchIndex) => {
         const branchIndexInGame = newBranches.findIndex(b => b.id === branch.id);
         const isRightColumn = branchIndexInGame >= Math.ceil(newBranches.length / 2);
-        const tileIndices = isRightColumn ? [3, 2, 1, 0] : [3, 2, 1, 0];
+        // Use dynamic tile indices based on actual tiles in the branch (tilesPerKana)
+        const tilesCount = branch.tiles.length;
+        const tileIndices = Array.from({ length: tilesCount }, (_, i) => tilesCount - 1 - i);
 
         tileIndices.forEach((tileIndex, animationIndex) => {
           const tileTimer = setTimeout(() => {
@@ -890,7 +896,9 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       });
       
       // After all animations, remove tiles and clear flipping state
-      const totalAnimationTime = completedBranches.length * 500 + 4 * 400 + 500;
+      // Use dynamic tiles count rather than hardcoded 4
+      const maxTilesPerBranch = completedBranches.reduce((max, b) => Math.max(max, b.tiles.length), 0);
+      const totalAnimationTime = completedBranches.length * 500 + maxTilesPerBranch * 400 + 500;
       const cleanupTimer = setTimeout(() => {
         setFlippingTiles(new Set());
         
@@ -986,12 +994,16 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
       const newMoves = prevState.moves + 1;
 
+      // Get level config for tilesPerKana
+      const levelConfig = getLevelConfig(level);
+      const tilesNeeded = levelConfig.tilesPerKana;
+      
       // Check for completions manually (without removing tiles yet)
       const completed: string[] = [];
       const tilesToDisappear = new Set<string>();
       
       newBranches.forEach(branch => {
-        if (branch.tiles.length === 4 && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)) {
+        if (branch.tiles.length === tilesNeeded && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)) {
           completed.push(branch.tiles[0].kana);
           branch.tiles.forEach(tile => tilesToDisappear.add(tile.id));
         }
@@ -1003,7 +1015,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         
         // Find completed branches
         const completedBranches = newBranches.filter(branch => 
-          branch.tiles.length === 4 && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)
+          branch.tiles.length === tilesNeeded && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)
         );
         
         // Choose animation based on display mode
@@ -1054,7 +1066,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         completedSets: prevState.completedSets,
       };
     });
-  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves, displayMode, animateFlipCompletion, animateSakuraCompletion]);
+  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves, displayMode, animateFlipCompletion, animateSakuraCompletion, level]);
 
   const selectBranch = useCallback((branchId: string) => {
     console.log('🎯 selectBranch called:', branchId);
@@ -1150,12 +1162,16 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
         const newMoves = prevState.moves + 1;
 
+        // Get level config for tilesPerKana
+        const levelConfig = getLevelConfig(level);
+        const tilesNeeded = levelConfig.tilesPerKana;
+
         // Check for completions manually (without removing tiles yet)
         const completed: string[] = [];
         const tilesToDisappear = new Set<string>();
         
         newBranches.forEach(branch => {
-          if (branch.tiles.length === 4 && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)) {
+          if (branch.tiles.length === tilesNeeded && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)) {
             completed.push(branch.tiles[0].kana);
             branch.tiles.forEach(tile => tilesToDisappear.add(tile.id));
           }
@@ -1178,7 +1194,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           console.log('🎉 Completed kana detected (selectBranch):', completed);
 
           const completedBranches = newBranches.filter(branch => 
-            branch.tiles.length === 4 && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)
+            branch.tiles.length === tilesNeeded && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)
           );
 
           // Choose animation based on display mode
@@ -1223,7 +1239,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
       return prevState;
     });
-  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast, displayMode, animateFlipCompletion, animateSakuraCompletion]);
+  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast, displayMode, animateFlipCompletion, animateSakuraCompletion, level]);
 
   const undoMove = useCallback(() => {
     if (gameHistory.length > 0) {

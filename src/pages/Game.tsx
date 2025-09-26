@@ -509,7 +509,7 @@ export const Game: React.FC = () => {
 
           {/* Instructions */}
           <div className="text-center mt-4 text-sm text-muted-foreground p-2">
-          <p>Group 4 identical kana.</p>
+          <p>Group {levelConfig?.tilesPerKana ?? 4} identical kana.</p>
           <p>Tap a branch, then another to move.</p>
           <p>Place only on empty branch or next to same kana.</p>
             {/* {levelConfig && (
