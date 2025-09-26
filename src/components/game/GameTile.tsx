@@ -140,6 +140,15 @@ export const GameTile: React.FC<GameTileProps> = ({
       style={{ ...(style || {}), perspective: 600 }}
       onClick={isSelectable ? onClick : undefined}
     >
+      {/* Oval shadow underneath the tile */}
+      <div 
+        className="absolute left-1/2 -bottom-1 w-[60%] h-[12%] bg-black/15 rounded-full blur-sm -translate-x-1/2 -z-10"
+        style={{ 
+          filter: 'blur(4px)',
+          transition: 'all 0.3s ease',
+          transform: `translateX(-50%) scale(${isSelected ? 1.25 : 1})`
+        }}
+      />
       {/* 3D flipper */}
       <div
         className="absolute inset-0 [transform-style:preserve-3d] transition-transform duration-500"
