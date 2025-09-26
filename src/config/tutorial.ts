@@ -10,7 +10,7 @@ export const tutorialSteps: TutorialStep[] = [
     {
       elementSelector: '#game-progress-bar',
       title: 'Your Goal',
-      description: 'Collect sets of identical kana characters to earn points and complete the level. Empty branches you generate will be collected globally.',
+      description: 'Collect sets of identical kana characters to earn points and complete the level.',
       placement: 'bottom',
     },
     {
