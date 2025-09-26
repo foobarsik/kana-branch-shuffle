@@ -55,10 +55,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   }
 
   return (
-    <div className={cn(
-      "flex flex-col items-center space-y-2 transition-all duration-300",
-      isDisappearing && "opacity-0 translate-y-2 pointer-events-none"
-    )}>
+    <div className="flex flex-col items-center space-y-2 transition-all duration-300">
       <div
         className={cn(
           "relative w-full md:max-w-80 md:mx-auto h-14 md:h-24 cursor-pointer transition-all duration-300",
@@ -66,7 +63,8 @@ export const GameBranch: React.FC<GameBranchProps> = ({
           // Selection and interaction states  
           // isSelected && "scale-105",
           // canPlace && selectedBranch && selectedBranch !== branch.id && "bg-success/10",
-          !isEmpty && !isFull && "hover:scale-102"
+          !isEmpty && !isFull && "hover:scale-102",
+          isDisappearing && "pointer-events-none"
         )}
         onClick={() => {
           console.log('🖱️ Branch clicked:', branch.id, 'tiles:', branch.tiles.length);
@@ -84,10 +82,11 @@ export const GameBranch: React.FC<GameBranchProps> = ({
         
         {/* Tiles container */}
         <div className={cn(
-          "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-0 md:px-2",
+          "absolute inset-x-0 bottom-3 md:bottom-5 flex items-end gap-1 px-0 md:px-2 transition-all duration-300",
           // Left column: normal flow from left edge
           // Right column: reverse visual order and keep row anchored to the right edge
-          align === 'right' && 'flex-row-reverse justify-start pr-[1px] pl-2 md:pl-2'
+          align === 'right' && 'flex-row-reverse justify-start pr-[1px] pl-2 md:pl-2',
+          isDisappearing && "opacity-0 translate-y-2"
         )}>
           {branch.tiles.map((tile, index) => {
             // Check if this tile should be selected (for multiple consecutive tiles)
