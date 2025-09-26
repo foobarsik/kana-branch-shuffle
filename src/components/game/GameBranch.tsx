@@ -74,6 +74,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
           !isEmpty && !isFull && "hover:scale-102",
           shouldApplyDisappearingAnimation && "pointer-events-none"
         )}
+        data-tutorial="branch"
         onClick={() => {
           console.log('🖱️ Branch clicked:', branch.id, 'tiles:', branch.tiles.length);
           onBranchClick(branch.id);

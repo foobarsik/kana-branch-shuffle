@@ -1,0 +1,32 @@
+export interface TutorialStep {
+  elementSelector?: string;
+  title: string;
+  description: string;
+  placement?: 'top' | 'bottom' | 'left' | 'right';
+  waitForAction?: boolean; // Does this step require user action to proceed?
+}
+
+export const tutorialSteps: TutorialStep[] = [
+    {
+      elementSelector: '#game-progress-bar',
+      title: 'Your Goal',
+      description: 'Collect sets of identical kana characters to earn points and complete the level.',
+      placement: 'bottom',
+    },
+    {
+      title: 'How to Move Tiles',
+      description: 'Tap a branch to select its top tile. Then tap another branch to move the tile there. You can place tiles only on empty branches or onto tiles with the same kana.',
+      placement: 'bottom',
+    },
+    {
+        title: 'Empty Branches Rule',
+        description: 'If there are too many empty branches, some may get stolen from the board.',
+        placement: 'bottom',
+      },
+    {
+      elementSelector: '#game-controls',
+      title: 'Helpful Tools',
+      description: 'If you get stuck, you can undo the last move or restart/shuffle the board. Each undo move will reduce your score.',
+      placement: 'top',
+    },
+  ];

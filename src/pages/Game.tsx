@@ -2,6 +2,8 @@ import React from "react";
 import { GameBranch } from "@/components/game/GameBranch";
 import { KanaPopup } from "@/components/game/KanaPopup";
 import { useGameLogic } from "@/hooks/useGameLogic";
+import { useTutorial } from '@/hooks/useTutorial';
+import { Tutorial } from '@/components/tutorial/Tutorial';
 import { Branch } from "@/types/game";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,9 +37,10 @@ export const Game: React.FC = () => {
   const {
     gameState,
     selectBranch,
-    undoMove,
     resetGame,
+    undoMove,
     restartPreset,
+    resetMoves,
     canUndo,
     showKanaPopup,
     closeKanaPopup,
@@ -53,6 +56,15 @@ export const Game: React.FC = () => {
     recentlyMovedTileIds,
     hasValidMoves,
   } = useGameLogic({ level: currentLevelNumber, displayMode });
+
+  const {
+    isTutorialActive,
+    currentStep,
+    nextStep,
+    stopTutorial,
+    isFirstStep,
+    isLastStep,
+  } = useTutorial(currentLevelNumber);
 
   // Get level configuration and player progress
   const levelConfig = getLevelConfig(currentLevelNumber);
@@ -335,7 +347,7 @@ export const Game: React.FC = () => {
                 ))}
               </div>
             </div>
-            <div className="flex items-center justify-center min-[431px]:justify-end gap-2 md:gap-3 text-sm md:text-[15px] font-medium shrink-0 whitespace-nowrap">
+            <div id="game-progress-bar" className="flex items-center justify-center min-[431px]:justify-end gap-2 md:gap-3 text-sm md:text-[15px] font-medium shrink-0 whitespace-nowrap">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-gray-200 text-gray-700 shadow-sm">
                 <Star className="w-3.5 h-3.5 text-yellow-500" />
                 <span className="text-gray-900 font-semibold">{gameState.score}</span>
@@ -400,7 +412,7 @@ export const Game: React.FC = () => {
           </div>
           
           {/* Action Buttons */}
-          <div className="flex justify-center items-center gap-2 md:gap-2 mt-6">
+          <div id="game-controls" className="flex justify-center items-center gap-2 md:gap-2 mt-6">
             <Button
               onClick={undoMove}
               disabled={!canUndo}
@@ -476,6 +488,17 @@ export const Game: React.FC = () => {
         achievements={newAchievements}
         onAchievementShown={clearNewAchievements}
       />
+
+      {/* Tutorial */}
+      {isTutorialActive && (
+        <Tutorial
+          step={currentStep}
+          onNext={nextStep}
+          onSkip={stopTutorial}
+          isFirstStep={isFirstStep}
+          isLastStep={isLastStep}
+        />
+      )}
     </div>
   );
 };
