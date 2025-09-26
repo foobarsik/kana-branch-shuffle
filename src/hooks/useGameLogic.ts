@@ -1228,6 +1228,15 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         score: newScore
       });
       setGameHistory(prev => prev.slice(0, -1));
+
+      // Decrement global branches collected on undo (cannot go below 0)
+      try {
+        const updated = incrementBranchesCollected(-1);
+        setBranchesCollected(updated.branchesCollected);
+        console.log(`↩️ branchesCollected decremented due to Undo: ${updated.branchesCollected}`);
+      } catch (e) {
+        console.warn('⚠️ Failed to decrement branchesCollected on Undo', e);
+      }
     }
   }, [gameHistory]);
 
@@ -1243,6 +1252,14 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     setNewAchievements([]);
     setGameStartTime(new Date());
     setDisappearingBranchIds(new Set());
+    // Decrement global branches collected on Shuffle (new layout)
+    try {
+      const updated = incrementBranchesCollected(-1);
+      setBranchesCollected(updated.branchesCollected);
+      console.log(`🔀 branchesCollected decremented due to Shuffle: ${updated.branchesCollected}`);
+    } catch (e) {
+      console.warn('⚠️ Failed to decrement branchesCollected on Shuffle', e);
+    }
   }, [createInitialState]);
 
   // Restart to the initially generated preset (no reshuffle)
@@ -1287,6 +1304,15 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     setNewAchievements([]);
     setGameStartTime(new Date());
     setDisappearingBranchIds(new Set());
+
+    // Decrement global branches collected on Restart preset
+    try {
+      const updated = incrementBranchesCollected(-1);
+      setBranchesCollected(updated.branchesCollected);
+      console.log(`🔁 branchesCollected decremented due to Restart: ${updated.branchesCollected}`);
+    } catch (e) {
+      console.warn('⚠️ Failed to decrement branchesCollected on Restart', e);
+    }
   }, [resetGame]);
 
   // Zero out moves and clear undo history, keeping the current board

@@ -8,8 +8,9 @@ export interface TutorialStep {
 
 export const tutorialSteps: TutorialStep[] = [
     {
+      elementSelector: '#game-progress-bar',
       title: 'Your Goal',
-      description: 'Collect sets of identical kana characters to earn points and complete the level.',
+      description: 'Collect sets of identical kana characters to earn points and complete the level. Empty branches you generate will be collected globally.',
       placement: 'bottom',
     },
     {
@@ -18,14 +19,14 @@ export const tutorialSteps: TutorialStep[] = [
       placement: 'bottom',
     },
     {
-        title: 'Empty Branches Rule',
-        description: 'If there are too many empty branches, some may get stolen from the board.',
-        placement: 'bottom',
-      },
+      title: 'Empty Branches Rule',
+      description: 'Empty branches don\'t just disappear — they are collected into your global stash. You can later spend them on actions.',
+      placement: 'bottom',
+    },
     {
       elementSelector: '#game-controls',
       title: 'Helpful Tools',
-      description: 'If you get stuck, you can undo the last move or restart/shuffle the board. Each undo move will reduce your score.',
+      description: 'If you get stuck, you can undo the last move or restart/shuffle the board. Each action costs 1 collected branch (Undo also reduces score by 10).',
       placement: 'top',
     },
   ];

@@ -457,33 +457,51 @@ export const Game: React.FC = () => {
               onClick={undoMove}
               disabled={!canUndo}
               variant="outline"
-              title="Undo"
-              aria-label="Undo"
-              className="btn-enameled h-9 md:h-8 px-3 whitespace-nowrap inline-flex items-center gap-2"
+              title="Undo (costs 1 branch)"
+              aria-label="Undo (costs 1 branch)"
+              className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100"
             >
               <Undo2 className="w-4 h-4" />
-              <span className="inline">Undo</span>
+              <span className="inline flex items-center gap-1">
+                Undo
+                <span className="inline-flex items-center gap-1 text-[11px] leading-none px-1 py-[1px] rounded bg-emerald-50 border border-emerald-200 text-emerald-700">
+                  <Leaf className="w-3 h-3" />
+                  -1
+                </span>
+              </span>
             </Button>
             <Button
               onClick={restartPreset}
               variant="outline"
-              title="Restart (return to initial preset)"
-              aria-label="Restart (return to initial preset)"
-              className="btn-enameled h-9 md:h-8 px-3 whitespace-nowrap inline-flex items-center gap-2"
+              title="Restart (return to initial preset, costs 1 branch)"
+              aria-label="Restart (return to initial preset, costs 1 branch)"
+              className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100"
               disabled={gameState.moves === 0}
             >
               <RotateCcw className="w-4 h-4" />
-              <span className="inline">Restart</span>
+              <span className="inline flex items-center gap-1">
+                Restart
+                <span className="inline-flex items-center gap-1 text-[11px] leading-none px-1 py-[1px] rounded bg-emerald-50 border border-emerald-200 text-emerald-700">
+                  <Leaf className="w-3 h-3" />
+                  -1
+                </span>
+              </span>
             </Button>
             <Button
               onClick={resetGame}
               variant="outline"
-              title="Shuffle (new layout)"
-              aria-label="Shuffle (new layout)"
-              className="btn-enameled h-9 md:h-8 px-3 whitespace-nowrap inline-flex items-center gap-2"
+              title="Shuffle (new layout, costs 1 branch)"
+              aria-label="Shuffle (new layout, costs 1 branch)"
+              className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100"
             >
               <ShuffleIcon className="w-4 h-4" />
-              <span className="inline">Shuffle</span>
+              <span className="inline flex items-center gap-1">
+                Shuffle
+                <span className="inline-flex items-center gap-1 text-[11px] leading-none px-1 py-[1px] rounded bg-emerald-50 border border-emerald-200 text-emerald-700">
+                  <Leaf className="w-3 h-3" />
+                  -1
+                </span>
+              </span>
             </Button>
           </div>
 
