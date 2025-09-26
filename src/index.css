@@ -217,7 +217,7 @@ All colors MUST be HSL.
 body.sakura {
   background:
     /* Edge vignette: subtle darkening near edges to focus center */
-    radial-gradient(120% 120% at 50% 50%, transparent 62%, rgba(0,0,0,.04) 100%),
+    radial-gradient(120% 120% at 50% 50%, transparent 60%, rgba(0,0,0,.05) 100%),
     /* Bottom vignette */
     radial-gradient(90% 70% at 50% 120%, var(--vignette) 0%, transparent 55%),
     /* Base paper gradient */
@@ -242,10 +242,10 @@ body.sakura .bg-corners{
   position:fixed; inset:0; pointer-events:none; z-index:-1;
   background:
     radial-gradient(360px 260px at 0%   0%,   color-mix(in srgb, var(--sakura-1) 20%, transparent) 0 70%, transparent 71%),
-    radial-gradient(340px 240px at 100% 0%,   color-mix(in srgb, var(--sakura-2) 18%, transparent) 0 70%, transparent 71%),
-    radial-gradient(360px 260px at 100% 100%, color-mix(in srgb, var(--sakura-3) 18%, transparent) 0 70%, transparent 71%),
-    radial-gradient(340px 240px at 0%   100%, color-mix(in srgb, var(--sakura-4) 18%, transparent) 0 70%, transparent 71%);
-  opacity: .7;
+    radial-gradient(340px 240px at 100% 0%,   color-mix(in srgb, var(--sakura-2) 20%, transparent) 0 70%, transparent 71%),
+    radial-gradient(360px 260px at 100% 100%, color-mix(in srgb, var(--sakura-3) 20%, transparent) 0 70%, transparent 71%),
+    radial-gradient(340px 240px at 0%   100%, color-mix(in srgb, var(--sakura-4) 20%, transparent) 0 70%, transparent 71%);
+  opacity: .75;
   filter: blur(0.3px); /* убирает «полосинг» на ретине */
 }
 
