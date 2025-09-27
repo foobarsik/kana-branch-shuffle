@@ -119,6 +119,21 @@ const Index = () => {
             </p>
           </Card>
         </div>
+        
+        {/* Footer */}
+        <div className="mt-8">
+          <p className="text-sm text-foreground/80">
+            Vibe-coded by{' '}
+            <a 
+              href="https://mehwow.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-primary font-medium hover:text-primary/80 transition-colors border-b border-primary/30 hover:border-primary/70 pb-0.5"
+            >
+              mehwow.com
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
