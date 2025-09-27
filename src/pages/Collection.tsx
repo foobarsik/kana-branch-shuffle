@@ -107,12 +107,12 @@ export const Collection: React.FC = () => {
 
         {/* Kana Grid */}
         <div>
-          {/* <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">Коллекция кана</h2>
             <div className="text-sm text-muted-foreground">
               {learnedKana.length} из {totalKana} изучено ({completionPercentage}%)
             </div>
-          </div> */}
+          </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {HIRAGANA_SET.map((kanaData) => {
@@ -148,16 +148,11 @@ export const Collection: React.FC = () => {
                   >
                     {kanaData.romaji}
                   </div>
-                  {/* {isLearned && (
-                    <div className="text-xs text-success font-medium">
+                  {isLearned && (
+                    <div className="text-xs text-muted-foreground/80 font-medium">
                       ✓ Learned
                     </div>
                   )}
-                  {!isLearned && (
-                    <div className="text-xs text-muted-foreground">
-                      Not learned yet
-                    </div>
-                  )} */}
                 </div>
               </Card>
             );
