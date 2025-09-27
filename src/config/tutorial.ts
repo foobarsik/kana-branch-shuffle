@@ -8,7 +8,6 @@ export interface TutorialStep {
 
 export const tutorialSteps: TutorialStep[] = [
     {
-      elementSelector: '#game-progress-bar',
       title: 'Your Goal',
       description: 'Collect sets of identical kana characters to earn points and complete the level.',
       placement: 'bottom',
@@ -27,6 +26,6 @@ export const tutorialSteps: TutorialStep[] = [
       elementSelector: '#game-controls',
       title: 'Helpful Tools',
       description: 'If you get stuck, you can undo the last move or restart/shuffle the board. Each action costs 1 collected branch (Undo also reduces score by 10).',
-      placement: 'top',
+      placement: 'bottom',
     },
   ];

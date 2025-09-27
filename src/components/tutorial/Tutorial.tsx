@@ -74,30 +74,13 @@ export const Tutorial: React.FC<TutorialProps> = ({ step, onNext, onSkip, isFirs
     const isMobile = window.innerWidth <= 480;
     if (isMobile) {
       return {
-        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)',
+        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 32px)',
         left: 0,
         right: 0,
         margin: '0 auto',
         paddingLeft: '16px',
         paddingRight: '16px',
       } as React.CSSProperties;
-    }
-    // place the first step under the bottom-left branch
-    if (step?.title === 'Your Goal') {
-      const branches = Array.from(document.querySelectorAll('[data-tutorial="branch"]')) as HTMLElement[];
-      const midX = window.innerWidth / 2;
-      const leftRects = branches
-        .map(el => el.getBoundingClientRect())
-        .filter(r => r.width > 0 && r.height > 0 && r.left < midX && r.bottom > 0 && r.top < window.innerHeight);
-      if (leftRects.length > 0) {
-        const target = leftRects.reduce((a, b) => (b.bottom > a.bottom ? b : a));
-        const top = Math.min(target.bottom + 12, window.innerHeight - 120);
-        return {
-          top,
-          left: target.left + target.width / 2,
-          transform: 'translateX(-50%)',
-        } as React.CSSProperties;
-      }
     }
 
     if (!targetRect) {
