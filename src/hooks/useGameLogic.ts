@@ -484,6 +484,17 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       console.log(`🌿 Empty branches check: found ${emptyBranchIds.length} empty normal branches (threshold ${MAX_EMPTY_NORMAL_BRANCHES}), disappearing: ${disappearingBranchIds.size}, queue: ${branchRemovalQueue.length}`);
       console.log(`📊 Total branches: ${gameState.branches.length}`);
 
+      // Guard: Do not replace branches if there is one or fewer kana sets left on the board
+      const remainingKana = new Set<string>();
+      for (const b of gameState.branches) {
+        for (const t of b.tiles) remainingKana.add(t.kana);
+      }
+      const remainingSets = remainingKana.size;
+      if (remainingSets <= 1) {
+        console.log(`🛑 Skipping wave replacement: only ${remainingSets} kana set(s) left`);
+        return;
+      }
+
       // If at or below threshold, don't replace anything
       if (emptyBranchIds.length <= MAX_EMPTY_NORMAL_BRANCHES) {
         console.log(`✅ Empty branches count is OK: ${emptyBranchIds.length} <= ${MAX_EMPTY_NORMAL_BRANCHES}`);
@@ -558,6 +569,19 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     if (gameState.isComplete) {
       if (branchRemovalQueue.length > 0) {
         console.log('✅ Level complete - clearing branch replacement queue');
+        setBranchRemovalQueue([]);
+      }
+      return;
+    }
+    // Guard: if there is one or fewer kana sets left, do not process replacements
+    const remainingKana = new Set<string>();
+    for (const b of gameState.branches) {
+      for (const t of b.tiles) remainingKana.add(t.kana);
+    }
+    const remainingSets = remainingKana.size;
+    if (remainingSets <= 1) {
+      if (branchRemovalQueue.length > 0) {
+        console.log(`🛑 Skipping queue processing: only ${remainingSets} kana set(s) left. Clearing queue.`);
         setBranchRemovalQueue([]);
       }
       return;
