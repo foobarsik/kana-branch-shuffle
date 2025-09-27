@@ -81,10 +81,10 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 7,
     name: "K-Series Complete (set of 5)",
-    description: "K-series — 4 kana, 7 branches; 5 tiles each",
+    description: "K-series — 4 kana, 6 branches; 5 tiles each",
     kanaCount: 4,            // = level 6
     tilesPerKana: 5,
-    branchCount: 7,
+    branchCount: 6,
     branchCapacity: 5,
     kanaSubset: ["か", "き", "く", "け"]
   },
