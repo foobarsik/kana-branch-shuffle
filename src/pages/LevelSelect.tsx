@@ -76,7 +76,7 @@ export const LevelSelect: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 pt-4">
+      <div className="max-w-6xl mx-auto px-4 pt-4 pb-8">
 
         {/* Progress Overview */}
         <Card className="mb-8">
