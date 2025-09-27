@@ -55,7 +55,7 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: ["あ", "い", "う", "え", "お"]
   },
-  
+
   // K-ряд
   {
     level: 5,
@@ -77,7 +77,20 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: ["か", "き", "く", "け"]
   },
-  
+
+  // based on 6
+  {
+    level: 7,
+    name: "K-Series Complete (set of 5)",
+    description: "5 kana variant of K-Series Complete",
+    kanaCount: 4,            // = level 6
+    tilesPerKana: 5,
+    branchCount: 6,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // Смешанные уровни
   {
     level: 8,
@@ -89,7 +102,20 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: ["あ", "い", "か", "き", "く"]
   },
-  
+
+  // based on 8
+  {
+    level: 9,
+    name: "Mixed Practice (set of 5)",
+    description: "5 kana variant of Mixed Practice",
+    kanaCount: 5,            // = level 8
+    tilesPerKana: 5,
+    branchCount: 7,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // S-ряд
   {
     level: 10,
@@ -101,7 +127,20 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: ["さ", "し", "す", "せ"]
   },
-  
+
+  // based on 10
+  {
+    level: 11,
+    name: "S-Series (set of 5)",
+    description: "5 kana variant of S-Series",
+    kanaCount: 4,            // = level 10
+    tilesPerKana: 5,
+    branchCount: 6,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // Больше пространства для маневра
   {
     level: 12,
@@ -113,7 +152,20 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: ["あ", "か", "さ", "た", "な"]
   },
-  
+
+  // based on 12
+  {
+    level: 13,
+    name: "Spacious Challenge (set of 5)",
+    description: "5 kana variant of Spacious Challenge",
+    kanaCount: 5,            // = level 12
+    tilesPerKana: 5,
+    branchCount: 7,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // T-ряд
   {
     level: 14,
@@ -125,7 +177,20 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: ["た", "ち", "つ", "て"]
   },
-  
+
+  // based on 14
+  {
+    level: 15,
+    name: "T-Series (set of 5)",
+    description: "5 kana variant of T-Series",
+    kanaCount: 4,            // = level 14
+    tilesPerKana: 5,
+    branchCount: 6,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // Продвинутые уровни с большим пространством
   {
     level: 16,
@@ -137,7 +202,20 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: ["あ", "か", "さ", "た", "な", "は"]
   },
-  
+
+  // based on 16
+  {
+    level: 17,
+    name: "Advanced Mix (set of 5)",
+    description: "5 kana variant of Advanced Mix",
+    kanaCount: 6,            // = level 16
+    tilesPerKana: 5,
+    branchCount: 8,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // Финальный уровень с максимальным пространством
   {
     level: 18,
@@ -149,7 +227,20 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: ["あ", "か", "さ", "た", "な", "は", "ま"]
   },
-  
+
+  // based on 18
+  {
+    level: 19,
+    name: "Master Level (set of 5)",
+    description: "5 kana variant of Master Level",
+    kanaCount: 7,            // = level 18
+    tilesPerKana: 5,
+    branchCount: 9,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // Случайный уровень с большим количеством веток
   {
     level: 20,
@@ -159,10 +250,23 @@ export const LEVELS: LevelConfig[] = [
     tilesPerKana: 4,
     branchCount: 10,
     branchCapacity: 4,
-    kanaSubset: [], // будет заполнено случайно
+    kanaSubset: [],
     isRandomKana: true
   },
-  
+
+  // based on 20
+  {
+    level: 21,
+    name: "Random Challenge (set of 5)",
+    description: "5 random kana, 11 branches",
+    kanaCount: 8,            // = level 20
+    tilesPerKana: 5,
+    branchCount: 10,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // Продвинутый случайный уровень с еще большим пространством
   {
     level: 22,
@@ -172,10 +276,23 @@ export const LEVELS: LevelConfig[] = [
     tilesPerKana: 4,
     branchCount: 11,
     branchCapacity: 4,
-    kanaSubset: [], // будет заполнено случайно
+    kanaSubset: [],
     isRandomKana: true
   },
-  
+
+  // based on 22
+  {
+    level: 23,
+    name: "Expert Random (set of 5)",
+    description: "5 random kana, 12 branches",
+    kanaCount: 9,            // = level 22
+    tilesPerKana: 5,
+    branchCount: 11,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // Максимальный случайный уровень
   {
     level: 24,
@@ -185,10 +302,23 @@ export const LEVELS: LevelConfig[] = [
     tilesPerKana: 4,
     branchCount: 12,
     branchCapacity: 4,
-    kanaSubset: [], // будет заполнено случайно
+    kanaSubset: [],
     isRandomKana: true
   },
-  
+
+  // based on 24
+  {
+    level: 25,
+    name: "Master Random (set of 5)",
+    description: "5 random kana, 13 branches",
+    kanaCount: 10,           // = level 24
+    tilesPerKana: 5,
+    branchCount: 12,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // Супер экспертный уровень
   {
     level: 26,
@@ -198,10 +328,23 @@ export const LEVELS: LevelConfig[] = [
     tilesPerKana: 4,
     branchCount: 13,
     branchCapacity: 4,
-    kanaSubset: [], // будет заполнено случайно
+    kanaSubset: [],
     isRandomKana: true
   },
-  
+
+  // based on 26
+  {
+    level: 27,
+    name: "Super Expert (set of 5)",
+    description: "5 random kana, 14 branches",
+    kanaCount: 11,           // = level 26
+    tilesPerKana: 5,
+    branchCount: 13,
+    branchCapacity: 5,
+    kanaSubset: [],
+    isRandomKana: true
+  },
+
   // Легендарный уровень
   {
     level: 28,
@@ -211,138 +354,18 @@ export const LEVELS: LevelConfig[] = [
     tilesPerKana: 4,
     branchCount: 14,
     branchCapacity: 4,
-    kanaSubset: [], // будет заполнено случайно
-    isRandomKana: true
-  },
-  // 5-kana variants for levels 6–17
-  {
-    level: 7, // based on level 6
-    name: "K-Series Complete (set of 5)",
-    description: "5 kana variant of K-Series Complete",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 7,
-    branchCapacity: 5,
     kanaSubset: [],
     isRandomKana: true
   },
+
+  // based on 28
   {
-    level: 9, // based on level 8
-    name: "Mixed Practice (set of 5)",
-    description: "5 kana variant of Mixed Practice",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 8,
-    branchCapacity: 5,
-    kanaSubset: [],
-    isRandomKana: true
-  },
-  {
-    level: 11, // based on level 10
-    name: "S-Series (set of 5)",
-    description: "5 kana variant of S-Series",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 7,
-    branchCapacity: 5,
-    kanaSubset: [],
-    isRandomKana: true
-  },
-  {
-    level: 13, // based on level 12
-    name: "Spacious Challenge (set of 5)",
-    description: "5 kana variant of Spacious Challenge",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 8,
-    branchCapacity: 5,
-    kanaSubset: [],
-    isRandomKana: true
-  },
-  {
-    level: 15, // based on level 14
-    name: "T-Series (set of 5)",
-    description: "5 kana variant of T-Series",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 7,
-    branchCapacity: 5,
-    kanaSubset: [],
-    isRandomKana: true
-  },
-  {
-    level: 17, // based on level 16
-    name: "Advanced Mix (set of 5)",
-    description: "5 kana variant of Advanced Mix",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 9,
-    branchCapacity: 5,
-    kanaSubset: [],
-    isRandomKana: true
-  },
-  {
-    level: 19, // based on level 18
-    name: "Master Level (set of 5)",
-    description: "5 kana variant of Master Level",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 10,
-    branchCapacity: 5,
-    kanaSubset: [],
-    isRandomKana: true
-  },
-  {
-    level: 21, // based on level 20
-    name: "Random Challenge (set of 5)",
-    description: "5 random kana, 11 branches",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 11,
-    branchCapacity: 5,
-    kanaSubset: [],
-    isRandomKana: true
-  },
-  {
-    level: 23, // based on level 22
-    name: "Expert Random (set of 5)",
-    description: "5 random kana, 12 branches",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 12,
-    branchCapacity: 5,
-    kanaSubset: [],
-    isRandomKana: true
-  },
-  {
-    level: 25, // based on level 24
-    name: "Master Random (set of 5)",
-    description: "5 random kana, 13 branches",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 13,
-    branchCapacity: 5,
-    kanaSubset: [],
-    isRandomKana: true
-  },
-  {
-    level: 27, // based on level 26
-    name: "Super Expert (set of 5)",
-    description: "5 random kana, 14 branches",
-    kanaCount: 5,
-    tilesPerKana: 5,
-    branchCount: 14,
-    branchCapacity: 5,
-    kanaSubset: [],
-    isRandomKana: true
-  },
-  {
-    level: 29, // based on level 17
+    level: 29,
     name: "Legendary Challenge (set of 5)",
     description: "5 random kana, 15 branches",
-    kanaCount: 5,
+    kanaCount: 12,           // = level 28
     tilesPerKana: 5,
-    branchCount: 15,
+    branchCount: 14,
     branchCapacity: 5,
     kanaSubset: [],
     isRandomKana: true
