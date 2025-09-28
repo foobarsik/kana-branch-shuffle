@@ -3,6 +3,7 @@ export interface KanaTile {
   kana: string;
   romaji: string;
   color?: string;
+  frozenUntilMove?: number; // Тайл заморожен до этого хода (включительно)
 }
 
 export enum BranchType {

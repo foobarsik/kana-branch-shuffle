@@ -32,10 +32,10 @@ export type AchievementRarity =
 export interface AchievementCondition {
   type: 'level_complete' | 'score_threshold' | 'moves_limit' | 'streak_count' | 
         'kana_learned' | 'perfect_level' | 'speed_clear' | 'total_games' | 
-        'consecutive_days' | 'collection_complete';
-  value: number;
+        'consecutive_days' | 'collection_complete' | 'custom';
+  value: number | string; // string для custom типов
   comparison?: 'equal' | 'greater' | 'less' | 'greater_equal' | 'less_equal';
-  metadata?: Record<string, any>; // дополнительные параметры
+  metadata?: Record<string, unknown>; // дополнительные параметры
 }
 
 export interface AchievementReward {

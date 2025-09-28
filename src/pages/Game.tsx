@@ -443,6 +443,7 @@ export const Game: React.FC = () => {
                     isLargeMode={displayMode === DisplayMode.LARGE}
                     isDisappearing={disappearingBranchIds?.has(branch.id)}
                     recentlyMovedTileIds={recentlyMovedTileIds}
+                    currentMove={gameState.moves}
                   />
                 </div>
               ))}
@@ -465,6 +466,7 @@ export const Game: React.FC = () => {
                     isLargeMode={displayMode === DisplayMode.LARGE}
                     isDisappearing={disappearingBranchIds?.has(branch.id)}
                     recentlyMovedTileIds={recentlyMovedTileIds}
+                    currentMove={gameState.moves}
                   />
                 </div>
               ))}

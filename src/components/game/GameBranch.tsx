@@ -17,6 +17,7 @@ interface GameBranchProps {
   isLargeMode?: boolean;
   isDisappearing?: boolean;
   recentlyMovedTileIds?: Set<string>;
+  currentMove?: number;
 }
 
 export const GameBranch: React.FC<GameBranchProps> = ({
@@ -32,6 +33,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   isLargeMode = false,
   isDisappearing = false,
   recentlyMovedTileIds,
+  currentMove = 0,
 }) => {
   const isSelected = selectedBranch === branch.id;
   const isEmpty = branch.tiles.length === 0;
@@ -130,6 +132,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
                 isDropping={recentlyMovedTileIds?.has(tile.id)}
                 showRomajiByDefault={getShouldShowRomaji ? getShouldShowRomaji(branch, index, align) : align === 'right'}
                 isLargeMode={isLargeMode}
+                currentMove={currentMove}
               />
             );
           })}

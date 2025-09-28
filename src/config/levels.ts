@@ -10,6 +10,11 @@ export interface LevelConfig {
   branchCapacity: number; // вместимость каждой ветки
   kanaSubset: string[]; // какие каны использовать
   isRandomKana?: boolean; // если true, случайно выбирать каны из всего набора
+  frozenTiles?: {
+    enabled: boolean; // включена ли механика замороженных тайлов
+    percentage: number; // процент тайлов, которые будут заморожены (0-100)
+    duration: number; // на сколько ходов замораживать тайлы
+  };
 }
 
 export const LEVELS: LevelConfig[] = [
@@ -361,6 +366,60 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 5,
     kanaSubset: [],
     isRandomKana: true
+  },
+
+  // Новая механика: замороженные тайлы
+  {
+    level: 30,
+    name: "Frozen Challenge",
+    description: "Frozen tiles — 10 kana, 12 branches; some tiles frozen for 4 moves",
+    kanaCount: 10,
+    tilesPerKana: 4,
+    branchCount: 12,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 25, // 25% тайлов будут заморожены
+      duration: 4     // на 4 хода
+    }
+  },
+
+  // Усложненная версия с большим количеством замороженных тайлов
+  {
+    level: 31,
+    name: "Ice Storm",
+    description: "Ice storm — 8 kana, 10 branches; more frozen tiles for 3 moves",
+    kanaCount: 8,
+    tilesPerKana: 4,
+    branchCount: 10,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 40, // 40% тайлов заморожены
+      duration: 3     // на 3 хода (быстрее размораживание)
+    }
+  },
+
+  // Экстремальный вызов с долгой заморозкой
+  {
+    level: 32,
+    name: "Deep Freeze",
+    description: "Deep freeze — 12 kana, 14 branches; few tiles frozen for 6 moves",
+    kanaCount: 12,
+    tilesPerKana: 4,
+    branchCount: 14,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 15, // меньше тайлов, но...
+      duration: 6     // дольше заморожены
+    }
   }
 ];
 

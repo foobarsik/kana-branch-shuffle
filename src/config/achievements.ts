@@ -276,6 +276,65 @@ export const ACHIEVEMENTS: Achievement[] = [
       description: '"Explorer" badge'
     },
     isUnlocked: false
+  },
+
+  // === FROZEN TILES ACHIEVEMENTS ===
+  {
+    id: 'ice_breaker',
+    title: 'Ice Breaker',
+    description: 'Complete your first level with frozen tiles',
+    icon: '🧊',
+    category: 'special',
+    rarity: 'rare',
+    condition: {
+      type: 'level_complete',
+      value: 30,
+      comparison: 'greater_equal'
+    },
+    reward: {
+      type: 'points',
+      value: 200,
+      description: '+200 achievement points'
+    },
+    isUnlocked: false
+  },
+  {
+    id: 'frozen_master',
+    title: 'Frozen Master',
+    description: 'Complete all frozen tile levels (30-32)',
+    icon: '❄️',
+    category: 'mastery',
+    rarity: 'epic',
+    condition: {
+      type: 'level_complete',
+      value: 32,
+      comparison: 'greater_equal'
+    },
+    reward: {
+      type: 'title',
+      value: 'Frozen Master',
+      description: 'Unlocked title "Frozen Master"'
+    },
+    isUnlocked: false
+  },
+  {
+    id: 'patience_of_ice',
+    title: 'Patience of Ice',
+    description: 'Complete a level without moving any frozen tiles',
+    icon: '🧘',
+    category: 'efficiency',
+    rarity: 'legendary',
+    condition: {
+      type: 'custom',
+      value: 'no_frozen_moves',
+      comparison: 'equal'
+    },
+    reward: {
+      type: 'points',
+      value: 500,
+      description: '+500 achievement points'
+    },
+    isUnlocked: false
   }
 ];
 

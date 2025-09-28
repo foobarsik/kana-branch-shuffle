@@ -88,6 +88,53 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     return initialBranches; // Return original if we can't fix it
   }, [isBranchComplete]);
 
+  // Apply frozen tiles mechanic to branches
+  const applyFrozenTilesMechanic = useCallback((branches: Branch[], frozenConfig: { percentage: number; duration: number }) => {
+    console.log(`🧊 Applying frozen tiles mechanic: ${frozenConfig.percentage}% for ${frozenConfig.duration} moves`);
+    
+    // Get all tiles from all branches
+    const allTiles: KanaTile[] = [];
+    branches.forEach(branch => {
+      branch.tiles.forEach(tile => {
+        allTiles.push(tile);
+      });
+    });
+    
+    // Calculate how many tiles to freeze
+    const tilesToFreeze = Math.floor(allTiles.length * (frozenConfig.percentage / 100));
+    console.log(`🧊 Freezing ${tilesToFreeze} out of ${allTiles.length} tiles`);
+    
+    // Randomly select tiles to freeze
+    const shuffledTiles = [...allTiles].sort(() => Math.random() - 0.5);
+    const frozenTiles = shuffledTiles.slice(0, tilesToFreeze);
+    
+    // Apply frozen status
+    frozenTiles.forEach(tile => {
+      tile.frozenUntilMove = frozenConfig.duration;
+    });
+    
+    console.log(`🧊 Applied frozen status to ${frozenTiles.length} tiles`);
+  }, []);
+
+  // Update frozen tiles: decrement remaining freeze moves after each successful move
+  const updateFrozenTiles = useCallback((branches: Branch[]): Branch[] => {
+    return branches.map(branch => ({
+      ...branch,
+      tiles: branch.tiles.map(tile => {
+        if (typeof tile.frozenUntilMove === 'number' && tile.frozenUntilMove > 0) {
+          const next = tile.frozenUntilMove - 1;
+          if (next <= 0) {
+            const { frozenUntilMove, ...unfrozenTile } = tile;
+            console.log(`🔥 Unfreezing tile: ${tile.kana}`);
+            return unfrozenTile;
+          }
+          return { ...tile, frozenUntilMove: next };
+        }
+        return tile;
+      })
+    }));
+  }, []);
+
   // Simple and reliable board generation
   const generateSolvableBoard = useCallback((levelConfig: LevelConfig, colorMap: Record<string, string>): Branch[] => {
     console.log(`🎮 Generating board for level ${levelConfig.level}`);
@@ -162,8 +209,13 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     // Ensure no branches are already completed
     const finalBranches = ensureNoCompletedBranches(branches, levelConfig);
 
+    // Apply frozen tiles mechanic if enabled
+    if (levelConfig.frozenTiles?.enabled) {
+      applyFrozenTilesMechanic(finalBranches, levelConfig.frozenTiles);
+    }
+
     return finalBranches;
-  }, [ensureNoCompletedBranches]);
+  }, [ensureNoCompletedBranches, applyFrozenTilesMechanic]);
 
   // Create initial state with solvable board generation
   const createInitialState = useCallback(() => {
@@ -897,13 +949,34 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         return prevState;
       }
 
-      // Get the tiles to move (consecutive identical tiles from the end)
-      const consecutiveCount = Math.min(selectedTileCount, getConsecutiveCount(sourceBranch));
-      const tilesToMove = sourceBranch.tiles.slice(-consecutiveCount);
+      // Determine movable tiles: take top consecutive identical tiles, but only those unfrozen from the very top
+      const maxSameFromTop = getConsecutiveCount(sourceBranch);
+      const desiredCount = Math.min(selectedTileCount, maxSameFromTop);
+      const candidateRun = sourceBranch.tiles.slice(-desiredCount);
+      // Count consecutive unfrozen tiles from the very top (end of array)
+      let movableCount = 0;
+      for (let i = candidateRun.length - 1; i >= 0; i--) {
+        const t = candidateRun[i];
+        if (typeof t.frozenUntilMove === 'number' && t.frozenUntilMove > 0) break;
+        movableCount++;
+      }
+      if (movableCount === 0) {
+        const top = sourceBranch.tiles[sourceBranch.tiles.length - 1];
+        const remaining = top && typeof top.frozenUntilMove === 'number' ? top.frozenUntilMove : 0;
+        toast({
+          title: "Frozen tile",
+          description: remaining > 0
+            ? `Top tile is frozen for ${remaining} more move${remaining === 1 ? '' : 's'}.`
+            : "Selected tiles cannot be moved.",
+          variant: "destructive",
+        });
+        return prevState;
+      }
+      const tilesToMove = sourceBranch.tiles.slice(-movableCount);
       const topTile = tilesToMove[tilesToMove.length - 1];
 
       console.log('🎴 Tiles to move:', {
-        count: consecutiveCount,
+        count: movableCount,
         selectedTileCount,
         topTile: topTile?.kana,
         targetTopTile: targetBranch.tiles.length > 0 ? targetBranch.tiles[targetBranch.tiles.length - 1].kana : 'empty'
@@ -936,7 +1009,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       // Create new branches array with the move
       const newBranches = prevState.branches.map(branch => {
         if (branch.id === sourceBranchId) {
-          return { ...branch, tiles: branch.tiles.slice(0, -consecutiveCount) };
+          return { ...branch, tiles: branch.tiles.slice(0, -movableCount) };
         }
         if (branch.id === targetBranchId) {
           return { ...branch, tiles: [...branch.tiles, ...tilesToMove] };
@@ -945,6 +1018,9 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       });
 
       const newMoves = prevState.moves + 1;
+      
+      // Update frozen tiles status after the move (decrement remaining counters)
+      const branchesWithUpdatedFrozenTiles = updateFrozenTiles(newBranches);
 
       // Get level config for tilesPerKana
       const levelConfig = getLevelConfig(level);
@@ -954,7 +1030,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       const completed: string[] = [];
       const tilesToDisappear = new Set<string>();
       
-      newBranches.forEach(branch => {
+      branchesWithUpdatedFrozenTiles.forEach(branch => {
         if (branch.tiles.length === tilesNeeded && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)) {
           completed.push(branch.tiles[0].kana);
           branch.tiles.forEach(tile => tilesToDisappear.add(tile.id));
@@ -966,22 +1042,22 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         console.log('🎉 Completed kana detected:', completed);
         
         // Find completed branches
-        const completedBranches = newBranches.filter(branch => 
+        const completedBranches = branchesWithUpdatedFrozenTiles.filter(branch => 
           branch.tiles.length === tilesNeeded && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)
         );
         
         // Choose animation based on display mode
         if (displayMode === DisplayMode.SMART_FLIP) {
-          animateSakuraCompletion(completedBranches, newBranches);
+          animateSakuraCompletion(completedBranches, branchesWithUpdatedFrozenTiles);
         } else {
-          animateFlipCompletion(completedBranches, newBranches);
+          animateFlipCompletion(completedBranches, branchesWithUpdatedFrozenTiles);
         }
         
         // Return current state for now
         const newLearnedKana = [...new Set([...prevState.learnedKana, ...completed])];
         
         return {
-          branches: newBranches,
+          branches: branchesWithUpdatedFrozenTiles,
           selectedBranch: null,
           moves: newMoves,
           score: prevState.score, // Score will be updated after animation
@@ -994,7 +1070,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       }
 
       // No completions - normal flow
-      const { completed: normalCompleted, updatedBranches } = checkForCompletion(newBranches);
+      const { completed: normalCompleted, updatedBranches } = checkForCompletion(branchesWithUpdatedFrozenTiles);
       const isComplete = updatedBranches.every(branch => branch.tiles.length === 0);
       
       // Check for deadlock (no valid moves available)
@@ -1020,7 +1096,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         levelState: isComplete ? LevelState.CELEBRATING : LevelState.IDLE,
       };
     });
-  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves, displayMode, animateFlipCompletion, animateSakuraCompletion, level]);
+  }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves, displayMode, animateFlipCompletion, animateSakuraCompletion, level, updateFrozenTiles]);
 
   const selectBranch = useCallback((branchId: string) => {
     console.log('🎯 selectBranch called:', branchId);
@@ -1034,17 +1110,34 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
       console.log('🌿 Branch found:', { id: branchId, tilesCount: branch.tiles.length, selectedBranch: prevState.selectedBranch });
 
-      // If no branch selected and this branch has tiles, select it
+      // If no branch selected and this branch has tiles, attempt to select it
       if (!prevState.selectedBranch && branch.tiles.length > 0) {
+        const topTile = branch.tiles[branch.tiles.length - 1];
+        // Block selection if top tile is frozen
+        if (topTile && typeof topTile.frozenUntilMove === 'number' && topTile.frozenUntilMove > 0) {
+          console.log('🧊 Top tile is frozen, cannot select branch:', branchId, 'remaining:', topTile.frozenUntilMove);
+          toast({
+            title: 'Frozen tile',
+            description: `This tile is frozen for ${topTile.frozenUntilMove} more move${topTile.frozenUntilMove === 1 ? '' : 's'}.`,
+            variant: 'destructive',
+          });
+          return prevState;
+        }
         console.log('✅ Selecting branch with tiles:', branchId);
         // Play sound for the top tile when selecting a branch
-        const topTile = branch.tiles[branch.tiles.length - 1];
         if (topTile) {
           playMoveSound(topTile.kana);
         }
-        // Set the count of consecutive identical tiles to select
-        const consecutiveCount = getConsecutiveCount(branch);
-        setSelectedTileCount(consecutiveCount);
+        // Set preview count to movable consecutive unfrozen tiles within the identical run
+        const maxSame = getConsecutiveCount(branch);
+        const candidate = branch.tiles.slice(-maxSame);
+        let movablePreview = 0;
+        for (let i = candidate.length - 1; i >= 0; i--) {
+          const t = candidate[i];
+          if (typeof t.frozenUntilMove === 'number' && t.frozenUntilMove > 0) break;
+          movablePreview++;
+        }
+        setSelectedTileCount(Math.max(1, movablePreview));
         return { ...prevState, selectedBranch: branchId, levelState: LevelState.PICKING };
       }
 
@@ -1067,13 +1160,33 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           return { ...prevState, selectedBranch: null, levelState: LevelState.IDLE };
         }
 
-        // Get the tiles to move (consecutive identical tiles from the end)
-        const consecutiveCount = Math.min(selectedTileCount, getConsecutiveCount(sourceBranch));
-        const tilesToMove = sourceBranch.tiles.slice(-consecutiveCount);
+        // Determine movable tiles like in moveTile():
+        const maxSameFromTop_sel = getConsecutiveCount(sourceBranch);
+        const desiredCount_sel = Math.min(selectedTileCount, maxSameFromTop_sel);
+        const candidateRun_sel = sourceBranch.tiles.slice(-desiredCount_sel);
+        let movableCount_sel = 0;
+        for (let i = candidateRun_sel.length - 1; i >= 0; i--) {
+          const t = candidateRun_sel[i];
+          if (typeof t.frozenUntilMove === 'number' && t.frozenUntilMove > 0) break;
+          movableCount_sel++;
+        }
+        if (movableCount_sel === 0) {
+          const top = sourceBranch.tiles[sourceBranch.tiles.length - 1];
+          const remaining = top && typeof top.frozenUntilMove === 'number' ? top.frozenUntilMove : 0;
+          toast({
+            title: 'Frozen tile',
+            description: remaining > 0
+              ? `Top tile is frozen for ${remaining} more move${remaining === 1 ? '' : 's'}.`
+              : 'Selected tiles cannot be moved.',
+            variant: 'destructive',
+          });
+          return { ...prevState, selectedBranch: null, levelState: LevelState.IDLE };
+        }
+        const tilesToMove = sourceBranch.tiles.slice(-movableCount_sel);
         const topTile = tilesToMove[tilesToMove.length - 1];
 
-        console.log('🎴 Tiles to move:', {
-          count: consecutiveCount,
+        console.log('🎴 Tiles to move (select):', {
+          count: movableCount_sel,
           selectedTileCount,
           topTile: topTile?.kana,
           targetTopTile: targetBranch.tiles.length > 0 ? targetBranch.tiles[targetBranch.tiles.length - 1].kana : 'empty'
@@ -1106,7 +1219,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         // Create new branches array with the move
         const newBranches = prevState.branches.map(branch => {
           if (branch.id === prevState.selectedBranch) {
-            return { ...branch, tiles: branch.tiles.slice(0, -consecutiveCount) };
+            return { ...branch, tiles: branch.tiles.slice(0, -movableCount_sel) };
           }
           if (branch.id === branchId) {
             return { ...branch, tiles: [...branch.tiles, ...tilesToMove] };
@@ -1116,6 +1229,9 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
         const newMoves = prevState.moves + 1;
 
+        // Decrement frozen counters after a successful move
+        const branchesWithUpdatedFrozenTiles = updateFrozenTiles(newBranches);
+
         // Get level config for tilesPerKana
         const levelConfig = getLevelConfig(level);
         const tilesNeeded = levelConfig.tilesPerKana;
@@ -1124,7 +1240,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         const completed: string[] = [];
         const tilesToDisappear = new Set<string>();
         
-        newBranches.forEach(branch => {
+        branchesWithUpdatedFrozenTiles.forEach(branch => {
           if (branch.tiles.length === tilesNeeded && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)) {
             completed.push(branch.tiles[0].kana);
             branch.tiles.forEach(tile => tilesToDisappear.add(tile.id));
@@ -1147,21 +1263,21 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         if (completed.length > 0) {
           console.log('🎉 Completed kana detected (selectBranch):', completed);
 
-          const completedBranches = newBranches.filter(branch => 
+          const completedBranches = branchesWithUpdatedFrozenTiles.filter(branch => 
             branch.tiles.length === tilesNeeded && branch.tiles.every(tile => tile.kana === branch.tiles[0].kana)
           );
 
           // Choose animation based on display mode
           if (displayMode === DisplayMode.SMART_FLIP) {
-            animateSakuraCompletion(completedBranches, newBranches);
+            animateSakuraCompletion(completedBranches, branchesWithUpdatedFrozenTiles);
           } else {
-            animateFlipCompletion(completedBranches, newBranches);
+            animateFlipCompletion(completedBranches, branchesWithUpdatedFrozenTiles);
           }
 
           // Return interim state now (before removal), so UI shows flipping state
           const newLearnedKanaNow = [...new Set([...prevState.learnedKana, ...completed])];
           return {
-            branches: newBranches,
+            branches: branchesWithUpdatedFrozenTiles,
             selectedBranch: null,
             moves: newMoves,
             score: prevState.score, // Score will be updated after animation
@@ -1174,7 +1290,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         }
 
         // No completions - normal flow (with deadlock check)
-        const { completed: normalCompleted, updatedBranches } = checkForCompletion(newBranches);
+        const { completed: normalCompleted, updatedBranches } = checkForCompletion(branchesWithUpdatedFrozenTiles);
         const isComplete = updatedBranches.every(branch => branch.tiles.length === 0);
         
         const hasMovesAvailable = hasValidMoves(updatedBranches);
@@ -1195,7 +1311,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
       return prevState;
     });
-  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast, displayMode, animateFlipCompletion, animateSakuraCompletion, level]);
+  }, [canPlaceTile, checkForCompletion, getConsecutiveCount, hasValidMoves, selectedTileCount, toast, displayMode, animateFlipCompletion, animateSakuraCompletion, level, updateFrozenTiles]);
 
   const undoMove = useCallback(() => {
     if (gameHistory.length > 0) {
