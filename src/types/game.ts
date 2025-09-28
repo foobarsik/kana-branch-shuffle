@@ -10,6 +10,14 @@ export enum BranchType {
   WAVE = 'wave'
 }
 
+export enum LevelState {
+  IDLE = 'idle',           // Ожидание действий игрока
+  PICKING = 'picking',     // Игрок выбирает ветку-источник
+  MOVING = 'moving',       // Тайлы перемещаются между ветками
+  RESOLVING = 'resolving', // Обработка завершенных наборов
+  CELEBRATING = 'celebrating' // Анимация завершения уровня
+}
+
 export interface Branch {
   id: string;
   tiles: KanaTile[];
@@ -26,6 +34,7 @@ export interface GameState {
   learnedKana: string[];
   kanaColorMap: Map<string, string>;
   completedSets: Set<string>; // Track branches that have been scored for completed sets
+  levelState: LevelState;
 }
 
 export interface KanaData {

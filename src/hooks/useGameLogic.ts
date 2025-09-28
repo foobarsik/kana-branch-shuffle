@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { Branch, GameState, KanaTile, HIRAGANA_SET, BranchType } from "@/types/game";
+import { Branch, GameState, KanaTile, HIRAGANA_SET, BranchType, LevelState } from "@/types/game";
 import { playMoveSound } from "@/utils/audio";
 import { useToast } from "@/hooks/use-toast";
 import { getLevelConfig, type LevelConfig } from "@/config/levels";
@@ -165,102 +165,6 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     return finalBranches;
   }, [ensureNoCompletedBranches]);
 
-  const generateTiles = useCallback((levelConfig: LevelConfig, colorMap: Record<string, string>): GameState => {
-    // Get level configuration or use default
-    const config = levelConfig || getLevelConfig(level) || {
-      level: 1,
-      name: "Default",
-      description: "Default level",
-      kanaCount: 5,
-      tilesPerKana: levelConfig?.tilesPerKana || 4,
-      branchCount: 5,
-      branchCapacity: 4,
-      kanaSubset: ["あ", "い", "う", "え", "お"]
-    };
-
-    // Generate the color map for the current level's kana subset
-    const kanaColorMap = generateKanaColorMap(config.kanaSubset);
-
-    // Create tiles based on level configuration
-    const allTiles: KanaTile[] = [];
-    config.kanaSubset.forEach((kanaChar) => {
-      const kanaData = HIRAGANA_SET.find(h => h.kana === kanaChar);
-      if (kanaData) {
-        for (let i = 0; i < config.tilesPerKana; i++) {
-          allTiles.push({
-            color: kanaColorMap.get(kanaData.kana),
-            id: `${kanaData.kana}-${i}`,
-            kana: kanaData.kana,
-            romaji: kanaData.romaji,
-          });
-        }
-      }
-    });
-
-    // Debug: log tile creation
-    if (import.meta.env.DEV) {
-      console.log(`Created ${allTiles.length} tiles for level ${config.level}:`, config.kanaSubset);
-    }
-
-    // Shuffle tiles
-    const shuffledTiles = [...allTiles].sort(() => Math.random() - 0.5);
-
-    // Create branches based on level configuration
-    const branches: Branch[] = [];
-    for (let i = 0; i < config.branchCount; i++) {
-      branches.push({
-        id: `branch-${i}`,
-        tiles: [],
-        maxCapacity: config.branchCapacity,
-        type: BranchType.NORMAL,
-      });
-    }
-
-    // Distribute tiles among branches more strategically
-    // Fill branches densely, leaving some completely empty for strategy
-    const tilesPerFilledBranch = Math.min(config.branchCapacity, 4); // Max 4 tiles per branch for better gameplay
-    const branchesToFill = Math.min(config.branchCount - 1, Math.ceil(shuffledTiles.length / tilesPerFilledBranch));
-    
-    console.log(`Level ${config.level}: ${shuffledTiles.length} tiles, filling ${branchesToFill} branches with ~${tilesPerFilledBranch} tiles each`);
-    
-    let tileIndex = 0;
-    for (let branchIndex = 0; branchIndex < branchesToFill && tileIndex < shuffledTiles.length; branchIndex++) {
-      // Fill this branch up to the limit or until we run out of tiles
-      const tilesToAdd = Math.min(tilesPerFilledBranch, shuffledTiles.length - tileIndex);
-      
-      for (let i = 0; i < tilesToAdd; i++) {
-        branches[branchIndex].tiles.push(shuffledTiles[tileIndex]);
-        tileIndex++;
-      }
-    }
-    
-    // If there are remaining tiles, distribute them among the filled branches
-    while (tileIndex < shuffledTiles.length) {
-      for (let branchIndex = 0; branchIndex < branchesToFill && tileIndex < shuffledTiles.length; branchIndex++) {
-        if (branches[branchIndex].tiles.length < config.branchCapacity) {
-          branches[branchIndex].tiles.push(shuffledTiles[tileIndex]);
-          tileIndex++;
-        }
-      }
-    }
-
-    // Debug: log branch distribution
-    if (import.meta.env.DEV) {
-      console.log('Branch distribution:', branches.map((b, i) => `Branch ${i}: ${b.tiles.length} tiles`));
-    }
-
-    return {
-      branches,
-      selectedBranch: null,
-      moves: 0,
-      score: 0,
-      isComplete: false,
-      learnedKana: [],
-      kanaColorMap,
-      completedSets: new Set<string>(),
-    };
-  }, [level]);
-
   // Create initial state with solvable board generation
   const createInitialState = useCallback(() => {
     console.log(`🎮 Creating initial state for level ${level}`);
@@ -290,6 +194,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         learnedKana: [],
         kanaColorMap,
         completedSets: new Set<string>(),
+        levelState: LevelState.IDLE,
       };
       
       console.log(`📊 Default state created with score: ${newState.score}`);
@@ -317,6 +222,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       learnedKana: [],
       kanaColorMap,
       completedSets: new Set<string>(),
+      levelState: LevelState.IDLE,
     };
     
     console.log(`📊 Level ${level} state created with score: ${newState.score}`);
@@ -326,6 +232,16 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const [gameState, setGameState] = useState<GameState>(() => createInitialState());
   const gameStateRef = useRef(gameState);
   gameStateRef.current = gameState;
+
+  // Define state machine functions after gameState is available
+  const setLevelState = useCallback((newState: LevelState) => {
+    setGameState(prev => ({ ...prev, levelState: newState }));
+  }, []);
+
+  const transitionToState = useCallback((newState: LevelState) => {
+    console.log(`🎮 State transition: ${gameState.levelState} → ${newState}`);
+    setGameState(prev => ({ ...prev, levelState: newState }));
+  }, [gameState.levelState]);
   const [gameHistory, setGameHistory] = useState<GameState[]>([]);
   const [showKanaPopup, setShowKanaPopup] = useState<{kana: string; romaji: string; learned: boolean} | null>(null);
   const [flippingTiles, setFlippingTiles] = useState<Set<string>>(new Set());
@@ -1073,6 +989,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           learnedKana: newLearnedKana,
           kanaColorMap: prevState.kanaColorMap,
           completedSets: prevState.completedSets,
+          levelState: LevelState.RESOLVING, // Переходим в состояние обработки завершенных наборов
         };
       }
 
@@ -1100,6 +1017,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         learnedKana: prevState.learnedKana,
         kanaColorMap: prevState.kanaColorMap,
         completedSets: prevState.completedSets,
+        levelState: isComplete ? LevelState.CELEBRATING : LevelState.IDLE,
       };
     });
   }, [canPlaceTile, checkForCompletion, toast, getConsecutiveCount, selectedTileCount, hasValidMoves, displayMode, animateFlipCompletion, animateSakuraCompletion, level]);
@@ -1127,13 +1045,13 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         // Set the count of consecutive identical tiles to select
         const consecutiveCount = getConsecutiveCount(branch);
         setSelectedTileCount(consecutiveCount);
-        return { ...prevState, selectedBranch: branchId };
+        return { ...prevState, selectedBranch: branchId, levelState: LevelState.PICKING };
       }
 
       // If this is the selected branch, deselect
       if (prevState.selectedBranch === branchId) {
         console.log('🔄 Deselecting branch:', branchId);
-        return { ...prevState, selectedBranch: null };
+        return { ...prevState, selectedBranch: null, levelState: LevelState.IDLE };
       }
 
       // If another branch is selected, try to move tile
@@ -1146,7 +1064,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
         if (!sourceBranch || !targetBranch || sourceBranch.tiles.length === 0) {
           console.log('❌ Invalid branches or empty source');
-          return { ...prevState, selectedBranch: null };
+          return { ...prevState, selectedBranch: null, levelState: LevelState.IDLE };
         }
 
         // Get the tiles to move (consecutive identical tiles from the end)
@@ -1169,7 +1087,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
             description: "You can only place tiles on empty branches or on tiles of the same kana.",
             variant: "destructive",
           });
-          return { ...prevState, selectedBranch: null };
+          return { ...prevState, selectedBranch: null, levelState: LevelState.IDLE };
         }
 
         // Check if target branch has enough space
@@ -1179,7 +1097,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
             description: "Not enough space in the target branch.",
             variant: "destructive",
           });
-          return { ...prevState, selectedBranch: null };
+          return { ...prevState, selectedBranch: null, levelState: LevelState.IDLE };
         }
 
         // Save current state to history
@@ -1251,6 +1169,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
             learnedKana: newLearnedKanaNow,
             kanaColorMap: prevState.kanaColorMap,
             completedSets: prevState.completedSets,
+            levelState: LevelState.RESOLVING, // Переходим в состояние обработки завершенных наборов
           };
         }
 
@@ -1270,6 +1189,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           learnedKana: prevState.learnedKana,
           kanaColorMap: prevState.kanaColorMap,
           completedSets: prevState.completedSets,
+          levelState: isComplete ? LevelState.CELEBRATING : LevelState.IDLE,
         };
       }
 
@@ -1479,5 +1399,8 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     clearNewAchievements: () => setNewAchievements([]),
     disappearingBranchIds,
     branchesCollected,
+    // State machine functions
+    setLevelState,
+    transitionToState,
   };
 };
