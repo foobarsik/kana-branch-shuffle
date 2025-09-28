@@ -1,36 +1,52 @@
 import React from "react";
 import { KanaTile } from "@/types/game";
 import { cn } from "@/lib/utils";
-import { extractPrimaryColor, isGradient } from "@/utils/colors";
+
+// Helpers to work with gradient or solid colors
+const isGradient = (val: string): boolean => val.includes('gradient(');
+// Naively extract a representative color from a CSS gradient string
+const extractPrimaryColor = (gradient: string): string => {
+  // Try to find first hex color
+  const hexMatch = gradient.match(/#(?:[0-9a-fA-F]{3}){1,2}/);
+  if (hexMatch) return hexMatch[0];
+  // Try to find rgb/rgba
+  const rgbMatch = gradient.match(/rgba?\([^)]*\)/);
+  if (rgbMatch) return rgbMatch[0];
+  // Fallback to a pleasant default
+  return '#4b5563';
+};
 
 interface GameTileProps {
   tile: KanaTile;
   isSelectable?: boolean;
   isSelected?: boolean;
-  onClick?: () => void;
   className?: string;
   style?: React.CSSProperties;
+  onClick?: () => void;
   isFlipping?: boolean;
   isSakuraAnimating?: boolean;
   isDropping?: boolean;
   showRomajiByDefault?: boolean;
   isLargeMode?: boolean;
-  currentMove?: number; // Current move count to determine if tile is frozen
+  currentMove?: number;
+  isThawing?: boolean;
 }
+// Current move count to determine if tile is frozen
 
 export const GameTile: React.FC<GameTileProps> = ({
   tile,
   isSelectable = false,
   isSelected = false,
-  onClick,
-  className,
+  className = '',
   style,
+  onClick,
   isFlipping = false,
   isSakuraAnimating = false,
   isDropping = false,
   showRomajiByDefault = false,
   isLargeMode = false,
   currentMove = 0,
+  isThawing = false,
 }) => {
   if (isFlipping) {
     console.log('🔄 Tile is flipping:', tile.id, tile.kana);
@@ -334,6 +350,20 @@ export const GameTile: React.FC<GameTileProps> = ({
               {remainingFrozenMoves}
             </span>
           </div>
+        </div>
+      )}
+
+      {/* Thawing animation overlay (one-shot) */}
+      {isThawing && !isFrozen && (
+        <div className="absolute inset-0 z-40 pointer-events-none flex items-center justify-center">
+          <span
+            className="absolute inline-flex w-full h-full rounded-full animate-ping"
+            style={{ border: '2px solid rgba(125, 211, 252, 0.7)', animationDuration: '600ms' }}
+          />
+          <span
+            className="absolute inline-flex w-[70%] h-[70%] rounded-full"
+            style={{ boxShadow: '0 0 18px 6px rgba(125, 211, 252, 0.45)' }}
+          />
         </div>
       )}
 

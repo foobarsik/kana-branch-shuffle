@@ -59,6 +59,7 @@ export const Game: React.FC = () => {
     clearNewAchievements,
     disappearingBranchIds,
     recentlyMovedTileIds,
+    thawingTileIds,
     hasValidMoves,
     branchesCollected,
     quizState,
@@ -444,6 +445,7 @@ export const Game: React.FC = () => {
                     isDisappearing={disappearingBranchIds?.has(branch.id)}
                     recentlyMovedTileIds={recentlyMovedTileIds}
                     currentMove={gameState.moves}
+                    thawingTileIds={thawingTileIds}
                   />
                 </div>
               ))}

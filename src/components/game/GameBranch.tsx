@@ -18,6 +18,7 @@ interface GameBranchProps {
   isDisappearing?: boolean;
   recentlyMovedTileIds?: Set<string>;
   currentMove?: number;
+  thawingTileIds?: Set<string>;
 }
 
 export const GameBranch: React.FC<GameBranchProps> = ({
@@ -34,6 +35,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
   isDisappearing = false,
   recentlyMovedTileIds,
   currentMove = 0,
+  thawingTileIds,
 }) => {
   const isSelected = selectedBranch === branch.id;
   const isEmpty = branch.tiles.length === 0;
@@ -133,6 +135,7 @@ export const GameBranch: React.FC<GameBranchProps> = ({
                 showRomajiByDefault={getShouldShowRomaji ? getShouldShowRomaji(branch, index, align) : align === 'right'}
                 isLargeMode={isLargeMode}
                 currentMove={currentMove}
+                isThawing={thawingTileIds?.has(tile.id)}
               />
             );
           })}

@@ -116,9 +116,13 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     console.log(`🧊 Applied frozen status to ${frozenTiles.length} tiles`);
   }, []);
 
+  // Track tiles that have just thawed (for brief thaw animation)
+  const [thawingTileIds, setThawingTileIds] = useState<Set<string>>(new Set());
+
   // Update frozen tiles: decrement remaining freeze moves after each successful move
   const updateFrozenTiles = useCallback((branches: Branch[]): Branch[] => {
-    return branches.map(branch => ({
+    const justThawed: string[] = [];
+    const updated = branches.map(branch => ({
       ...branch,
       tiles: branch.tiles.map(tile => {
         if (typeof tile.frozenUntilMove === 'number' && tile.frozenUntilMove > 0) {
@@ -126,6 +130,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
           if (next <= 0) {
             const { frozenUntilMove, ...unfrozenTile } = tile;
             console.log(`🔥 Unfreezing tile: ${tile.kana}`);
+            justThawed.push(tile.id);
             return unfrozenTile;
           }
           return { ...tile, frozenUntilMove: next };
@@ -133,6 +138,23 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         return tile;
       })
     }));
+    if (justThawed.length > 0) {
+      setThawingTileIds(prev => {
+        const next = new Set(prev);
+        justThawed.forEach(id => next.add(id));
+        return next;
+      });
+      // Clear thaw markers shortly after to create one-shot animation window
+      const clearTimer = setTimeout(() => {
+        setThawingTileIds(prev => {
+          const next = new Set(prev);
+          justThawed.forEach(id => next.delete(id));
+          return next;
+        });
+      }, 450);
+      animationTimersRef.current.push(clearTimer);
+    }
+    return updated;
   }, []);
 
   // Simple and reliable board generation
@@ -1514,6 +1536,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     newAchievements,
     clearNewAchievements: () => setNewAchievements([]),
     disappearingBranchIds,
+    thawingTileIds,
     branchesCollected,
     // State machine functions
     setLevelState,
