@@ -400,7 +400,7 @@ export const LEVELS: LevelConfig[] = [
     frozenTiles: {
       enabled: true,
       percentage: 40, // 40% тайлов заморожены
-      duration: 4     // на 4 хода
+      duration: 6     // на 4 хода
     }
   },
 
