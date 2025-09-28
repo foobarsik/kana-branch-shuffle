@@ -34,6 +34,8 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
            branch.tiles.every(tile => tile.kana === firstKana);
   }, []);
 
+  // (autoThawIfStuck is defined later after hasValidMoves)
+
   // Shuffle board to ensure no branches are complete at the start
   const ensureNoCompletedBranches = useCallback((initialBranches: Branch[], levelConfig: LevelConfig): Branch[] => {
     const branches = [...initialBranches.map(b => ({ ...b, tiles: [...b.tiles] }))];
@@ -88,32 +90,57 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     return initialBranches; // Return original if we can't fix it
   }, [isBranchComplete]);
 
-  // Apply frozen tiles mechanic to branches
+  // Apply frozen tiles mechanic to branches (with top-freeze safeguards)
   const applyFrozenTilesMechanic = useCallback((branches: Branch[], frozenConfig: { percentage: number; duration: number }) => {
     console.log(`🧊 Applying frozen tiles mechanic: ${frozenConfig.percentage}% for ${frozenConfig.duration} moves`);
-    
-    // Get all tiles from all branches
-    const allTiles: KanaTile[] = [];
+
+    // Collect non-top and top tiles separately
+    const nonTopTiles: KanaTile[] = [];
+    const topTiles: Array<{ tile: KanaTile; branchId: string }> = [];
     branches.forEach(branch => {
-      branch.tiles.forEach(tile => {
-        allTiles.push(tile);
+      const topIndex = branch.tiles.length - 1;
+      branch.tiles.forEach((tile, idx) => {
+        if (idx === topIndex) {
+          topTiles.push({ tile, branchId: branch.id });
+        } else {
+          nonTopTiles.push(tile);
+        }
       });
     });
-    
-    // Calculate how many tiles to freeze
-    const tilesToFreeze = Math.floor(allTiles.length * (frozenConfig.percentage / 100));
-    console.log(`🧊 Freezing ${tilesToFreeze} out of ${allTiles.length} tiles`);
-    
-    // Randomly select tiles to freeze
-    const shuffledTiles = [...allTiles].sort(() => Math.random() - 0.5);
-    const frozenTiles = shuffledTiles.slice(0, tilesToFreeze);
-    
+
+    const totalTiles = nonTopTiles.length + topTiles.length;
+    const tilesToFreeze = Math.floor(totalTiles * (frozenConfig.percentage / 100));
+    const minUnfrozenTops = Math.min(2, topTiles.length); // keep at least 2 branches unfrozen on top when possible
+    const maxFrozenTopsByQuota = Math.ceil(branches.length / 3); // do not freeze more than ~1/3 of tops
+    const maxFrozenTops = Math.max(0, Math.min(topTiles.length - minUnfrozenTops, maxFrozenTopsByQuota));
+
+    // Shuffle helpers
+    const shuffle = <T,>(arr: T[]) => arr.sort(() => Math.random() - 0.5);
+    shuffle(nonTopTiles);
+    shuffle(topTiles);
+
+    const frozen: KanaTile[] = [];
+
+    // 1) Prefer freezing non-top tiles first
+    for (let i = 0; i < nonTopTiles.length && frozen.length < tilesToFreeze; i++) {
+      frozen.push(nonTopTiles[i]);
+    }
+
+    // 2) If need more, freeze some tops but respect cap
+    const remaining = tilesToFreeze - frozen.length;
+    if (remaining > 0 && topTiles.length > 0) {
+      const topsToFreeze = Math.min(remaining, maxFrozenTops);
+      for (let i = 0; i < topsToFreeze; i++) {
+        frozen.push(topTiles[i].tile);
+      }
+    }
+
     // Apply frozen status
-    frozenTiles.forEach(tile => {
+    frozen.forEach(tile => {
       tile.frozenUntilMove = frozenConfig.duration;
     });
-    
-    console.log(`🧊 Applied frozen status to ${frozenTiles.length} tiles`);
+
+    console.log(`🧊 Applied frozen status to ${frozen.length} tiles (tops frozen: ${frozen.filter(t => topTiles.some(tt => tt.tile.id === t.id)).length}, non-tops: ${frozen.filter(t => !topTiles.some(tt => tt.tile.id === t.id)).length})`);
   }, []);
 
   // Track tiles that have just thawed (for brief thaw animation)
@@ -755,6 +782,32 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     console.log('❌ No valid moves found');
     return false;
   }, [getConsecutiveCount]);
+
+  // Attempt an automatic thaw when the board is stuck (no valid moves) without consuming a move
+  const autoThawIfStuck = useCallback((): boolean => {
+    // Up to 3 thaw ticks, stop early if a move appears
+    let changed = false;
+    for (let i = 0; i < 3; i++) {
+      const movesAvailable = hasValidMoves((i === 0) ? gameState.branches : (typeof (window as any).__lastThawed === 'object' ? (window as any).__lastThawed : gameState.branches));
+      if (movesAvailable) break;
+      const anyFrozen = ((i === 0) ? gameState.branches : (typeof (window as any).__lastThawed === 'object' ? (window as any).__lastThawed : gameState.branches))
+        .some(b => b.tiles.some(t => typeof t.frozenUntilMove === 'number' && t.frozenUntilMove > 0));
+      if (!anyFrozen) break;
+      console.log(`🧊 Auto-thaw tick ${i + 1}`);
+      const base = (i === 0) ? gameState.branches : (window as any).__lastThawed as Branch[] ?? gameState.branches;
+      const thawed = updateFrozenTiles(base);
+      (window as any).__lastThawed = thawed; // temp carry between iterations
+      changed = true;
+    }
+    if (changed) {
+      const thawedBranches = (window as any).__lastThawed as Branch[] ?? gameState.branches;
+      setGameState(prev => ({ ...prev, branches: thawedBranches }));
+      setEmptyBranchCheckTrigger(prev => prev + 1);
+      (window as any).__lastThawed = undefined;
+      return true;
+    }
+    return false;
+  }, [gameState.branches, hasValidMoves, updateFrozenTiles]);
 
   const checkForCompletion = useCallback((branches: Branch[]): { completed: string[], updatedBranches: Branch[] } => {
     const completed: string[] = [];
@@ -1538,6 +1591,7 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     disappearingBranchIds,
     thawingTileIds,
     branchesCollected,
+    autoThawIfStuck,
     // State machine functions
     setLevelState,
     transitionToState,

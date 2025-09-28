@@ -60,6 +60,7 @@ export const Game: React.FC = () => {
     disappearingBranchIds,
     recentlyMovedTileIds,
     thawingTileIds,
+    autoThawIfStuck,
     hasValidMoves,
     branchesCollected,
     quizState,
@@ -121,12 +122,15 @@ export const Game: React.FC = () => {
       shouldShow: !isComplete && !hasMovesAvailable && !showGameOverModal && !gameOverModalClosed
     });
     
-    // Show game over modal if no moves available and game is not complete
+    // If stuck (no moves) and not complete, try auto-thaw before showing modal
     if (!isComplete && !hasMovesAvailable && !showGameOverModal && !gameOverModalClosed) {
-      console.log('🚨 Showing game over modal!');
-      setShowGameOverModal(true);
+      const thawed = autoThawIfStuck();
+      if (!thawed) {
+        console.log('🚨 Showing game over modal!');
+        setShowGameOverModal(true);
+      }
     }
-  }, [gameState.branches, showGameOverModal, gameOverModalClosed, hasValidMoves]);
+  }, [gameState.branches, showGameOverModal, gameOverModalClosed, hasValidMoves, autoThawIfStuck]);
 
   // Reset the modal closed flag when game state changes
   React.useEffect(() => {
