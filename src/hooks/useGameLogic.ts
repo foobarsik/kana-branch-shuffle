@@ -1269,22 +1269,49 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
 
         // Check if we can place the top tile
         if (!canPlaceTile(topTile, targetBranch)) {
-          console.log('❌ Cannot place tile - validation failed');
-          toast({
-            title: "Invalid move",
-            description: "You can only place tiles on empty branches or on tiles of the same kana.",
-            variant: "destructive",
-          });
+          console.log('❌ Cannot place tile - validation failed. Switching selection to target branch.');
+          // Switch selection to the target branch if it has a selectable, unfrozen top tile
+          if (targetBranch.tiles.length > 0) {
+            const tTop = targetBranch.tiles[targetBranch.tiles.length - 1];
+            if (!(typeof tTop.frozenUntilMove === 'number' && tTop.frozenUntilMove > 0)) {
+              const maxSameTarget = getConsecutiveCount(targetBranch);
+              const candidateTarget = targetBranch.tiles.slice(-maxSameTarget);
+              let movablePreviewTarget = 0;
+              for (let i = candidateTarget.length - 1; i >= 0; i--) {
+                const t = candidateTarget[i];
+                if (typeof t.frozenUntilMove === 'number' && t.frozenUntilMove > 0) break;
+                movablePreviewTarget++;
+              }
+              setSelectedTileCount(Math.max(1, movablePreviewTarget));
+              // Optional sound feedback for new selection
+              playMoveSound(tTop.kana);
+              return { ...prevState, selectedBranch: branchId, levelState: LevelState.PICKING };
+            }
+          }
+          // If target is empty or its top is frozen, just clear selection
           return { ...prevState, selectedBranch: null, levelState: LevelState.IDLE };
         }
 
         // Check if target branch has enough space
         if (targetBranch.tiles.length + tilesToMove.length > targetBranch.maxCapacity) {
-          toast({
-            title: "Invalid move", 
-            description: "Not enough space in the target branch.",
-            variant: "destructive",
-          });
+          console.log('❌ Cannot place tile - not enough space. Switching selection to target branch.');
+          // Switch selection to the target branch if it has a selectable, unfrozen top tile
+          if (targetBranch.tiles.length > 0) {
+            const tTop = targetBranch.tiles[targetBranch.tiles.length - 1];
+            if (!(typeof tTop.frozenUntilMove === 'number' && tTop.frozenUntilMove > 0)) {
+              const maxSameTarget = getConsecutiveCount(targetBranch);
+              const candidateTarget = targetBranch.tiles.slice(-maxSameTarget);
+              let movablePreviewTarget = 0;
+              for (let i = candidateTarget.length - 1; i >= 0; i--) {
+                const t = candidateTarget[i];
+                if (typeof t.frozenUntilMove === 'number' && t.frozenUntilMove > 0) break;
+                movablePreviewTarget++;
+              }
+              setSelectedTileCount(Math.max(1, movablePreviewTarget));
+              playMoveSound(tTop.kana);
+              return { ...prevState, selectedBranch: branchId, levelState: LevelState.PICKING };
+            }
+          }
           return { ...prevState, selectedBranch: null, levelState: LevelState.IDLE };
         }
 
