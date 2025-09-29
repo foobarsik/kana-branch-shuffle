@@ -10,6 +10,12 @@ export interface LevelConfig {
   branchCapacity: number; // вместимость каждой ветки
   kanaSubset: string[]; // какие каны использовать
   isRandomKana?: boolean; // если true, случайно выбирать каны из всего набора
+  overrideRules?: {
+    count: number; // сколько случайных кан нужно переопределить
+    multiplier: number; // множитель для tilesPerKana
+  };
+  // Это поле будет генерироваться динамически, не для ручного заполнения
+  kanaTileOverrides?: Record<string, number>;
   frozenTiles?: {
     enabled: boolean; // включена ли механика замороженных тайлов
     percentage: number; // процент тайлов, которые будут заморожены (0-100)
@@ -420,7 +426,80 @@ export const LEVELS: LevelConfig[] = [
       percentage: 15, // меньше тайлов, но...
       duration: 6     // дольше заморожены
     }
-  }
+  },
+
+  // Новая механика: удвоенное количество одной из кан
+  {
+    level: 33,
+    name: "Double Trouble",
+    description: "Double trouble — 8 kana, 15 branches; one kana has 8 tiles",
+    kanaCount: 12,
+    tilesPerKana: 4,
+    branchCount: 15,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    overrideRules: { count: 1, multiplier: 2 },
+    frozenTiles: {
+      enabled: true,
+      percentage: 20,
+      duration: 4
+    }
+  },
+
+  {
+    level: 34,
+    name: "Mega Swarm",
+    description: "Mega swarm — 13 kana, 16 branches; two kana have 8 tiles, more ice",
+    kanaCount: 12,
+    tilesPerKana: 4,
+    branchCount: 16,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    overrideRules: { count: 2, multiplier: 2 },
+    frozenTiles: {
+      enabled: true,
+      percentage: 30,
+      duration: 5
+    }
+  },
+
+  {
+    level: 35,
+    name: "Swarm Growth",
+    description: "Swarm growth — 15 kana, 17 branches; one kana has 8 tiles, more ice",
+    kanaCount: 12,
+    tilesPerKana: 4,
+    branchCount: 17,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    overrideRules: { count: 3, multiplier: 2 },
+    frozenTiles: {
+      enabled: true,
+      percentage: 30,
+      duration: 5
+    }
+  },
+
+  {
+    level: 36,
+    name: "Ultimate Swarm",
+    description: "Ultimate swarm — 16 kana, 18 branches; one kana has 8 tiles, more ice",
+    kanaCount: 12,
+    tilesPerKana: 4,
+    branchCount: 18,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    overrideRules: { count: 4, multiplier: 2 },
+    frozenTiles: {
+      enabled: true,
+      percentage: 30,
+      duration: 5
+    }
+  },
 ];
 
 // Функция для случайного выбора кан из полного набора
@@ -432,21 +511,31 @@ export const getRandomKanaSubset = (count: number): string[] => {
 
 // Получить конфигурацию уровня
 export const getLevelConfig = (level: number): LevelConfig | null => {
-  const levelConfig = LEVELS.find(l => l.level === level);
-  if (!levelConfig) return null;
-  
-  // Если это случайный уровень, генерируем случайные каны
-  if (levelConfig.isRandomKana) {
-    return {
-      ...levelConfig,
-      kanaSubset: getRandomKanaSubset(levelConfig.kanaCount)
-    };
-  }
-  
-  return levelConfig;
-};
+  const config = LEVELS.find(l => l.level === level);
+  if (!config) return null;
 
-// Получить максимальный уровень
+  const finalConfig = { ...config };
+
+  // Если это случайный уровень, генерируем случайные каны
+  if (finalConfig.isRandomKana) {
+    finalConfig.kanaSubset = getRandomKanaSubset(finalConfig.kanaCount);
+  }
+
+  // Применяем правила переопределения, если они есть
+  if (finalConfig.overrideRules && finalConfig.kanaSubset.length > 0) {
+    const { count, multiplier } = finalConfig.overrideRules;
+    const shuffledKana = [...finalConfig.kanaSubset].sort(() => Math.random() - 0.5);
+    const kanaToOverride = shuffledKana.slice(0, count);
+
+    finalConfig.kanaTileOverrides = {};
+    for (const kana of kanaToOverride) {
+      finalConfig.kanaTileOverrides[kana] = finalConfig.tilesPerKana * multiplier;
+      console.log(`Overriding tile count for ${kana} to ${finalConfig.tilesPerKana * multiplier}`);
+    }
+  }
+
+  return finalConfig;
+};
 export const getMaxLevel = (): number => {
   return LEVELS.length;
 };

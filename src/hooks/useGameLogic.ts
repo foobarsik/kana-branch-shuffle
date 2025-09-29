@@ -197,8 +197,11 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         return;
       }
       
+      // Use override if available, otherwise use default tilesPerKana
+      const tileCount = levelConfig.kanaTileOverrides?.[kana] ?? levelConfig.tilesPerKana;
+      
       // Create the specified number of tiles for this kana
-      for (let i = 0; i < levelConfig.tilesPerKana; i++) {
+      for (let i = 0; i < tileCount; i++) {
         allTiles.push({
           id: `${kana}-${i}`,
           kana: kana,
@@ -787,23 +790,23 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
   const autoThawIfStuck = useCallback((): boolean => {
     // Up to 3 thaw ticks, stop early if a move appears
     let changed = false;
+    let currentBranches = gameState.branches;
+
     for (let i = 0; i < 3; i++) {
-      const movesAvailable = hasValidMoves((i === 0) ? gameState.branches : (typeof (window as any).__lastThawed === 'object' ? (window as any).__lastThawed : gameState.branches));
+      const movesAvailable = hasValidMoves(currentBranches);
       if (movesAvailable) break;
-      const anyFrozen = ((i === 0) ? gameState.branches : (typeof (window as any).__lastThawed === 'object' ? (window as any).__lastThawed : gameState.branches))
-        .some(b => b.tiles.some(t => typeof t.frozenUntilMove === 'number' && t.frozenUntilMove > 0));
+
+      const anyFrozen = currentBranches.some(b => b.tiles.some(t => typeof t.frozenUntilMove === 'number' && t.frozenUntilMove > 0));
       if (!anyFrozen) break;
+
       console.log(`🧊 Auto-thaw tick ${i + 1}`);
-      const base = (i === 0) ? gameState.branches : (window as any).__lastThawed as Branch[] ?? gameState.branches;
-      const thawed = updateFrozenTiles(base);
-      (window as any).__lastThawed = thawed; // temp carry between iterations
+      currentBranches = updateFrozenTiles(currentBranches);
       changed = true;
     }
+
     if (changed) {
-      const thawedBranches = (window as any).__lastThawed as Branch[] ?? gameState.branches;
-      setGameState(prev => ({ ...prev, branches: thawedBranches }));
+      setGameState(prev => ({ ...prev, branches: currentBranches }));
       setEmptyBranchCheckTrigger(prev => prev + 1);
-      (window as any).__lastThawed = undefined;
       return true;
     }
     return false;
