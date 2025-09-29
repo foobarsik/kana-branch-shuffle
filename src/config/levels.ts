@@ -500,6 +500,58 @@ export const LEVELS: LevelConfig[] = [
       duration: 5
     }
   },
+
+  {
+    level: 37,
+    name: "Color trap",
+    description: "Some kana are same color",
+    kanaCount: 16,
+    tilesPerKana: 4,
+    branchCount: 18,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 30,
+      duration: 5
+    }
+  },
+
+  {
+    level: 38,
+    name: "Color trap II",
+    description: "Some kana are same color",
+    kanaCount: 17,
+    tilesPerKana: 4,
+    branchCount: 19,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 30,
+      duration: 5
+    }
+  },
+
+
+  {
+    level: 39,
+    name: "Color trap III",
+    description: "Some kana are same color",
+    kanaCount: 18,
+    tilesPerKana: 4,
+    branchCount: 20,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 30,
+      duration: 5
+    }
+  },
 ];
 
 // Функция для случайного выбора кан из полного набора
