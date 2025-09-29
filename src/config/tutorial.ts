@@ -19,7 +19,7 @@ export const tutorialSteps: TutorialStep[] = [
     },
     {
       title: 'Empty Branches Rule',
-      description: 'Empty branches don\'t just disappear — they are collected into your global stash. You can later spend them on actions.',
+      description: 'Empty branches don\'t just disappear — they are collected into your global stash. You can later spend them on actions (undo, restart, shuffle).',
       placement: 'bottom',
     },
     {
