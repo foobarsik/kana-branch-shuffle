@@ -432,7 +432,7 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 33,
     name: "Double Trouble",
-    description: "Double trouble — 8 kana, 15 branches; one kana has 8 tiles",
+    description: "Double trouble — 12 kana, 15 branches; one kana has 8 tiles",
     kanaCount: 12,
     tilesPerKana: 4,
     branchCount: 15,
@@ -450,7 +450,7 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 34,
     name: "Mega Swarm",
-    description: "Mega swarm — 13 kana, 16 branches; two kana have 8 tiles, more ice",
+    description: "Mega swarm — 12 kana, 16 branches; 2 kana have 8 tiles, more ice",
     kanaCount: 12,
     tilesPerKana: 4,
     branchCount: 16,
@@ -468,7 +468,7 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 35,
     name: "Swarm Growth",
-    description: "Swarm growth — 15 kana, 17 branches; one kana has 8 tiles, more ice",
+    description: "Swarm growth — 12 kana, 17 branches; 3 kana has 8 tiles, more ice",
     kanaCount: 12,
     tilesPerKana: 4,
     branchCount: 17,
@@ -486,7 +486,7 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 36,
     name: "Ultimate Swarm",
-    description: "Ultimate swarm — 16 kana, 18 branches; one kana has 8 tiles, more ice",
+    description: "Ultimate swarm — 12 kana, 18 branches; 4 kana has 8 tiles, more ice",
     kanaCount: 12,
     tilesPerKana: 4,
     branchCount: 18,
