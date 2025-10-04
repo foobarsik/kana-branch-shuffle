@@ -10,6 +10,7 @@ import Collection from "./pages/Collection";
 import { LevelSelect } from "./pages/LevelSelect";
 import Achievements from "./pages/Achievements";
 import Stats from "./pages/Stats";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/collection" element={<Collection />} />
             <Route path="/achievements" element={<Achievements />} />
             <Route path="/stats" element={<Stats />} />
+            <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

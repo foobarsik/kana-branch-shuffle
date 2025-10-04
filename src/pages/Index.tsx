@@ -109,13 +109,16 @@ const Index = () => {
             </p>
           </Card>
 
-          <Card className="p-6 cursor-pointer transition-all hover:scale-105 hover:shadow-lg border-2 hover:border-primary/50 bg-gradient-tile opacity-60">
+          <Card 
+            className="p-6 cursor-pointer transition-all hover:scale-105 hover:shadow-lg border-2 hover:border-primary/50 bg-gradient-tile"
+            onClick={() => navigate("/settings")}
+          >
             <div className="flex items-center justify-center space-x-3">
-              <Settings className="w-6 h-6 text-muted-foreground" />
-              <span className="text-xl font-semibold text-muted-foreground">Settings</span>
+              <Settings className="w-6 h-6 text-primary" />
+              <span className="text-xl font-semibold">Settings</span>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
-              Coming soon
+              Customize your game experience
             </p>
           </Card>
         </div>

@@ -204,84 +204,91 @@ const saveStreakData = (streakData: StreakData): void => {
 
 const checkLevelComplete = (achievement: Achievement, level: number): boolean => {
   const { value, comparison = 'greater_equal' } = achievement.condition;
+  const numValue = typeof value === 'string' ? parseInt(value, 10) : value;
   switch (comparison) {
-    case 'equal': return level === value;
-    case 'greater': return level > value;
-    case 'less': return level < value;
-    case 'greater_equal': return level >= value;
-    case 'less_equal': return level <= value;
+    case 'equal': return level === numValue;
+    case 'greater': return level > numValue;
+    case 'less': return level < numValue;
+    case 'greater_equal': return level >= numValue;
+    case 'less_equal': return level <= numValue;
     default: return false;
   }
 };
 
 const checkScoreThreshold = (achievement: Achievement, score: number): boolean => {
   const { value, comparison = 'greater_equal' } = achievement.condition;
+  const numValue = typeof value === 'string' ? parseInt(value, 10) : value;
   switch (comparison) {
-    case 'equal': return score === value;
-    case 'greater': return score > value;
-    case 'less': return score < value;
-    case 'greater_equal': return score >= value;
-    case 'less_equal': return score <= value;
+    case 'equal': return score === numValue;
+    case 'greater': return score > numValue;
+    case 'less': return score < numValue;
+    case 'greater_equal': return score >= numValue;
+    case 'less_equal': return score <= numValue;
     default: return false;
   }
 };
 
 const checkMovesLimit = (achievement: Achievement, moves: number): boolean => {
   const { value, comparison = 'less' } = achievement.condition;
+  const numValue = typeof value === 'string' ? parseInt(value, 10) : value;
   switch (comparison) {
-    case 'equal': return moves === value;
-    case 'greater': return moves > value;
-    case 'less': return moves < value;
-    case 'greater_equal': return moves >= value;
-    case 'less_equal': return moves <= value;
+    case 'equal': return moves === numValue;
+    case 'greater': return moves > numValue;
+    case 'less': return moves < numValue;
+    case 'greater_equal': return moves >= numValue;
+    case 'less_equal': return moves <= numValue;
     default: return false;
   }
 };
 
 const checkSpeedClear = (achievement: Achievement, timeSpent: number): boolean => {
   const { value, comparison = 'less' } = achievement.condition;
+  const numValue = typeof value === 'string' ? parseInt(value, 10) : value;
   switch (comparison) {
-    case 'equal': return timeSpent === value;
-    case 'greater': return timeSpent > value;
-    case 'less': return timeSpent < value;
-    case 'greater_equal': return timeSpent >= value;
-    case 'less_equal': return timeSpent <= value;
+    case 'equal': return timeSpent === numValue;
+    case 'greater': return timeSpent > numValue;
+    case 'less': return timeSpent < numValue;
+    case 'greater_equal': return timeSpent >= numValue;
+    case 'less_equal': return timeSpent <= numValue;
     default: return false;
   }
 };
 
 const checkKanaLearned = (achievement: Achievement, kanaCount: number): boolean => {
   const { value, comparison = 'greater_equal' } = achievement.condition;
+  const numValue = typeof value === 'string' ? parseInt(value, 10) : value;
   switch (comparison) {
-    case 'equal': return kanaCount === value;
-    case 'greater': return kanaCount > value;
-    case 'less': return kanaCount < value;
-    case 'greater_equal': return kanaCount >= value;
-    case 'less_equal': return kanaCount <= value;
+    case 'equal': return kanaCount === numValue;
+    case 'greater': return kanaCount > numValue;
+    case 'less': return kanaCount < numValue;
+    case 'greater_equal': return kanaCount >= numValue;
+    case 'less_equal': return kanaCount <= numValue;
     default: return false;
   }
 };
 
 const checkTotalGames = (achievement: Achievement, totalGames: number): boolean => {
   const { value, comparison = 'greater_equal' } = achievement.condition;
+  const numValue = typeof value === 'string' ? parseInt(value, 10) : value;
   switch (comparison) {
-    case 'equal': return totalGames === value;
-    case 'greater': return totalGames > value;
-    case 'less': return totalGames < value;
-    case 'greater_equal': return totalGames >= value;
-    case 'less_equal': return totalGames <= value;
+    case 'equal': return totalGames === numValue;
+    case 'greater': return totalGames > numValue;
+    case 'less': return totalGames < numValue;
+    case 'greater_equal': return totalGames >= numValue;
+    case 'less_equal': return totalGames <= numValue;
     default: return false;
   }
 };
 
 const checkConsecutiveDays = (achievement: Achievement, streak: number): boolean => {
   const { value, comparison = 'greater_equal' } = achievement.condition;
+  const numValue = typeof value === 'string' ? parseInt(value, 10) : value;
   switch (comparison) {
-    case 'equal': return streak === value;
-    case 'greater': return streak > value;
-    case 'less': return streak < value;
-    case 'greater_equal': return streak >= value;
-    case 'less_equal': return streak <= value;
+    case 'equal': return streak === numValue;
+    case 'greater': return streak > numValue;
+    case 'less': return streak < numValue;
+    case 'greater_equal': return streak >= numValue;
+    case 'less_equal': return streak <= numValue;
     default: return false;
   }
 };

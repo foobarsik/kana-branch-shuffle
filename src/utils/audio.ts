@@ -1,5 +1,12 @@
 // Audio utility for game sounds
 
+const KANA_PRONUNCIATION_KEY = 'kanaPronunciationEnabled';
+
+export const isKanaPronunciationEnabled = (): boolean => {
+  const stored = localStorage.getItem(KANA_PRONUNCIATION_KEY);
+  return stored === null ? true : stored === 'true'; // Default to enabled
+};
+
 // Get the best available Japanese voice
 const getBestJapaneseVoice = (): SpeechSynthesisVoice | null => {
   if (!('speechSynthesis' in window)) return null;
@@ -34,6 +41,11 @@ const getBestJapaneseVoice = (): SpeechSynthesisVoice | null => {
 
 // Enhanced audio playback with better voice selection
 export const playMoveSound = (kana: string) => {
+  // Check if pronunciation is enabled
+  if (!isKanaPronunciationEnabled()) {
+    return;
+  }
+
   if (!('speechSynthesis' in window)) {
     console.warn('Speech synthesis not supported');
     return;
