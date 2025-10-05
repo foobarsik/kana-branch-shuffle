@@ -563,12 +563,7 @@ export const LEVELS: LevelConfig[] = [
     branchCount: 21,
     branchCapacity: 4,
     kanaSubset: [],
-    isRandomKana: true,
-    frozenTiles: {
-      enabled: true,
-      percentage: 25,
-      duration: 5
-    }
+    isRandomKana: true
   },
 
   {
@@ -580,12 +575,7 @@ export const LEVELS: LevelConfig[] = [
     branchCount: 22,
     branchCapacity: 4,
     kanaSubset: [],
-    isRandomKana: true,
-    frozenTiles: {
-      enabled: true,
-      percentage: 25,
-      duration: 5
-    }
+    isRandomKana: true
   },
 
   {
@@ -597,12 +587,7 @@ export const LEVELS: LevelConfig[] = [
     branchCount: 23,
     branchCapacity: 4,
     kanaSubset: [],
-    isRandomKana: true,
-    frozenTiles: {
-      enabled: true,
-      percentage: 30,
-      duration: 5
-    }
+    isRandomKana: true
   },
 
   {
@@ -614,12 +599,7 @@ export const LEVELS: LevelConfig[] = [
     branchCount: 24,
     branchCapacity: 4,
     kanaSubset: [],
-    isRandomKana: true,
-    frozenTiles: {
-      enabled: true,
-      percentage: 30,
-      duration: 5
-    }
+    isRandomKana: true
   },
 
   {
@@ -631,12 +611,7 @@ export const LEVELS: LevelConfig[] = [
     branchCount: 25,
     branchCapacity: 4,
     kanaSubset: [],
-    isRandomKana: true,
-    frozenTiles: {
-      enabled: true,
-      percentage: 35,
-      duration: 6
-    }
+    isRandomKana: true
   },
 
   {
@@ -648,12 +623,7 @@ export const LEVELS: LevelConfig[] = [
     branchCount: 26,
     branchCapacity: 4,
     kanaSubset: [],
-    isRandomKana: true,
-    frozenTiles: {
-      enabled: true,
-      percentage: 35,
-      duration: 6
-    }
+    isRandomKana: true
   },
 
   {
@@ -666,12 +636,7 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: [],
     isRandomKana: true,
-    overrideRules: { count: 3, multiplier: 2 },
-    frozenTiles: {
-      enabled: true,
-      percentage: 35,
-      duration: 6
-    }
+    overrideRules: { count: 3, multiplier: 2 }
   },
 
   {
@@ -684,12 +649,7 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: [],
     isRandomKana: true,
-    overrideRules: { count: 4, multiplier: 2 },
-    frozenTiles: {
-      enabled: true,
-      percentage: 35,
-      duration: 6
-    }
+    overrideRules: { count: 4, multiplier: 2 }
   },
 
   {
@@ -702,12 +662,7 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: [],
     isRandomKana: true,
-    overrideRules: { count: 5, multiplier: 2 },
-    frozenTiles: {
-      enabled: true,
-      percentage: 40,
-      duration: 7
-    }
+    overrideRules: { count: 5, multiplier: 2 }
   },
 
   {
@@ -720,12 +675,7 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: [],
     isRandomKana: true,
-    overrideRules: { count: 6, multiplier: 2 },
-    frozenTiles: {
-      enabled: true,
-      percentage: 40,
-      duration: 7
-    }
+    overrideRules: { count: 6, multiplier: 2 }
   },
 
   {
@@ -738,12 +688,7 @@ export const LEVELS: LevelConfig[] = [
     branchCapacity: 4,
     kanaSubset: [],
     isRandomKana: true,
-    overrideRules: { count: 7, multiplier: 2 },
-    frozenTiles: {
-      enabled: true,
-      percentage: 45,
-      duration: 8
-    }
+    overrideRules: { count: 7, multiplier: 2 }
   },
 ];
 
