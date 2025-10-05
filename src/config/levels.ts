@@ -552,6 +552,199 @@ export const LEVELS: LevelConfig[] = [
       duration: 5
     }
   },
+
+  // Продвинутые уровни с большим количеством веток и кан
+  {
+    level: 40,
+    name: "Mass Challenge",
+    description: "Mass challenge — 19 kana, 21 branches",
+    kanaCount: 19,
+    tilesPerKana: 4,
+    branchCount: 21,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 25,
+      duration: 5
+    }
+  },
+
+  {
+    level: 41,
+    name: "Mass Challenge II",
+    description: "Mass challenge — 20 kana, 22 branches",
+    kanaCount: 20,
+    tilesPerKana: 4,
+    branchCount: 22,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 25,
+      duration: 5
+    }
+  },
+
+  {
+    level: 42,
+    name: "Overwhelming Force",
+    description: "Overwhelming force — 21 kana, 23 branches",
+    kanaCount: 21,
+    tilesPerKana: 4,
+    branchCount: 23,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 30,
+      duration: 5
+    }
+  },
+
+  {
+    level: 43,
+    name: "Overwhelming Force II",
+    description: "Overwhelming force — 22 kana, 24 branches",
+    kanaCount: 22,
+    tilesPerKana: 4,
+    branchCount: 24,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 30,
+      duration: 5
+    }
+  },
+
+  {
+    level: 44,
+    name: "Absolute Chaos",
+    description: "Absolute chaos — 23 kana, 25 branches",
+    kanaCount: 23,
+    tilesPerKana: 4,
+    branchCount: 25,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 35,
+      duration: 6
+    }
+  },
+
+  {
+    level: 45,
+    name: "Absolute Chaos II",
+    description: "Absolute chaos — 24 kana, 26 branches",
+    kanaCount: 24,
+    tilesPerKana: 4,
+    branchCount: 26,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    frozenTiles: {
+      enabled: true,
+      percentage: 35,
+      duration: 6
+    }
+  },
+
+  {
+    level: 46,
+    name: "Mega Madness",
+    description: "Mega madness — 25 kana, 27 branches; 3 kana have 8 tiles",
+    kanaCount: 25,
+    tilesPerKana: 4,
+    branchCount: 27,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    overrideRules: { count: 3, multiplier: 2 },
+    frozenTiles: {
+      enabled: true,
+      percentage: 35,
+      duration: 6
+    }
+  },
+
+  {
+    level: 47,
+    name: "Mega Madness II",
+    description: "Mega madness — 26 kana, 28 branches; 4 kana have 8 tiles",
+    kanaCount: 26,
+    tilesPerKana: 4,
+    branchCount: 28,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    overrideRules: { count: 4, multiplier: 2 },
+    frozenTiles: {
+      enabled: true,
+      percentage: 35,
+      duration: 6
+    }
+  },
+
+  {
+    level: 48,
+    name: "Ultimate Mayhem",
+    description: "Ultimate mayhem — 27 kana, 29 branches; 5 kana have 8 tiles",
+    kanaCount: 27,
+    tilesPerKana: 4,
+    branchCount: 29,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    overrideRules: { count: 5, multiplier: 2 },
+    frozenTiles: {
+      enabled: true,
+      percentage: 40,
+      duration: 7
+    }
+  },
+
+  {
+    level: 49,
+    name: "Infinite Complexity",
+    description: "Infinite complexity — 28 kana, 30 branches; 6 kana have 8 tiles",
+    kanaCount: 28,
+    tilesPerKana: 4,
+    branchCount: 30,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    overrideRules: { count: 6, multiplier: 2 },
+    frozenTiles: {
+      enabled: true,
+      percentage: 40,
+      duration: 7
+    }
+  },
+
+  {
+    level: 50,
+    name: "Master of the Universe",
+    description: "Master of the Universe — 30 kana, 32 branches; 7 kana have 8 tiles",
+    kanaCount: 30,
+    tilesPerKana: 4,
+    branchCount: 32,
+    branchCapacity: 4,
+    kanaSubset: [],
+    isRandomKana: true,
+    overrideRules: { count: 7, multiplier: 2 },
+    frozenTiles: {
+      enabled: true,
+      percentage: 45,
+      duration: 8
+    }
+  },
 ];
 
 // Функция для случайного выбора кан из полного набора
