@@ -901,10 +901,31 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         // Now actually remove the tiles from branches
         setGameState(currentState => {
           const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
+          const isComplete = finalBranches.every(branch => branch.tiles.length === 0);
+          
+          // Check for deadlock after tiles are removed
+          if (!isComplete) {
+            const hasMovesAvailable = hasValidMoves(finalBranches);
+            if (!hasMovesAvailable) {
+              // Try to auto-thaw if stuck
+              const thawed = autoThawIfStuck();
+              if (!thawed) {
+                toast({
+                  title: "No moves available! 😔",
+                  description: "The game is stuck. Try using the undo button or restart the level.",
+                  variant: "destructive",
+                  duration: 10000,
+                });
+              }
+            }
+          }
+          
           return {
             ...currentState,
             branches: finalBranches,
             learnedKana: [...new Set([...currentState.learnedKana, ...newCompleted])],
+            isComplete,
+            levelState: isComplete ? LevelState.CELEBRATING : LevelState.IDLE,
           };
         });
         
@@ -987,10 +1008,31 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         // Now actually remove the tiles from branches
         setGameState(currentState => {
           const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
+          const isComplete = finalBranches.every(branch => branch.tiles.length === 0);
+          
+          // Check for deadlock after tiles are removed
+          if (!isComplete) {
+            const hasMovesAvailable = hasValidMoves(finalBranches);
+            if (!hasMovesAvailable) {
+              // Try to auto-thaw if stuck
+              const thawed = autoThawIfStuck();
+              if (!thawed) {
+                toast({
+                  title: "No moves available! 😔",
+                  description: "The game is stuck. Try using the undo button or restart the level.",
+                  variant: "destructive",
+                  duration: 10000,
+                });
+              }
+            }
+          }
+          
           return {
             ...currentState,
             branches: finalBranches,
             learnedKana: [...new Set([...currentState.learnedKana, ...newCompleted])],
+            isComplete,
+            levelState: isComplete ? LevelState.CELEBRATING : LevelState.IDLE,
           };
         });
         
