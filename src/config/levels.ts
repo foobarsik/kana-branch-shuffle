@@ -629,8 +629,8 @@ export const LEVELS: LevelConfig[] = [
   {
     level: 46,
     name: "Mega Madness",
-    description: "Mega madness — 25 kana, 27 branches; 3 kana have 8 tiles",
-    kanaCount: 25,
+    description: "Mega madness — 22 kana, 27 branches; 3 kana have 8 tiles",
+    kanaCount: 22,
     tilesPerKana: 4,
     branchCount: 27,
     branchCapacity: 4,
@@ -639,57 +639,45 @@ export const LEVELS: LevelConfig[] = [
     overrideRules: { count: 3, multiplier: 2 }
   },
 
-  {
-    level: 47,
-    name: "Mega Madness II",
-    description: "Mega madness — 26 kana, 28 branches; 4 kana have 8 tiles",
-    kanaCount: 26,
-    tilesPerKana: 4,
-    branchCount: 28,
-    branchCapacity: 4,
-    kanaSubset: [],
-    isRandomKana: true,
-    overrideRules: { count: 4, multiplier: 2 }
-  },
+  // {
+  //   level: 47,
+  //   name: "Mega Madness II",
+  //   description: "Mega madness — 26 kana, 28 branches; 4 kana have 8 tiles",
+  //   kanaCount: 22,
+  //   tilesPerKana: 4,
+  //   branchCount: 28,
+  //   branchCapacity: 4,
+  //   kanaSubset: [],
+  //   isRandomKana: true,
+  //   overrideRules: { count: 4, multiplier: 2 }
+  // },
 
-  {
-    level: 48,
-    name: "Ultimate Mayhem",
-    description: "Ultimate mayhem — 27 kana, 29 branches; 5 kana have 8 tiles",
-    kanaCount: 27,
-    tilesPerKana: 4,
-    branchCount: 29,
-    branchCapacity: 4,
-    kanaSubset: [],
-    isRandomKana: true,
-    overrideRules: { count: 5, multiplier: 2 }
-  },
+  // {
+  //   level: 48,
+  //   name: "Ultimate Mayhem",
+  //   description: "Ultimate mayhem — 27 kana, 29 branches; 5 kana have 8 tiles",
+  //   kanaCount: 22,
+  //   tilesPerKana: 4,
+  //   branchCount: 29,
+  //   branchCapacity: 4,
+  //   kanaSubset: [],
+  //   isRandomKana: true,
+  //   overrideRules: { count: 5, multiplier: 2 }
+  // },
 
-  {
-    level: 49,
-    name: "Infinite Complexity",
-    description: "Infinite complexity — 28 kana, 30 branches; 6 kana have 8 tiles",
-    kanaCount: 28,
-    tilesPerKana: 4,
-    branchCount: 30,
-    branchCapacity: 4,
-    kanaSubset: [],
-    isRandomKana: true,
-    overrideRules: { count: 6, multiplier: 2 }
-  },
+  // {
+  //   level: 49,
+  //   name: "Infinite Complexity",
+  //   description: "Infinite complexity — 28 kana, 30 branches; 6 kana have 8 tiles",
+  //   kanaCount: 22,
+  //   tilesPerKana: 4,
+  //   branchCount: 30,
+  //   branchCapacity: 4,
+  //   kanaSubset: [],
+  //   isRandomKana: true,
+  //   overrideRules: { count: 6, multiplier: 2 }
+  // },
 
-  {
-    level: 50,
-    name: "Master of the Universe",
-    description: "Master of the Universe — 30 kana, 32 branches; 7 kana have 8 tiles",
-    kanaCount: 30,
-    tilesPerKana: 4,
-    branchCount: 32,
-    branchCapacity: 4,
-    kanaSubset: [],
-    isRandomKana: true,
-    overrideRules: { count: 7, multiplier: 2 }
-  },
 ];
 
 // Функция для случайного выбора кан из полного набора
