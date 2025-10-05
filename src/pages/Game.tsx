@@ -428,7 +428,7 @@ export const Game: React.FC = () => {
 
       {/* Game Board */}
       <div className="flex-1 flex justify-center items-center px-0 md:px-1 mt-3 md:mt-4">
-        <div className="w-full md:max-w-2xl">
+        <div className={`w-full md:max-w-2xl transition-transform duration-300 ${gameState.branches.length >= 12 ? 'scale-90' : ''}`}>
           <div className="grid grid-cols-2 gap-y-3 gap-x-3 md:gap-y-3 md:gap-x-0">
             {/* First column */}
             <div className="grid grid-rows-[repeat(auto-fit,minmax(0,1fr))] gap-2 md:gap-3">
