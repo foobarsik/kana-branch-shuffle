@@ -252,6 +252,18 @@ All colors MUST be HSL.
   --paper-line: rgba(0,0,0,.006);
 }
 
+/* Dark theme overrides for Sakura */
+.dark {
+  --bg-base-1: #1a1b26;     /* deep navy blue */
+  --bg-base-2: #16171f;     /* darker navy */
+  --sakura-1:  #ff6b9d;     /* vibrant pink */
+  --sakura-2:  #ff4d8f;     /* hot pink */
+  --sakura-3:  #7da9ff;     /* bright blue */
+  --sakura-4:  #7ee89e;     /* mint green */
+  --vignette:  rgba(0,0,0,.15);
+  --paper-line: rgba(255,255,255,.015);
+}
+
 /* База: тёплый градиент + мягкая виньетка */
 body.sakura {
   background:
@@ -295,17 +307,14 @@ body.sakura .bg-topglow{
     radial-gradient(120% 80% at 50% -20%, rgba(255,255,255,.85) 0%, transparent 60%);
 }
 
-/* Дарк (Night Dojo) совместимость — на будущее */
-@media (prefers-color-scheme: dark) {
-  /* Всегда держим светлую версию Sakura, даже в дарке */
-  body.sakura {
-    --bg-base-1: #FAFAF8;
-    --bg-base-2: #F7F7F4;
-    --vignette: rgba(0,0,0,.02);
-  }
-  body.sakura .bg-corners{
-    opacity:.65; /* можно чуть усилить в дарке, но база остаётся светлой */
-  }
+/* Dark theme adjustments for Sakura */
+body.dark.sakura .bg-topglow{
+  background:
+    radial-gradient(120% 80% at 50% -20%, rgba(100,100,150,.25) 0%, transparent 60%);
+}
+
+body.dark.sakura .bg-corners{
+  opacity: .45;
 }
 
 /* Ensure app root doesn't paint over background and content stays above bg layers */
