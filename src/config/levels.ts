@@ -687,6 +687,21 @@ export const getRandomKanaSubset = (count: number): string[] => {
   return shuffled.slice(0, count);
 };
 
+// Cache for random kana selections to ensure consistency within a level
+const levelKanaCache: Map<number, string[]> = new Map();
+const levelOverridesCache: Map<number, Record<string, number>> = new Map();
+
+// Clear cache for a specific level (call when restarting/changing level)
+export const clearLevelCache = (level?: number) => {
+  if (level !== undefined) {
+    levelKanaCache.delete(level);
+    levelOverridesCache.delete(level);
+  } else {
+    levelKanaCache.clear();
+    levelOverridesCache.clear();
+  }
+};
+
 // Получить конфигурацию уровня
 export const getLevelConfig = (level: number): LevelConfig | null => {
   const config = LEVELS.find(l => l.level === level);
@@ -694,22 +709,31 @@ export const getLevelConfig = (level: number): LevelConfig | null => {
 
   const finalConfig = { ...config };
 
-  // Если это случайный уровень, генерируем случайные каны
+  // Если это случайный уровень, генерируем случайные каны (с кешированием)
   if (finalConfig.isRandomKana) {
-    finalConfig.kanaSubset = getRandomKanaSubset(finalConfig.kanaCount);
+    if (!levelKanaCache.has(level)) {
+      const randomKana = getRandomKanaSubset(finalConfig.kanaCount);
+      levelKanaCache.set(level, randomKana);
+      console.log(`🎲 Generated random kana for level ${level}:`, randomKana);
+    }
+    finalConfig.kanaSubset = levelKanaCache.get(level)!;
   }
 
-  // Применяем правила переопределения, если они есть
+  // Применяем правила переопределения, если они есть (с кешированием)
   if (finalConfig.overrideRules && finalConfig.kanaSubset.length > 0) {
-    const { count, multiplier } = finalConfig.overrideRules;
-    const shuffledKana = [...finalConfig.kanaSubset].sort(() => Math.random() - 0.5);
-    const kanaToOverride = shuffledKana.slice(0, count);
+    if (!levelOverridesCache.has(level)) {
+      const { count, multiplier } = finalConfig.overrideRules;
+      const shuffledKana = [...finalConfig.kanaSubset].sort(() => Math.random() - 0.5);
+      const kanaToOverride = shuffledKana.slice(0, count);
 
-    finalConfig.kanaTileOverrides = {};
-    for (const kana of kanaToOverride) {
-      finalConfig.kanaTileOverrides[kana] = finalConfig.tilesPerKana * multiplier;
-      console.log(`Overriding tile count for ${kana} to ${finalConfig.tilesPerKana * multiplier}`);
+      const overrides: Record<string, number> = {};
+      for (const kana of kanaToOverride) {
+        overrides[kana] = finalConfig.tilesPerKana * multiplier;
+        console.log(`Overriding tile count for ${kana} to ${finalConfig.tilesPerKana * multiplier}`);
+      }
+      levelOverridesCache.set(level, overrides);
     }
+    finalConfig.kanaTileOverrides = levelOverridesCache.get(level);
   }
 
   return finalConfig;

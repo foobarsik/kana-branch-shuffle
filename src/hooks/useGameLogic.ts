@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { Branch, GameState, KanaTile, HIRAGANA_SET, BranchType, LevelState } from "@/types/game";
 import { playMoveSound } from "@/utils/audio";
 import { useToast } from "@/hooks/use-toast";
-import { getLevelConfig, type LevelConfig } from "@/config/levels";
+import { getLevelConfig, clearLevelCache, type LevelConfig } from "@/config/levels";
 import { getPlayerProgress, updateProgressAfterLevel, incrementBranchesCollected } from "@/utils/progress";
 import { generateKanaColorMap } from '@/utils/colors';
 import { checkAndUnlockAchievements, updateStreak } from '@/utils/achievements';
@@ -397,6 +397,9 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
       
       // Cancel all pending animation timers to prevent score updates after transition
       cleanupAnimationTimers();
+      
+      // Clear cache for the new level to allow fresh random generation on restart
+      clearLevelCache(level);
       
       setCurrentLevel(level);
       const newState = createInitialState();
