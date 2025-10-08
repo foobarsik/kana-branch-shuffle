@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Home, Volume2, VolumeX } from "lucide-react";
+import { Home, Volume2, Moon, Sun } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "next-themes";
 
 const KANA_PRONUNCIATION_KEY = 'kanaPronunciationEnabled';
 
@@ -15,11 +16,16 @@ export const getKanaPronunciationEnabled = (): boolean => {
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [kanaPronunciation, setKanaPronunciation] = useState(getKanaPronunciationEnabled);
 
   const handlePronunciationToggle = (enabled: boolean) => {
     setKanaPronunciation(enabled);
     localStorage.setItem(KANA_PRONUNCIATION_KEY, enabled.toString());
+  };
+
+  const handleThemeToggle = (isDark: boolean) => {
+    setTheme(isDark ? "dark" : "light");
   };
 
   return (
@@ -33,6 +39,32 @@ const Settings = () => {
 
         {/* Settings Cards */}
         <div className="space-y-4">
+          {/* Appearance Settings */}
+          <Card className="p-6 bg-gradient-tile">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              {theme === "dark" ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-primary" />}
+              Appearance
+            </h2>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label htmlFor="dark-mode" className="text-base font-medium">
+                    Dark Mode
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Switch between light and dark theme
+                  </p>
+                </div>
+                <Switch
+                  id="dark-mode"
+                  checked={theme === "dark"}
+                  onCheckedChange={handleThemeToggle}
+                />
+              </div>
+            </div>
+          </Card>
+
           {/* Audio Settings */}
           <Card className="p-6 bg-gradient-tile">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
