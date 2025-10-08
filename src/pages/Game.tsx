@@ -487,13 +487,13 @@ export const Game: React.FC = () => {
               variant="outline"
               title="Undo (costs 1 branch)"
               aria-label="Undo (costs 1 branch)"
-              className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100"
+              className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100 rounded-full dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:text-white dark:border-slate-600 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] dark:focus-visible:ring-2 dark:focus-visible:ring-slate-400/60 dark:focus-visible:ring-offset-0 disabled:opacity-60 disabled:cursor-not-allowed dark:disabled:bg-slate-800/40 dark:disabled:text-slate-500 dark:disabled:border-slate-700"
             >
-              <Undo2 className="w-4 h-4" />
+              <Undo2 className="w-4 h-4 dark:text-white" />
               <span className="inline flex items-center gap-1">
-                Undo
-                <span className="inline-flex items-center gap-1 text-[11px] leading-none px-1 py-[1px] rounded bg-emerald-50 border border-emerald-200 text-emerald-700">
-                  <Leaf className="w-3 h-3" />
+                <span className="font-semibold">Undo</span>
+                <span className="inline-flex items-center gap-1 text-[11px] leading-none px-1.5 py-[1px] rounded-md bg-emerald-50 border border-emerald-200 text-emerald-700 dark:bg-emerald-700/60 dark:border-emerald-400 dark:text-emerald-100">
+                  <Leaf className="w-3 h-3 dark:text-emerald-200" />
                   -1
                 </span>
               </span>
@@ -503,14 +503,14 @@ export const Game: React.FC = () => {
               variant="outline"
               title="Restart (return to initial preset, costs 1 branch)"
               aria-label="Restart (return to initial preset, costs 1 branch)"
-              className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100"
+              className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100 rounded-full dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:text-white dark:border-slate-600 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] dark:focus-visible:ring-2 dark:focus-visible:ring-slate-400/60 dark:focus-visible:ring-offset-0 disabled:opacity-60 disabled:cursor-not-allowed dark:disabled:bg-slate-800/40 dark:disabled:text-slate-500 dark:disabled:border-slate-700"
               disabled={gameState.moves === 0 || branchesCollected === 0}
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4 dark:text-white" />
               <span className="inline flex items-center gap-1">
-                Restart
-                <span className="inline-flex items-center gap-1 text-[11px] leading-none px-1 py-[1px] rounded bg-emerald-50 border border-emerald-200 text-emerald-700">
-                  <Leaf className="w-3 h-3" />
+                <span className="font-semibold">Restart</span>
+                <span className="inline-flex items-center gap-1 text-[11px] leading-none px-1.5 py-[1px] rounded-md bg-emerald-50 border border-emerald-200 text-emerald-700 dark:bg-emerald-700/60 dark:border-emerald-400 dark:text-emerald-100">
+                  <Leaf className="w-3 h-3 dark:text-emerald-200" />
                   -1
                 </span>
               </span>
@@ -520,14 +520,14 @@ export const Game: React.FC = () => {
               variant="outline"
               title="Shuffle (new layout, costs 1 branch)"
               aria-label="Shuffle (new layout, costs 1 branch)"
-              className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100"
+              className="btn-enameled h-8 md:h-9 px-2 md:px-3 text-[13px] md:text-[15px] whitespace-nowrap inline-flex items-center gap-2 scale-95 md:scale-100 rounded-full dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:text-white dark:border-slate-600 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] dark:focus-visible:ring-2 dark:focus-visible:ring-slate-400/60 dark:focus-visible:ring-offset-0 disabled:opacity-60 disabled:cursor-not-allowed dark:disabled:bg-slate-800/40 dark:disabled:text-slate-500 dark:disabled:border-slate-700"
               disabled={branchesCollected === 0}
             >
-              <ShuffleIcon className="w-4 h-4" />
+              <ShuffleIcon className="w-4 h-4 dark:text-white" />
               <span className="inline flex items-center gap-1">
-                Shuffle
-                <span className="inline-flex items-center gap-1 text-[11px] leading-none px-1 py-[1px] rounded bg-emerald-50 border border-emerald-200 text-emerald-700">
-                  <Leaf className="w-3 h-3" />
+                <span className="font-semibold">Shuffle</span>
+                <span className="inline-flex items-center gap-1 text-[11px] leading-none px-1.5 py-[1px] rounded-md bg-emerald-50 border border-emerald-200 text-emerald-700 dark:bg-emerald-700/60 dark:border-emerald-400 dark:text-emerald-100">
+                  <Leaf className="w-3 h-3 dark:text-emerald-200" />
                   -1
                 </span>
               </span>
