@@ -302,7 +302,7 @@ body.sakura::after{
 
 /* Угловые «сакура-боке» — 4 мягких пятна по углам */
 body.sakura .bg-corners{
-  position:fixed; inset:0; pointer-events:none; z-index:-1;
+  position:fixed; inset:0; pointer-events:none; z-index:0;
   background:
     radial-gradient(360px 260px at 0%   0%,   color-mix(in srgb, var(--sakura-1) 20%, transparent) 0 70%, transparent 71%),
     radial-gradient(340px 240px at 100% 0%,   color-mix(in srgb, var(--sakura-2) 20%, transparent) 0 70%, transparent 71%),
@@ -314,18 +314,18 @@ body.sakura .bg-corners{
 
 /* Деликатная верхняя вуаль-подсветка */
 body.sakura .bg-topglow{
-  position:fixed; inset:0; pointer-events:none; z-index:-1;
+  position:fixed; inset:0; pointer-events:none; z-index:0;
   background:
     radial-gradient(120% 80% at 50% -20%, rgba(255,255,255,.85) 0%, transparent 60%);
 }
 
 /* Dark theme adjustments for Sakura */
-body.dark.sakura .bg-topglow{
+.dark body.sakura .bg-topglow{
   background:
     radial-gradient(120% 80% at 50% -20%, rgba(100,100,150,.25) 0%, transparent 60%);
 }
 
-body.dark.sakura .bg-corners{
+.dark body.sakura .bg-corners{
   opacity: .45;
 }
 
@@ -438,6 +438,134 @@ body.sakura.theme-tsunami::before{
     repeating-linear-gradient(135deg, rgba(0,0,0,.06) 0 1px, transparent 1px 14px);
   background-blend-mode: screen, screen, multiply;
 }
+
+/* ==========================
+   Dark theme rich variants
+   ========================== */
+/* Waves — stronger cyan arcs and denser pattern for dark */
+.dark body.sakura.theme-waves::before{
+  opacity:.28;
+  background-image:
+    radial-gradient(circle at 0 50%, rgba(255,255,255,.10) 2.4px, transparent 2.8px),
+    radial-gradient(circle at 12px 50%, rgba(173,216,230,.14) 2.4px, transparent 2.8px);
+  background-size: 24px 12px;
+  background-position: 0 0, 12px 6px;
+  mix-blend-mode: screen;
+}
+
+/* Branches — brighter conic strokes with neon tint */
+.dark body.sakura.theme-branches::before{
+  opacity:.30;
+  background:
+    conic-gradient(from 200deg at 0% 0%, color-mix(in srgb, var(--sakura-2) 30%, transparent) 0 12%, transparent 12% 100%),
+    conic-gradient(from 20deg  at 100% 0%, color-mix(in srgb, var(--sakura-1) 28%, transparent) 0 12%, transparent 12% 100%),
+    conic-gradient(from 200deg at 0% 100%, color-mix(in srgb, var(--sakura-3) 26%, transparent) 0 12%, transparent 12% 100%),
+    conic-gradient(from 20deg  at 100% 100%, color-mix(in srgb, var(--sakura-4) 26%, transparent) 0 12%, transparent 12% 100%);
+  background-blend-mode: screen;
+}
+
+/* Mountains — cooler silhouettes with subtle starfield */
+.dark body.sakura.theme-mountains::before{
+  opacity:.34;
+  background:
+    radial-gradient(82% 36% at 15% 115%, rgba(255,255,255,.08) 0 60%, transparent 61%),
+    radial-gradient(92% 42% at 55% 118%, rgba(173,216,230,.10) 0 60%, transparent 61%),
+    radial-gradient(70% 32% at 90% 112%, rgba(135,206,250,.08) 0 60%, transparent 61%),
+    radial-gradient(1px 1px at 20% 10%, rgba(255,255,255,.12), transparent 60%),
+    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,.08), transparent 60%);
+  background-blend-mode: screen, screen, screen, normal;
+}
+
+/* Tsunami — vivid arcs with blue neon and tighter ripples */
+.dark body.sakura.theme-tsunami::before{
+  opacity:.38;
+  background:
+    conic-gradient(from 210deg at 100% 0%, color-mix(in srgb, var(--sakura-3) 35%, transparent) 0 16%, transparent 16% 100%),
+    conic-gradient(from 30deg at 0% 100%, color-mix(in srgb, var(--sakura-3) 28%, transparent) 0 14%, transparent 14% 100%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,.10) 0 1px, transparent 1px 9px);
+  background-blend-mode: screen, screen, screen;
+}
+
+/* Rice Paper — fiber texture becomes bright speckles */
+.dark body.sakura.theme-ricepaper::before{
+  opacity:.24;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.14), transparent 60%),
+    radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,.12), transparent 60%),
+    radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,.14), transparent 60%),
+    radial-gradient(1px 1px at 85% 65%, rgba(255,255,255,.12), transparent 60%);
+  background-size: 240px 240px, 210px 210px, 250px 250px, 230px 230px;
+  mix-blend-mode: screen;
+}
+
+/* Geometry — cyan-magenta neon hexes */
+.dark body.sakura.theme-geo::before{
+  opacity:.26;
+  background:
+    conic-gradient(from 30deg, rgba(173,216,230,.18) 0 60deg, transparent 60deg 120deg,
+                             rgba(255,105,180,.16) 120deg 180deg, transparent 180deg 240deg,
+                             rgba(173,216,230,.18) 240deg 300deg, transparent 300deg 360deg);
+  background-size: 26px 26px;
+  mix-blend-mode: screen;
+}
+
+/* Dots — dark variant */
+.dark body.sakura.theme-dots::before{
+  opacity:.26;
+  background-image:
+    radial-gradient(circle at center, rgba(255,255,255,.16) 1.2px, transparent 1.9px);
+  background-size: 16px 16px;
+  mix-blend-mode: screen;
+}
+
+/* Grid — dark variant */
+.dark body.sakura.theme-grid::before{
+  opacity:.26;
+  background-image:
+    repeating-linear-gradient(0deg,   rgba(255,255,255,.12) 0 1px, transparent 1px 11px),
+    repeating-linear-gradient(90deg,  rgba(255,255,255,.12) 0 1px, transparent 1px 11px);
+  mix-blend-mode: screen;
+}
+
+/* Stripes — dark variant */
+.dark body.sakura.theme-stripes::before{
+  opacity:.24;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.14) 0 1px, transparent 1px 16px);
+  mix-blend-mode: screen;
+}
+
+/* ==========================
+   Boost mode for user-selected themes
+   ========================== */
+/* Intensify corner and top glow layers */
+body.sakura.theme-boost .bg-corners{ opacity: .95; }
+body.sakura.theme-boost .bg-topglow{ opacity: .9; }
+.dark body.sakura.theme-boost .bg-corners{ opacity: .6; }
+.dark body.sakura.theme-boost .bg-topglow{ opacity: .7; }
+
+/* Light mode boosts */
+body.sakura.theme-boost.theme-dots::before{      opacity:.28; }
+body.sakura.theme-boost.theme-grid::before{      opacity:.30; }
+body.sakura.theme-boost.theme-stripes::before{   opacity:.26; }
+body.sakura.theme-boost.theme-ricepaper::before{ opacity:.30; }
+body.sakura.theme-boost.theme-mountains::before{ opacity:.36; }
+body.sakura.theme-boost.theme-branches::before{  opacity:.30; }
+body.sakura.theme-boost.theme-waves::before{     opacity:.30; }
+body.sakura.theme-boost.theme-geo::before{       opacity:.28; }
+body.sakura.theme-boost.theme-tsunami::before{   opacity:.32; }
+
+/* Dark mode boosts */
+.dark body.sakura.theme-boost.theme-dots::before{      opacity:.34; }
+.dark body.sakura.theme-boost.theme-grid::before{      opacity:.34; }
+.dark body.sakura.theme-boost.theme-stripes::before{   opacity:.32; }
+.dark body.sakura.theme-boost.theme-ricepaper::before{ opacity:.32; }
+.dark body.sakura.theme-boost.theme-mountains::before{ opacity:.42; }
+.dark body.sakura.theme-boost.theme-branches::before{  opacity:.38; }
+.dark body.sakura.theme-boost.theme-waves::before{     opacity:.36; }
+.dark body.sakura.theme-boost.theme-geo::before{       opacity:.34; }
+.dark body.sakura.theme-boost.theme-tsunami::before{   opacity:.46; }
 
 
 /* ==========================

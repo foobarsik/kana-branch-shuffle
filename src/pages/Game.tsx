@@ -12,6 +12,8 @@ import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as Shuff
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
 import { applyThemeForLevel } from "@/utils/themes";
+import { BackgroundPicker } from "@/components/ui/BackgroundPicker";
+import { useUserSettings } from "@/hooks/useUserSettings";
 import { getLevelConfig, getMaxLevel } from "@/config/levels";
 import { getPlayerProgress } from "@/utils/progress";
 import { AchievementNotificationManager } from "@/components/ui/AchievementNotification";
@@ -76,6 +78,9 @@ export const Game: React.FC = () => {
     isLastStep,
   } = useTutorial(currentLevelNumber);
 
+  // User settings (background theme override)
+  const { settings } = useUserSettings();
+
   // Get level configuration and player progress
   const levelConfig = getLevelConfig(currentLevelNumber);
   const playerProgress = getPlayerProgress();
@@ -85,10 +90,10 @@ export const Game: React.FC = () => {
     initializeVoices();
   }, []);
 
-  // Apply per-level Sakura theme to the body
+  // Apply Sakura theme: user-selected override takes precedence over per-level theme
   React.useEffect(() => {
-    applyThemeForLevel(currentLevelNumber);
-  }, [currentLevelNumber]);
+    applyThemeForLevel(currentLevelNumber, settings.backgroundTheme ?? undefined);
+  }, [currentLevelNumber, settings.backgroundTheme]);
 
   // Detect global branchesCollected increments and show visual feedback
   React.useEffect(() => {
@@ -378,6 +383,7 @@ export const Game: React.FC = () => {
             {/* Display Mode & Audio Controls */}
             <div className="flex items-center gap-2">
               <AudioControls compact={true} />
+              <BackgroundPicker compact={true} />
             </div>
           </div>
 

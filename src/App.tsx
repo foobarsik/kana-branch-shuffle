@@ -21,6 +21,9 @@ const App = () => (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
       <TooltipProvider>
         <AudioProvider>
+          {/* Global background layers used by Sakura themes */}
+          <div className="bg-corners" />
+          <div className="bg-topglow" />
           <Toaster />
           <Sonner />
           <BrowserRouter>

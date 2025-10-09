@@ -60,7 +60,7 @@ export function getThemeForLevel(level: number): ThemeClass {
   return pickDeterministicTheme(level);
 }
 
-export function applyThemeForLevel(level: number) {
+export function applyThemeForLevel(level: number, overrideTheme?: ThemeClass) {
   if (typeof document === 'undefined') return;
   const body = document.body;
   if (!body) return;
@@ -72,11 +72,16 @@ export function applyThemeForLevel(level: number) {
   THEME_CLASSES.forEach(tc => body.classList.remove(tc));
   // Remove previous level-* classes
   body.classList.forEach(c => { if (c.startsWith('level-')) body.classList.remove(c); });
+  // Manage boost class
+  body.classList.remove('theme-boost');
 
   // Apply new
-  const theme = getThemeForLevel(level);
+  const theme = overrideTheme ?? getThemeForLevel(level);
   body.classList.add(theme);
   body.setAttribute('data-theme', theme);
+  if (overrideTheme) {
+    body.classList.add('theme-boost');
+  }
   // Add level marker for CSS targeting
   const levelClass = `level-${level}`;
   body.classList.add(levelClass);
