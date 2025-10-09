@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Home, Volume2, Moon, Sun } from "lucide-react";
+import { Home, Volume2, Moon, Sun, Palette } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
+import { useUserSettings } from "@/hooks/useUserSettings";
 
 const KANA_PRONUNCIATION_KEY = 'kanaPronunciationEnabled';
 
@@ -18,6 +19,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const [kanaPronunciation, setKanaPronunciation] = useState(getKanaPronunciationEnabled);
+  const { settings, setUseKanaSvgBg, setKanaTextureStrength, setKanaTextureBlend } = useUserSettings();
 
   const handlePronunciationToggle = (enabled: boolean) => {
     setKanaPronunciation(enabled);
@@ -62,6 +64,62 @@ const Settings = () => {
                   onCheckedChange={handleThemeToggle}
                 />
               </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label htmlFor="kana-svg-bg" className="text-base font-medium flex items-center gap-2">
+                    <Palette className="w-4 h-4 text-primary" /> Customise your kanas
+                  </Label>
+                </div>
+                <Switch
+                  id="kana-svg-bg"
+                  checked={settings.useKanaSvgBg}
+                  onCheckedChange={setUseKanaSvgBg}
+                />
+              </div>
+
+              {settings.useKanaSvgBg && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1 pr-4">
+                      <Label htmlFor="kana-texture-strength" className="text-base font-medium">
+                        Kawaii strength
+                      </Label>
+                    </div>
+                    <div className="flex items-center gap-3 min-w-[220px]">
+                      <input
+                        id="kana-texture-strength"
+                        type="range"
+                        min={0}
+                        max={1}
+                        step={0.05}
+                        value={settings.kanaTextureStrength}
+                        onChange={(e) => setKanaTextureStrength(parseFloat(e.target.value))}
+                        className="w-[160px]"
+                      />
+                      <span className="tabular-nums w-10 text-right text-sm">{Math.round(settings.kanaTextureStrength * 100)}%</span>
+                    </div>
+                  </div>
+
+                  {/* <div className="flex items-center justify-between">
+                    <div className="space-y-1 pr-4">
+                      <Label htmlFor="kana-texture-blend" className="text-base font-medium">
+                      Kawaii blend mode
+                      </Label>
+                    </div>
+                    <select
+                      id="kana-texture-blend"
+                      value={settings.kanaTextureBlend}
+                      onChange={(e) => setKanaTextureBlend(e.target.value as 'multiply' | 'overlay' | 'soft-light')}
+                      className="h-8 rounded-md border bg-background px-2 text-sm"
+                    >
+                      <option value="multiply">Multiply (default)</option>
+                      <option value="overlay">Overlay</option>
+                      <option value="soft-light">Soft light</option>
+                    </select>
+                  </div> */}
+                </>
+              )}
             </div>
           </Card>
 
@@ -88,13 +146,6 @@ const Settings = () => {
                   onCheckedChange={handlePronunciationToggle}
                 />
               </div>
-            </div>
-          </Card>
-
-          {/* Future settings placeholder */}
-          <Card className="p-6 bg-gradient-tile opacity-60">
-            <div className="text-center py-4">
-              <p className="text-muted-foreground">More settings coming soon...</p>
             </div>
           </Card>
         </div>

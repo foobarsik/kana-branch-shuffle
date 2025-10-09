@@ -6,10 +6,16 @@ const UPDATE_EVENT = "userSettings:updated";
 
 export interface UserSettings {
   backgroundTheme: BackgroundThemeId | null; // null means follow per-level theme
+  useKanaSvgBg: boolean; // enable kana svg background texture on tiles
+  kanaTextureStrength: number; // 0..1 opacity multiplier for svg tint
+  kanaTextureBlend: 'multiply' | 'overlay' | 'soft-light'; // blend mode for svg tint
 }
 
 const defaultSettings: UserSettings = {
   backgroundTheme: null,
+  useKanaSvgBg: false,
+  kanaTextureStrength: 1,
+  kanaTextureBlend: 'multiply',
 };
 
 function loadSettings(): UserSettings {
@@ -18,8 +24,14 @@ function loadSettings(): UserSettings {
     if (!raw) return defaultSettings;
     const parsed = JSON.parse(raw) as Partial<UserSettings>;
     const backgroundTheme = parsed.backgroundTheme;
+    const useKanaSvgBg = typeof parsed.useKanaSvgBg === 'boolean' ? parsed.useKanaSvgBg : true;
+    const kanaTextureStrength = typeof parsed.kanaTextureStrength === 'number' ? Math.max(0, Math.min(1, parsed.kanaTextureStrength)) : defaultSettings.kanaTextureStrength;
+    const kanaTextureBlend = (parsed.kanaTextureBlend as UserSettings['kanaTextureBlend']) ?? defaultSettings.kanaTextureBlend;
     return {
       backgroundTheme: isValidBackgroundTheme(backgroundTheme) ? backgroundTheme : null,
+      useKanaSvgBg,
+      kanaTextureStrength,
+      kanaTextureBlend,
     };
   } catch {
     return defaultSettings;
@@ -48,6 +60,31 @@ export function useUserSettings() {
   const setBackgroundTheme = React.useCallback((id: BackgroundThemeId | null) => {
     setSettings(prev => {
       const next = { ...prev, backgroundTheme: id };
+      saveSettings(next);
+      return next;
+    });
+  }, []);
+
+  const setUseKanaSvgBg = React.useCallback((val: boolean) => {
+    setSettings(prev => {
+      const next = { ...prev, useKanaSvgBg: val };
+      saveSettings(next);
+      return next;
+    });
+  }, []);
+
+  const setKanaTextureStrength = React.useCallback((val: number) => {
+    const clamped = Math.max(0, Math.min(1, val));
+    setSettings(prev => {
+      const next = { ...prev, kanaTextureStrength: clamped };
+      saveSettings(next);
+      return next;
+    });
+  }, []);
+
+  const setKanaTextureBlend = React.useCallback((val: UserSettings['kanaTextureBlend']) => {
+    setSettings(prev => {
+      const next = { ...prev, kanaTextureBlend: val };
       saveSettings(next);
       return next;
     });
@@ -82,6 +119,9 @@ export function useUserSettings() {
   return {
     settings,
     setBackgroundTheme,
+    setUseKanaSvgBg,
+    setKanaTextureStrength,
+    setKanaTextureBlend,
     resetToDefault,
   };
 }

@@ -1,6 +1,7 @@
 import React from "react";
 import { KanaTile } from "@/types/game";
 import { cn } from "@/lib/utils";
+import { useUserSettings } from "@/hooks/useUserSettings";
 
 // Helpers to work with gradient or solid colors
 const isGradient = (val: string): boolean => val.includes('gradient(');
@@ -48,6 +49,7 @@ export const GameTile: React.FC<GameTileProps> = ({
   currentMove = 0,
   isThawing = false,
 }) => {
+  const { settings } = useUserSettings();
   if (isFlipping) {
     console.log('🔄 Tile is flipping:', tile.id, tile.kana);
   }
@@ -216,13 +218,24 @@ export const GameTile: React.FC<GameTileProps> = ({
           <div
             className="absolute inset-0.5 rounded-full overflow-hidden"
             style={{
+              // For frozen tiles keep ice gradient; otherwise base fill then optional texture overlay
               background: isFrozen
                 ? 'radial-gradient(circle at 30% 30%, #e9f7ff 0%, #cfefff 45%, #a7dcff 70%, #7ac3ff 100%)'
-                : (isGradient(tileColorValue)
-                  ? tileColorValue // Use the original gradient
-                  : `radial-gradient(circle at center, ${baseColor} ${isSelected ? '55%' : '60%'}, ${dark1} 100%)`)
+                : baseColor,
             }}
           >
+            {/* Texture overlay (front) */}
+            {!isFrozen && settings.useKanaSvgBg && (
+              <div
+                className="absolute inset-0 bg-center bg-no-repeat pointer-events-none"
+                style={{
+                  backgroundImage: "url('/kana-bg.svg')",
+                  backgroundSize: '140%',
+                  mixBlendMode: settings.kanaTextureBlend,
+                  opacity: settings.kanaTextureStrength,
+                }}
+              />
+            )}
             {/* Very light inner shadow at bottom for embossed effect */}
             <div
               className="absolute inset-0 rounded-full pointer-events-none"
@@ -302,11 +315,21 @@ export const GameTile: React.FC<GameTileProps> = ({
             style={{
               background: isFrozen
                 ? 'radial-gradient(circle at 30% 30%, #e9f7ff 0%, #cfefff 45%, #a7dcff 70%, #7ac3ff 100%)'
-                : (isGradient(tileColorValue)
-                  ? tileColorValue // Use the original gradient
-                  : `radial-gradient(circle at center, ${baseColor} ${isSelected ? '55%' : '60%'}, ${dark1} 100%)`)
+                : baseColor,
             }}
           >
+            {/* Texture overlay (back) */}
+            {!isFrozen && settings.useKanaSvgBg && (
+              <div
+                className="absolute inset-0 bg-center bg-no-repeat pointer-events-none"
+                style={{
+                  backgroundImage: "url('/kana-bg.svg')",
+                  backgroundSize: '140%',
+                  mixBlendMode: settings.kanaTextureBlend,
+                  opacity: settings.kanaTextureStrength,
+                }}
+              />
+            )}
             {/* Very light inner shadow at bottom for embossed effect (back face) */}
             <div
               className="absolute inset-0 rounded-full pointer-events-none"
