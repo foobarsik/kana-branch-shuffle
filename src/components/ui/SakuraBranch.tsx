@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { useTheme } from 'next-themes';
 
 interface SakuraBranchProps {
   className?: string;
@@ -14,6 +15,9 @@ export const SakuraBranch: React.FC<SakuraBranchProps> = ({
   canPlace,
   mirrored = false
 }) => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  
   return (
     <svg
       viewBox="0 0 500 40"
@@ -104,7 +108,9 @@ export const SakuraBranch: React.FC<SakuraBranchProps> = ({
       <path d="M400 18 Q405 25 410 28" stroke="#8B4513" strokeWidth="3" fill="none" strokeLinecap="round" />
       <path d="M440 19 Q445 12 450 9" stroke="#8B4513" strokeWidth="3" fill="none" strokeLinecap="round" />
       
-      {/* Sakura flowers */}
+      {/* Sakura flowers - only in light mode */}
+      {!isDark && (
+        <>
       {/* Flower 1 */}
       <g transform="translate(50, 13)">
         <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
@@ -227,6 +233,8 @@ export const SakuraBranch: React.FC<SakuraBranchProps> = ({
       <circle cx="385" cy="19" r="1.5" fill="#FFB7C5" opacity="0.7" />
       <circle cx="425" cy="20" r="1.5" fill="#FFB7C5" opacity="0.7" />
       <circle cx="465" cy="20" r="1.5" fill="#FFB7C5" opacity="0.7" />
+        </>
+      )}
     </svg>
   );
 };
