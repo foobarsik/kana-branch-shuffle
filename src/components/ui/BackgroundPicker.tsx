@@ -29,7 +29,7 @@ export const BackgroundPicker: React.FC<BackgroundPickerProps> = ({ compact = tr
           }
         }}
       >
-        <SelectTrigger className={compact ? "h-8 min-w-[140px]" : "h-9 min-w-[180px]"} aria-label="Background theme">
+        <SelectTrigger className={compact ? "h-8 min-w-[136px]" : "h-9 min-w-[136px]"} aria-label="Background theme">
           <SelectValue placeholder="Background" />
         </SelectTrigger>
         <SelectContent>
