@@ -789,6 +789,32 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
     return false;
   }, [getConsecutiveCount]);
 
+  // Helper: count remaining tiles by kana
+  const getRemainingKanaCounts = useCallback((branches: Branch[]): Record<string, number> => {
+    const counts: Record<string, number> = {};
+    branches.forEach(b => b.tiles.forEach(t => {
+      counts[t.kana] = (counts[t.kana] || 0) + 1;
+    }));
+    return counts;
+  }, []);
+
+  // Helper: if only one kana remains and its count < tilesPerKana, auto-resolve as a safeguard
+  const resolveStragglersIfAny = useCallback((branches: Branch[]): { branches: Branch[]; resolved: boolean } => {
+    const counts = getRemainingKanaCounts(branches);
+    const remaining = Object.entries(counts).filter(([, c]) => c > 0);
+    if (remaining.length === 1) {
+      const [kana, count] = remaining[0];
+      const cfg = getLevelConfig(level);
+      const need = cfg?.tilesPerKana ?? 4;
+      if (count > 0 && count < need) {
+        console.warn(`🧹 Straggler fix engaged: removing leftover ${count} tile(s) of ${kana} (< ${need})`);
+        const cleaned = branches.map(b => ({ ...b, tiles: b.tiles.filter(t => t.kana !== kana) }));
+        return { branches: cleaned, resolved: true };
+      }
+    }
+    return { branches, resolved: false };
+  }, [getRemainingKanaCounts, level]);
+
   // Attempt an automatic thaw when the board is stuck (no valid moves) without consuming a move
   const autoThawIfStuck = useCallback((): boolean => {
     // Up to 3 thaw ticks, stop early if a move appears
@@ -903,7 +929,8 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
         
         // Now actually remove the tiles from branches
         setGameState(currentState => {
-          const { completed: newCompleted, updatedBranches: finalBranches } = checkForCompletion(currentState.branches);
+          const { completed: newCompleted, updatedBranches: finalBranchesRaw } = checkForCompletion(currentState.branches);
+          const { branches: finalBranches, resolved: fixed } = resolveStragglersIfAny(finalBranchesRaw);
           const isComplete = finalBranches.every(branch => branch.tiles.length === 0);
           
           // Check for deadlock after tiles are removed
@@ -922,6 +949,12 @@ export const useGameLogic = ({ level = 1, displayMode = DisplayMode.LEFT_KANA_RI
               }
             }
           }
+
+          // Integrity log
+          try {
+            const counts = getRemainingKanaCounts(finalBranches);
+            console.log('🧮 Remaining tiles by kana after cleanup:', counts, { fixedStragglers: fixed });
+          } catch {}
           
           return {
             ...currentState,
