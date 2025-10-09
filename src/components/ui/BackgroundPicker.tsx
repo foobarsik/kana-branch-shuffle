@@ -33,7 +33,7 @@ export const BackgroundPicker: React.FC<BackgroundPickerProps> = ({ compact = tr
           <SelectValue placeholder="Background" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="auto">Auto (per-level)</SelectItem>
+          <SelectItem value="auto">Auto</SelectItem>
           {BACKGROUND_THEMES.map((t) => (
             <SelectItem key={t.id} value={t.id}>
               {t.label}
