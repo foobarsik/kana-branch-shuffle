@@ -8,11 +8,10 @@ import { Branch } from "@/types/game";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon, Crown, Star, MoveRight, Leaf } from "lucide-react";
+import { Undo2, RotateCcw, Home, Trophy, ArrowLeft, ArrowRight, Shuffle as ShuffleIcon, Crown, Star, MoveRight, Leaf, Settings as SettingsIcon } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { initializeVoices } from "@/utils/audio";
 import { applyThemeForLevel } from "@/utils/themes";
-import { BackgroundPicker } from "@/components/ui/BackgroundPicker";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { getLevelConfig, getMaxLevel } from "@/config/levels";
 import { getPlayerProgress } from "@/utils/progress";
@@ -383,7 +382,16 @@ export const Game: React.FC = () => {
             {/* Display Mode & Audio Controls */}
             <div className="flex items-center gap-2">
               <AudioControls compact={true} />
-              <BackgroundPicker compact={true} />
+              <Button
+                onClick={() => navigate('/settings')}
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9"
+                title="Settings"
+                aria-label="Settings"
+              >
+                <SettingsIcon className="w-5 h-5" />
+              </Button>
             </div>
           </div>
 

@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Home, Volume2, Moon, Sun, Palette } from "lucide-react";
+import { Home, Volume2, Moon, Sun, Palette, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { useUserSettings } from "@/hooks/useUserSettings";
+import { BackgroundPicker } from "@/components/ui/BackgroundPicker";
 
 const KANA_PRONUNCIATION_KEY = 'kanaPronunciationEnabled';
 
@@ -120,6 +121,21 @@ const Settings = () => {
                   </div> */}
                 </>
               )}
+
+              {/* Background theme selection */}
+              <div className="flex items-center justify-between">
+                <div className="space-y-1 pr-4">
+                  <Label className="text-base font-medium">
+                    Background theme
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Choose a global background or keep Auto per level
+                  </p>
+                </div>
+                <div>
+                  <BackgroundPicker compact={false} />
+                </div>
+              </div>
             </div>
           </Card>
 
@@ -153,13 +169,13 @@ const Settings = () => {
         {/* Back Button */}
         <div className="flex justify-center">
           <Button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(-1)}
             variant="outline"
             size="lg"
             className="gap-2"
           >
-            <Home className="w-4 h-4" />
-            Back to Home
+            <ArrowLeft className="w-4 h-4" />
+            Back
           </Button>
         </div>
       </div>
