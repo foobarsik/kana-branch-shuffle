@@ -66,6 +66,18 @@ const Settings = () => {
                 />
               </div>
 
+              {/* Background theme selection */}
+               <div className="flex items-center justify-between">
+                <div className="space-y-1 pr-4">
+                  <Label className="text-base font-medium">
+                    Background theme
+                  </Label>
+                </div>
+                <div>
+                  <BackgroundPicker compact={false} />
+                </div>
+              </div>
+
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label htmlFor="kana-svg-bg" className="text-base font-medium flex items-center gap-2">
@@ -121,21 +133,6 @@ const Settings = () => {
                   </div> */}
                 </>
               )}
-
-              {/* Background theme selection */}
-              <div className="flex items-center justify-between">
-                <div className="space-y-1 pr-4">
-                  <Label className="text-base font-medium">
-                    Background theme
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    Choose a global background or keep Auto per level
-                  </p>
-                </div>
-                <div>
-                  <BackgroundPicker compact={false} />
-                </div>
-              </div>
             </div>
           </Card>
 
