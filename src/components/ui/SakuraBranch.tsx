@@ -111,128 +111,212 @@ export const SakuraBranch: React.FC<SakuraBranchProps> = ({
       {/* Sakura flowers - only in light mode */}
       {!isDark && (
         <>
-      {/* Flower 1 */}
-      <g transform="translate(50, 13)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
+          {/* Flower 1 */}
+          <g transform="translate(50, 13)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Flower 2 */}
+          <g transform="translate(90, 32)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Flower 3 */}
+          <g transform="translate(130, 13)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Flower 4 */}
+          <g transform="translate(170, 32)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Flower 5 */}
+          <g transform="translate(210, 11)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Flower 6 */}
+          <g transform="translate(250, 30)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Flower 7 */}
+          <g transform="translate(290, 9)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Flower 8 */}
+          <g transform="translate(330, 28)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Flower 9 */}
+          <g transform="translate(370, 8)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Flower 10 */}
+          <g transform="translate(410, 28)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Flower 11 */}
+          <g transform="translate(450, 9)">
+            <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
+            <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
+            <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
+          </g>
+          
+          {/* Small buds */}
+          <circle cx="65" cy="21" r="1.5" fill="#FFB7C5" opacity="0.7" />
+          <circle cx="105" cy="22" r="1.5" fill="#FFB7C5" opacity="0.7" />
+          <circle cx="145" cy="21" r="1.5" fill="#FFB7C5" opacity="0.7" />
+          <circle cx="185" cy="20" r="1.5" fill="#FFB7C5" opacity="0.7" />
+          <circle cx="225" cy="19" r="1.5" fill="#FFB7C5" opacity="0.7" />
+          <circle cx="265" cy="18" r="1.5" fill="#FFB7C5" opacity="0.7" />
+          <circle cx="305" cy="17" r="1.5" fill="#FFB7C5" opacity="0.7" />
+          <circle cx="345" cy="18" r="1.5" fill="#FFB7C5" opacity="0.7" />
+          <circle cx="385" cy="19" r="1.5" fill="#FFB7C5" opacity="0.7" />
+          <circle cx="425" cy="20" r="1.5" fill="#FFB7C5" opacity="0.7" />
+          <circle cx="465" cy="20" r="1.5" fill="#FFB7C5" opacity="0.7" />
+        </>
+      )}
       
-      {/* Flower 2 */}
-      <g transform="translate(90, 32)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
-      
-      {/* Flower 3 */}
-      <g transform="translate(130, 13)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
-      
-      {/* Flower 4 */}
-      <g transform="translate(170, 32)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
-      
-      {/* Flower 5 */}
-      <g transform="translate(210, 11)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
-      
-      {/* Flower 6 */}
-      <g transform="translate(250, 30)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
-      
-      {/* Flower 7 */}
-      <g transform="translate(290, 9)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
-      
-      {/* Flower 8 */}
-      <g transform="translate(330, 28)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
-      
-      {/* Flower 9 */}
-      <g transform="translate(370, 8)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
-      
-      {/* Flower 10 */}
-      <g transform="translate(410, 28)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
-      
-      {/* Flower 11 */}
-      <g transform="translate(450, 9)">
-        <circle cx="0" cy="0" r="3" fill="#FFB7C5" opacity="0.9" />
-        <circle cx="-2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="-2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="-2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="2" cy="2" r="2.5" fill="#FFC0CB" opacity="0.8" />
-        <circle cx="0" cy="0" r="1" fill="#FFE4E1" />
-      </g>
-      
-      {/* Small buds */}
-      <circle cx="65" cy="21" r="1.5" fill="#FFB7C5" opacity="0.7" />
-      <circle cx="105" cy="22" r="1.5" fill="#FFB7C5" opacity="0.7" />
-      <circle cx="145" cy="21" r="1.5" fill="#FFB7C5" opacity="0.7" />
-      <circle cx="185" cy="20" r="1.5" fill="#FFB7C5" opacity="0.7" />
-      <circle cx="225" cy="19" r="1.5" fill="#FFB7C5" opacity="0.7" />
-      <circle cx="265" cy="18" r="1.5" fill="#FFB7C5" opacity="0.7" />
-      <circle cx="305" cy="17" r="1.5" fill="#FFB7C5" opacity="0.7" />
-      <circle cx="345" cy="18" r="1.5" fill="#FFB7C5" opacity="0.7" />
-      <circle cx="385" cy="19" r="1.5" fill="#FFB7C5" opacity="0.7" />
-      <circle cx="425" cy="20" r="1.5" fill="#FFB7C5" opacity="0.7" />
-      <circle cx="465" cy="20" r="1.5" fill="#FFB7C5" opacity="0.7" />
+      {/* Green leaves - only in dark mode */}
+      {isDark && (
+        <>
+          {/* Leaf 1 */}
+          <g transform="translate(50, 13)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(-25)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Leaf 2 */}
+          <g transform="translate(90, 32)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(25)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Leaf 3 */}
+          <g transform="translate(130, 13)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(-20)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Leaf 4 */}
+          <g transform="translate(170, 32)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(30)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Leaf 5 */}
+          <g transform="translate(210, 11)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(-30)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Leaf 6 */}
+          <g transform="translate(250, 30)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(20)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Leaf 7 */}
+          <g transform="translate(290, 9)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(-35)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Leaf 8 */}
+          <g transform="translate(330, 28)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(25)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Leaf 9 */}
+          <g transform="translate(370, 8)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(-40)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Leaf 10 */}
+          <g transform="translate(410, 28)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(30)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Leaf 11 */}
+          <g transform="translate(450, 9)">
+            <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#4ade80" opacity="0.8" transform="rotate(-30)" />
+            <path d="M-3 -1 Q0 0 3 -1" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </g>
+          
+          {/* Small leaf buds */}
+          <ellipse cx="65" cy="21" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(-20 65 21)" />
+          <ellipse cx="105" cy="22" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(15 105 22)" />
+          <ellipse cx="145" cy="21" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(-25 145 21)" />
+          <ellipse cx="185" cy="20" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(20 185 20)" />
+          <ellipse cx="225" cy="19" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(-30 225 19)" />
+          <ellipse cx="265" cy="18" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(25 265 18)" />
+          <ellipse cx="305" cy="17" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(-20 305 17)" />
+          <ellipse cx="345" cy="18" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(30 345 18)" />
+          <ellipse cx="385" cy="19" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(-25 385 19)" />
+          <ellipse cx="425" cy="20" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(20 425 20)" />
+          <ellipse cx="465" cy="20" rx="2" ry="1.2" fill="#4ade80" opacity="0.6" transform="rotate(-30 465 20)" />
         </>
       )}
     </svg>
