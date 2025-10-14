@@ -118,23 +118,28 @@ export const Game: React.FC = () => {
     const isComplete = gameState.branches.every(branch => branch.tiles.length === 0);
     const hasMovesAvailable = hasValidMoves();
     
+    // Don't check for game over during animations (RESOLVING or CELEBRATING state)
+    const isAnimating = gameState.levelState === 'resolving' || gameState.levelState === 'celebrating';
+    
     console.log('🎮 Game over check:', {
       isComplete,
       hasMovesAvailable,
+      isAnimating,
+      levelState: gameState.levelState,
       showGameOverModal,
       gameOverModalClosed,
-      shouldShow: !isComplete && !hasMovesAvailable && !showGameOverModal && !gameOverModalClosed
+      shouldShow: !isComplete && !hasMovesAvailable && !showGameOverModal && !gameOverModalClosed && !isAnimating
     });
     
-    // If stuck (no moves) and not complete, try auto-thaw before showing modal
-    if (!isComplete && !hasMovesAvailable && !showGameOverModal && !gameOverModalClosed) {
+    // If stuck (no moves) and not complete and not animating, try auto-thaw before showing modal
+    if (!isComplete && !hasMovesAvailable && !showGameOverModal && !gameOverModalClosed && !isAnimating) {
       const thawed = autoThawIfStuck();
       if (!thawed) {
         console.log('🚨 Showing game over modal!');
         setShowGameOverModal(true);
       }
     }
-  }, [gameState.branches, showGameOverModal, gameOverModalClosed, hasValidMoves, autoThawIfStuck]);
+  }, [gameState.branches, gameState.levelState, showGameOverModal, gameOverModalClosed, hasValidMoves, autoThawIfStuck]);
 
   // Reset the modal closed flag when game state changes
   React.useEffect(() => {
